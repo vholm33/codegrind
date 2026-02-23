@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Register</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gray-900 text-white">
+        <header class="grid h-14 grid-cols-3 items-center border-b-2 bg-gray-950 p-4">
+            <p>Hem</p>
+            <h1 class="text-center text-2xl font-semibold">CodeGrind</h1>
+            <!-- Login: Om redan har registrerat -->
+            <button class="text-md w-24 justify-self-end rounded-md bg-blue-500 font-semibold">
+                <a href="./register.html">Login</a>
+            </button>
+        </header>
+        <main>
+            <!-- Form container -->
+            <section class="mt-12 flex justify-center">
+                <form class="flex w-96 flex-col items-center rounded-md border-2 bg-gray-800 p-4">
+                    <header class="mb-4 w-full border-b text-center text-xl font-semibold">
+                        <h1>Register</h1>
+                    </header>
+                    <!-- Input container -->
+                    <div class="grid w-full grid-rows-3 gap-5">
+                        <div class="flex flex-col">
+                            <label class="flex" for="email">Email:</label>
+                            <input
+                                class="rounded border bg-gray-900 p-2"
+                                type="text"
+                                id="email"
+                                placeholder="user@me.com..."
+                            />
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="email">Username:</label>
+                            <input
+                                class="rounded border bg-gray-900 p-2"
+                                type="text"
+                                id="username"
+                                placeholder="CoolCoder"
+                            />
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="email">Password:</label>
+                            <input
+                                class="rounded border bg-gray-900 p-2"
+                                type="text"
+                                id="password"
+                                placeholder="******"
+                            />
+                        </div>
+                    </div>
+                    <button
+                        class="mt-4 w-1/2 rounded-md border-2 border-blue-600 bg-blue-500 hover:border hover:bg-blue-700"
+                    >
+                        Submit
+                    </button>
+                </form>
+            </section>
+        </main>
+    </body>
+</html>
