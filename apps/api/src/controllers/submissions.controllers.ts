@@ -1,5 +1,5 @@
-import {runTests} from "../services/code-execution.services.js";
 import {Request, Response} from "express";
+import {runTests} from "../services/code-execution.services.js";
 
 //Hanterar submission i frontend
 export async function submitSolution(req: Request, res: Response) {

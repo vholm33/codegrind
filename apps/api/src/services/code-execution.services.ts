@@ -1,5 +1,5 @@
 import {VM} from "vm2";
-import { getTestsByProblemId } from "../repositories/tests.repo.js";
+import {getTestsByProblemId} from "../repositories/tests.repo.js";
 
 //Kör tester för ett problem
 export async function runTests(problemId: number, userCode: string) {

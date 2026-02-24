@@ -10,6 +10,7 @@ CREATE TABLE railway.tests (
     problem_id INT NOT NULL,
     input TEXT NOT NULL,
     expected TEXT NOT NULL,
+    is_hidden BOOLEAN NOT NULL DEFAULT TRUE,
     FOREIGN KEY (problem_id) REFERENCES railway.problems(id)
 );
 
