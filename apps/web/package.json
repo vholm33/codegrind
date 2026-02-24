@@ -9,8 +9,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
+    "@codemirror/lang-javascript": "^6.2.4",
     "codemirror": "^6.0.2"
   }
 }
