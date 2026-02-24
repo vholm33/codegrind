@@ -5,8 +5,9 @@ import { javascript } from '@codemirror/lang-javascript';
 export class CodeEditor {
     private view: EditorView;
 
-    constructor(element: HTMLElement) {
+    constructor(element: HTMLElement, initialDoc: string = '') {
         this.view = new EditorView({
+            doc: initialDoc,
             extensions: [basicSetup, javascript()],
             parent: element,
         });
@@ -14,5 +15,19 @@ export class CodeEditor {
 
     getValue(): string {
         return this.view.state.doc.toString();
+    }
+
+    setValue(newText: string): void {
+        this.view.dispatch({
+            changes: {
+                from: 0,
+                to: this.view.state.doc.length,
+                insert: newText,
+            },
+        });
+    }
+
+    destroy(): void {
+        this.view.destroy();
     }
 }
