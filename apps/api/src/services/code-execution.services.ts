@@ -1,13 +1,21 @@
 import {VM} from "vm2";
-import {getTestsByProblemId} from "../repositories/tests.repo.js";
+import {getTestsByProblemId, getVisibleTests} from "../repositories/tests.repo.js";
 
-//Kör tester för ett problem
+//SUBMIT för alla tester, submit knap
 export async function runTests(problemId: number, userCode: string) {
-    
-    //Hämtar tester från databasen
     const tests = await getTestsByProblemId(problemId);
+    return execute(userCode, tests);
+}
 
-    //Skapar en isolerad sandbox för att löra användarens kod
+//Bara synliga tester, Test knap
+export async function runSampleTests(problemId: number, userCode: string) {
+    const tests = await getVisibleTests(problemId);
+    return execute(userCode, tests);    
+}
+
+//Skapar en isolerad sandbox för att löra användarens kod
+function execute(userCode: string, tests: any[]) { 
+
     const vm = new VM({
         timeout: 1000,
         sandbox: {} 
@@ -18,7 +26,6 @@ export async function runTests(problemId: number, userCode: string) {
         vm.run(userCode)
 
         for (const t of tests) {
-            
             //kör funktionen med testets input
             const result = vm.run(
                 `userFunction(${JSON.stringify(t.input)})`
@@ -35,8 +42,8 @@ export async function runTests(problemId: number, userCode: string) {
 
         //Om alla tester klaras
         return {success: true};
+
     } catch (error: any) {
-        
         //Om koden kraschar
         return {
             success: false,
