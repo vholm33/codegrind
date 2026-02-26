@@ -92,6 +92,20 @@ Domain
 
 # 4. Development Workflow
 
+## Github flow
+
+### Create new change / function
+
+1. Create new branch (locally)
+2. Make changes
+3. Push local branch to remote
+4. Go into pull requests:
+  - Stand on main
+  - Compare to new branch
+  - Create pull request
+5. Go through pull request together.
+6. If all is ok: approve pull request.
+
 ## Feature Workflow
 
 1. Define domain type
