@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "homepage": "https://github.com/vholm33/codegrind#readme",
+  "workspaces": [
+    "apps/api",
+    "apps/web/"
+  ],
   "bugs": {
     "url": "https://github.com/vholm33/codegrind/issues"
   },
