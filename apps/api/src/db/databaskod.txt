@@ -11,7 +11,7 @@ CREATE TABLE railway.tests (
     input TEXT NOT NULL,
     expected TEXT NOT NULL,
     is_hidden BOOLEAN NOT NULL DEFAULT TRUE,
-    FOREIGN KEY (problem_id) REFERENCES railway.problems(id)
+    FOREIGN KEY (problem_id) REFERENCES railway.problems(id) ON DELETE CASCADE
 );
 
 create table railway.users (
