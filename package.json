@@ -12,16 +12,14 @@
     },
     "license": "ISC",
     "author": "",
-    "type": "module",
-    "main": "index.js",
     "workspaces": [
         "apps/api/",
         "apps/web/"
     ],
     "scripts": {
+        "dev": "npm run dev --workspace=api",
         "dev:back": "npm run dev --workspace=api",
-        "dev-frontend": "tsx watch apps/web/src/app.ts",
-        "build": "tsc --project apps/api",
-        "start": "node dist/app.js"
+        "build:back": "npm run build --workspace=api",
+        "start:back": "npm run start --workspace=api"
     }
 }

@@ -1,6 +1,18 @@
 # NEW INFO : workspaces
+
 Install to workspace from root:
-  - npm install cors --workspace=api // not --workspace=apps/api
+
+- npm install cors --workspace=api // not --workspace=apps/api
+
+## workspace : api - backend
+
+- npm run dev:back // Runs dev in backend workspace - tsx --watch src/server.ts
+- npm run build:back // Builds backend dist/
+- npm run start:back // Starts compiled js app from dist/
+
+## workspace : web - frontend
+
+- npm run dev:front // runs dev in frontend workspace
 
 # Project Name
 
@@ -52,17 +64,17 @@ Example backend structure:
 
 apps/api
 ├── src
-│   ├── app.ts
-│   ├── server.ts
-│   ├── config/
-│   ├── db/
-│   ├── routes/
-│   ├── controllers/
-│   ├── services/
-│   ├── repositories/
-│   ├── domain/ -- MAYBE
-│   ├── middleware/
-│   └── utils/
+│ ├── app.ts
+│ ├── server.ts
+│ ├── config/
+│ ├── db/
+│ ├── routes/
+│ ├── controllers/
+│ ├── services/
+│ ├── repositories/
+│ ├── domain/ -- MAYBE
+│ ├── middleware/
+│ └── utils/
 ├── dist
 ├── package.json
 ├── tsconfig.json
@@ -70,23 +82,28 @@ apps/api
 ### Layer Responsibilities
 
 Routes
+
 - Define endpoints
 - No business logic
 
 Controllers
+
 - Parse request
 - Call service
 - Return response
 
 Services
+
 - Business logic
 - Orchestration
 
 Repositories
+
 - Database access only
 - No business logic
 
 Domain
+
 - Types
 - Factories
 - Entities
@@ -123,11 +140,11 @@ npm run dev
 Example scripts:
 
 {
-  "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js"
-  }
+"scripts": {
+"dev": "tsx watch src/server.ts",
+"build": "tsc",
+"start": "node dist/server.js"
+}
 }
 
 ---
@@ -185,6 +202,7 @@ Before adding a package:
 5. Does it duplicate built-in functionality?
 
 Avoid:
+
 - Overlapping libraries
 - Heavy frameworks for small problems
 - Magic-heavy ORMs unless necessary
@@ -201,9 +219,9 @@ Avoid:
 Example pattern:
 
 class AppError extends Error {
-  constructor(message: string, public statusCode: number) {
-    super(message);
-  }
+constructor(message: string, public statusCode: number) {
+super(message);
+}
 }
 
 ---
@@ -211,9 +229,11 @@ class AppError extends Error {
 # 9. Logging Strategy
 
 Development
+
 - console.log
 
 Production
+
 - Structured logger (pino / winston)
 
 ---
