@@ -19,7 +19,7 @@
         "apps/web/"
     ],
     "scripts": {
-        "dev-backend": "tsx watch apps/api/src/app.ts",
+        "dev:back": "npm run dev --workspace=api",
         "dev-frontend": "tsx watch apps/web/src/app.ts",
         "build": "tsc --project apps/api",
         "start": "node dist/app.js"
