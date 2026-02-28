@@ -27,7 +27,7 @@ export async function updateProblemHandler(req: Request, res: Response) {
         const problemId = Number(req.params.id);
         const { title, description } = req.body;
 
-        const result = await editProblem{problemId, title, description};
+        const result = await editProblem(problemId, title, description);
 
         res.json(result);
     } catch (error: any){
@@ -41,7 +41,7 @@ export async function updateProblemHandler(req: Request, res: Response) {
 export async function deleteProblemHandler(req: Request, res: Response) {
     try {
         const problemId = Number(req.params.id);
-        
+
         const result = await removeProblem(problemId);
 
         res.json(result);
