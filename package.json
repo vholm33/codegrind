@@ -19,7 +19,9 @@
     "scripts": {
         "dev": "npm run dev --workspace=api",
         "dev:back": "npm run dev --workspace=api",
+        "dev:front": "npm run dev --workspace=web",
         "build:back": "npm run build --workspace=api",
+        "build:front": "npm run build --workspace=web",
         "start:back": "npm run start --workspace=api"
     }
 }

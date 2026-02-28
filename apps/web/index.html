@@ -39,7 +39,7 @@
                     <!-- Toggle btn -->
                     <button onclick="toggleSidebar()" class="w-full p-4 hover:bg-gray-700 focus:outline-none">
                         <div class="flex items-center">
-                            <span class="text-xl mr-3"
+                            <span class="mr-3 text-xl"
                                 ><svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -55,14 +55,14 @@
                                     />
                                 </svg>
                             </span>
-                            <span data-sidebar-text class="font-semibold hidden">Menu</span>
+                            <span data-sidebar-text class="hidden font-semibold">Menu</span>
                         </div>
                     </button>
 
                     <!-- Navigation icons -->
                     <nav class="mt-6">
                         <a href="#" class="flex items-center px-4 py-3 hover:bg-gray-700">
-                            <span class="text-xl mr-3"
+                            <span class="mr-3 text-xl"
                                 ><svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -86,7 +86,7 @@
                             <span data-sidebar-text class="hidden">Analytics</span>
                         </a>
                         <a href="#" class="flex items-center px-4 py-3 hover:bg-gray-700">
-                            <span class="text-xl mr-3"
+                            <span class="mr-3 text-xl"
                                 ><svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -105,7 +105,7 @@
                             <span data-sidebar-text class="hidden">Users</span>
                         </a>
                         <a href="#" class="flex items-center px-4 py-3 hover:bg-gray-700">
-                            <span class="text-xl mr-3"
+                            <span class="mr-3 text-xl"
                                 ><svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -132,15 +132,15 @@
                 </div>
             </aside>
 
-            <main class="flex flex-1 flex-col m-4">
+            <main class="m-4 flex flex-1 flex-col">
                 <!-- Sidebar with menu -->
 
                 <!-- Statistics -->
-                <section class="bg-gray-950 border rounded-md">
+                <section class="rounded-md border bg-gray-950">
                     <header>
                         <h2>Statistics</h2>
                         <h3>Översikt: hur frekvent</h3>
-                        <button class="bg-blue-500 border rounded-md hover:bg-blue-600 px-2">
+                        <button class="rounded-md border bg-blue-500 px-2 hover:bg-blue-600">
                             <a href="./quiz-session.html">Start Quiz</a>
                         </button>
                     </header>
@@ -148,5 +148,5 @@
             </main>
         </div>
     </body>
-    <script src="./utilities/sidebar.js"></script>
+    <script type="module" src="./src/utilities/sidebar.js"></script>
 </html>
