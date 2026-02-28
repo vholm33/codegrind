@@ -20,8 +20,6 @@
         "dev": "npm run dev --workspace=api",
         "dev:back": "npm run dev --workspace=api",
         "build:back": "npm run build --workspace=api",
-        "start:back": "npm run start --workspace=api",
-        "install:back": "npm run install --workspace=api",
-        "install:front": "npm run install --workspace=web"
+        "start:back": "npm run start --workspace=api"
     }
 }
