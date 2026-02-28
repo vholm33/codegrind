@@ -1,3 +1,7 @@
+# NEW INFO : workspaces
+Install to workspace from root:
+  - npm install cors --workspace=api // not --workspace=apps/api
+
 # Project Name
 
 Short description of what the project does and why it exists.
@@ -22,7 +26,7 @@ Core principles for all technical decisions:
 
 - Node.js (ES6)
 - TypeScript
-- Express 
+- Express
 
 ## Database
 
@@ -65,28 +69,28 @@ apps/api
 
 ### Layer Responsibilities
 
-Routes  
-- Define endpoints  
-- No business logic  
+Routes
+- Define endpoints
+- No business logic
 
-Controllers  
-- Parse request  
-- Call service  
-- Return response  
+Controllers
+- Parse request
+- Call service
+- Return response
 
-Services  
-- Business logic  
-- Orchestration  
+Services
+- Business logic
+- Orchestration
 
-Repositories  
-- Database access only  
-- No business logic  
+Repositories
+- Database access only
+- No business logic
 
-Domain  
-- Types  
-- Factories  
-- Entities  
-- Validation logic  
+Domain
+- Types
+- Factories
+- Entities
+- Validation logic
 
 ---
 
@@ -113,8 +117,8 @@ Domain
 
 ## Running Locally
 
-npm install  
-npm run dev  
+npm install
+npm run dev
 
 Example scripts:
 
@@ -132,9 +136,9 @@ Example scripts:
 
 .env
 
-PORT=3000  
-DATABASE_URL=  
-JWT_SECRET=  
+PORT=3000
+DATABASE_URL=
+JWT_SECRET=
 
 Never commit .env.
 
@@ -206,10 +210,10 @@ class AppError extends Error {
 
 # 9. Logging Strategy
 
-Development  
-- console.log  
+Development
+- console.log
 
-Production  
+Production
 - Structured logger (pino / winston)
 
 ---
@@ -271,4 +275,3 @@ Document:
 - Known limitations
 - Performance bottlenecks
 - Architecture upgrades
-
