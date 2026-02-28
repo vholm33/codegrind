@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Login</title>
-        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="./index.css" />
     </head>
     <body class="bg-gray-900 text-white">
         <header class="grid h-14 grid-cols-3 items-center border-b-2 bg-gray-950 p-4">
@@ -39,7 +39,7 @@
                     <!-- Toggle btn -->
                     <button onclick="toggleSidebar()" class="w-full p-4 hover:bg-gray-700 focus:outline-none">
                         <div class="flex items-center">
-                            <span class="text-xl mr-3"
+                            <span class="mr-3 text-xl"
                                 ><svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -55,14 +55,14 @@
                                     />
                                 </svg>
                             </span>
-                            <span data-sidebar-text class="font-semibold hidden">Menu</span>
+                            <span data-sidebar-text class="hidden font-semibold">Menu</span>
                         </div>
                     </button>
 
                     <!-- Navigation icons -->
                     <nav class="mt-6">
                         <a href="#" class="flex items-center px-4 py-3 hover:bg-gray-700">
-                            <span class="text-xl mr-3"
+                            <span class="mr-3 text-xl"
                                 ><svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -86,7 +86,7 @@
                             <span data-sidebar-text class="hidden">Analytics</span>
                         </a>
                         <a href="#" class="flex items-center px-4 py-3 hover:bg-gray-700">
-                            <span class="text-xl mr-3"
+                            <span class="mr-3 text-xl"
                                 ><svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -105,7 +105,7 @@
                             <span data-sidebar-text class="hidden">Users</span>
                         </a>
                         <a href="#" class="flex items-center px-4 py-3 hover:bg-gray-700">
-                            <span class="text-xl mr-3"
+                            <span class="mr-3 text-xl"
                                 ><svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -132,7 +132,7 @@
                 </div>
             </aside>
 
-            <main class="flex flex-1 flex-col m-4">
+            <main class="m-4 flex flex-1 flex-col">
                 <!-- Form container -->
                 <section class="mt-12 flex justify-center">
                     <form class="flex w-96 flex-col items-center rounded-md border-2 bg-gray-800 p-4">
