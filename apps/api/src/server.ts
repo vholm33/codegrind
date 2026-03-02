@@ -31,6 +31,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(distPath));
 
+//====== Routes ======
+import problemRoutes from './routes/problems.routes.ts';
+app.use('/api/problems', problemRoutes)
+
+
 app.get('/', (_req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
 });

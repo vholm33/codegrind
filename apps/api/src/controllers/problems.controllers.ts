@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { addProblem } from "../services/problems.services.js";
 import { removeProblem } from "../services/problems.services.js";
 import { editProblem } from "../services/problems.services.js";
