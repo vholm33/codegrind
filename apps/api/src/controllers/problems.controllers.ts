@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import { addProblem } from "../services/problems.services.js";
+import { fetchAllProblems, fetchProblemById } from "../services/problems.services.js";
 import { removeProblem } from "../services/problems.services.js";
 import { editProblem } from "../services/problems.services.js";
+import { getProblemById } from "../repositories/problems.repo.js";
 
-//Hanterar HTTP request för att skapa problem
+//HTTP request för att skapa ett problem, POST /problems
 export async function createProblemHandler(req: Request, res: Response) {
     try {
         const {title, description} = req.body;
@@ -21,7 +23,36 @@ export async function createProblemHandler(req: Request, res: Response) {
     }
 }
 
-//UPDATE
+//Hämta alla problem, GET /problems
+export async function getAllProblemsHandler(req: Request, res: Response) {
+    try {
+        const problems = await fetchAllProblems();
+        
+        res.json(problems);
+    } catch (error: any) {
+        res.status(400).json({
+            message: "Kunde inte hämta alla problem",
+            error: error.message
+        })
+    }
+}
+
+//Hämta ett problem, GET /problems/:id
+export async function getProblemByIdHandler(req: Request, res: Response) {
+    try {
+        const problemId = Number(req.params.id);
+        const problem = await fetchProblemById(problemId);
+
+        res.json(problem)
+    } catch (error: any) {
+        res.status(400).json({
+            message: "Kunde inte hämta problem",
+            error: error.message
+        })
+    }
+}
+
+//Updatera ett problem, PUT /problems/:id
 export async function updateProblemHandler(req: Request, res: Response) {
     try {
         const problemId = Number(req.params.id);
@@ -37,7 +68,7 @@ export async function updateProblemHandler(req: Request, res: Response) {
     }
 }
 
-//DELETE
+//Radera ett problem, DELETE /problems/:id
 export async function deleteProblemHandler(req: Request, res: Response) {
     try {
         const problemId = Number(req.params.id);
