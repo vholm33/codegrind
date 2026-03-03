@@ -53,7 +53,11 @@ addEventListener('DOMContentLoaded', (event) => {
             } */
 
             const result = await response.json();
-            console.log(`OK: ${result}`);
+            console.log('Registrering lyckades:', result);
+
+            //? Borde autofylla genom datan här?
+            // Omdirigeras till login direkt efter registrering
+            window.location.href = './login.html';
         } catch (error) {
             console.error('Error:', error);
         }
