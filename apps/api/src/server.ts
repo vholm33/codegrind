@@ -32,6 +32,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(distPath));
 
 //====== Routes ======
+import userRoutes from './routes/users.routes.ts'
+app.use('/api/users', userRoutes)
+
 import problemRoutes from './routes/problems.routes.ts';
 app.use('/api/problems', problemRoutes);
 

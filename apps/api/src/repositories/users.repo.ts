@@ -1,4 +1,4 @@
-import pool from "../db/mysql.js";
+// import pool from "../db/mysql.js";
 import type { Pool, ResultSetHeader } from "mysql2/promise";
 
 export type InsertUserInput = {
@@ -9,8 +9,8 @@ export type InsertUserInput = {
 
 export async function insertUser(pool: Pool, input: InsertUserInput) {
   const sql = `
-  INSERT into users 
-  (username, email, password_hash) 
+  INSERT into users
+  (username, email, password_hash)
   VALUES
   (?, ?, ?)
   `;
