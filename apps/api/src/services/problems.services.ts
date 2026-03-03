@@ -1,8 +1,9 @@
 import { createProblem } from "../repositories/problems.repo.js"
+import { getAllProblems, getProblemById } from "../repositories/problems.repo.js";
 import { updateProblem } from "../repositories/problems.repo.js";
 import { deleteProblem } from "../repositories/problems.repo.js";
 
-//Buisness logic för att skapa problem
+//Skapa ett problem
 export async function addProblem(title: string, description: string) {
     
     //Validering
@@ -13,7 +14,20 @@ export async function addProblem(title: string, description: string) {
     return await createProblem(title, description)
 }
 
-//UPDATE
+//Hämta alla problem
+export async function fetchAllProblems() {
+    return await getAllProblems();
+}
+
+//Hämtar ett problem
+export async function fetchProblemById(problemId: number) {
+    if (!problemId) {
+        throw new Error("Problem Id saknas!");
+    }
+    return await getProblemById(problemId);
+}
+
+//Updatera ett problem
 export async function editProblem(problemId: number, title: string, description: string) {
     if (!problemId || !title || !description) {
         throw new Error("Ogiltig data");
@@ -24,7 +38,7 @@ export async function editProblem(problemId: number, title: string, description:
     return {message:"Problemet har uppdaterats!", success: true}
 }
 
-//DELETE
+//Radera ett problem
 export async function removeProblem(problemId: number) {
     if (!problemId) {
         throw new Error("Problem id krävs!");

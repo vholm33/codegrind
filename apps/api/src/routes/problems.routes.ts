@@ -1,13 +1,17 @@
 import express from 'express';
 import {
     createProblemHandler,
+    getAllProblemsHandler,
+    getProblemByIdHandler,
     deleteProblemHandler,
     updateProblemHandler,
 } from '../controllers/problems.controllers.js';
 
 const router = express.Router();
 
-// /api/problems/problems
+//Endpoints
+router.get('/problems', getAllProblemsHandler);
+router.get('/problems/:id', getProblemByIdHandler);
 
 // Endpoint för att skapa problem
 router.post('/problems', createProblemHandler);
