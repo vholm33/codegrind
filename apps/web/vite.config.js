@@ -13,7 +13,7 @@ export default defineConfig({
                 main: resolve(__dirname, 'index.html'),
                 login: resolve(__dirname, 'src/login.html'),
                 register: resolve(__dirname, 'src/register.html'),
-                assets: resolve(__dirname, 'assets'), // utilities och css
+                // assets: resolve(__dirname, 'assets'), // utilities och css
             },
         },
     },
