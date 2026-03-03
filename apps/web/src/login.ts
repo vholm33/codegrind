@@ -1,12 +1,9 @@
-/* FORM SUBMIT to register user */
+/* FORM SUBMIT to login user */
 addEventListener('DOMContentLoaded', (event) => {
     const form = document.querySelector('form');
 
     form?.addEventListener('submit', async (event) => {
         event.preventDefault();
-
-        const emailInput = document.querySelector<HTMLInputElement>('input#email');
-        console.log('emailInput:', emailInput);
 
         const usernameInput = document.querySelector<HTMLInputElement>('input#username');
         console.log('usernameInput:', usernameInput);
@@ -14,36 +11,27 @@ addEventListener('DOMContentLoaded', (event) => {
         const passwordInput = document.querySelector<HTMLInputElement>('input#password');
         console.log(`password: ${passwordInput}`);
 
-        const email = emailInput?.value;
         const username = usernameInput?.value;
         const password = passwordInput?.value;
 
         console.table({
-            email: email,
             username: username,
             password: password,
         });
 
-        if (!email || !username || !password) {
+        if (!username || !password) {
             console.error(`‼️ email, username or password is missing`);
             return;
         }
 
-        console.table({
-            username: username,
-            email: email,
-            password: password,
-        });
-
         try {
-            const response = await fetch('http://localhost:3000/api/users/register', {
+            const response = await fetch('http://localhost:3000/api/users/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     username: username,
-                    email: email,
                     password: password,
                 }),
             });
@@ -53,7 +41,15 @@ addEventListener('DOMContentLoaded', (event) => {
             } */
 
             const result = await response.json();
-            console.log(`OK: ${result}`);
+            console.log('Login SUCCESS', result);
+
+            console.log(`Sparar user och token i localStorage`);
+            // Spara användare och token i localStorage
+            localStorage.setItem('token', result.token);
+            localStorage.setItem('user', JSON.stringify(result.user));
+
+            // Omdirigera till hem
+            window.location.href = '../index.html';
         } catch (error) {
             console.error('Error:', error);
         }
