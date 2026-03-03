@@ -33,8 +33,10 @@ app.use(express.static(distPath));
 
 //====== Routes ======
 import problemRoutes from './routes/problems.routes.ts';
-app.use('/api/problems', problemRoutes)
+app.use('/api/problems', problemRoutes);
 
+import submissionRoutes from './routes/submissions.routes.ts';
+app.use('/api/submissions', submissionRoutes);
 
 app.get('/', (_req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
