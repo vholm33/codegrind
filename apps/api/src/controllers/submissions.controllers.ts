@@ -1,4 +1,4 @@
-import {Request, Response} from "express";
+import type {Request, Response} from "express";
 import {runTests, runSampleTests} from "../services/code-execution.services.js";
 
 //Hanterar submission i frontend - submission knappen
@@ -17,7 +17,7 @@ export async function submitSolution(req: Request, res: Response) {
             error: error.message
         })
     }
-        
+
 }
 
 //Hanterar test i frontend - test knappen
@@ -35,5 +35,5 @@ export async function runSample(req: Request, res: Response) {
             error: error.message
         })
     }
-        
+
 }
