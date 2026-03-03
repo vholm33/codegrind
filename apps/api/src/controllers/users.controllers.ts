@@ -1,1 +1,1 @@
-import type { Request, Response}
+import type { Request, Response } from 'express'
