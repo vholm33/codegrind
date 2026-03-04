@@ -58,6 +58,9 @@ app.use('/api/submissions', submissionRoutes);
 import codeQuestionRoutes from './routes/codeQuestion.routes.js';
 app.use('/api/codeQuestions', codeQuestionRoutes);
 
+import categoriesRoute from './routes/categories.routes.js'
+app.use('/api/categories', categoriesRoute)
+
 app.get('/', (_req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
 });
@@ -65,7 +68,7 @@ app.get('/', (_req, res) => {
 app.get('/login', (_req, res) => {
     res.sendFile(path.join(__dirname, '../../web/dist/login.html'));
 });
-  
+
 app.get('/register', (_req, res) => {
     res.sendFile(path.join(__dirname, '../../web/dist/register.html'));
 });
