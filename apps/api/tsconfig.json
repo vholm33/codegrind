@@ -33,8 +33,8 @@
         "isolatedModules": true,
         "noUncheckedSideEffectImports": true,
         "moduleDetection": "force",
-        "skipLibCheck": true,
-        "allowImportingTsExtensions": true,
-        "noEmit": true
+        "skipLibCheck": true
+        // "allowImportingTsExtensions": true,
+        // "noEmit": true kan inte kompilera till js. är för när bara typescript
     }
 }

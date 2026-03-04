@@ -3,17 +3,17 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Homepage</title>
+        <title>Lägg till kodproblem</title>
         <link
             rel="icon"
             href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>"
         />
 
-        <link rel="stylesheet" href="./src/index.css" />
+        <link rel="stylesheet" href="./index.css" />
     </head>
     <body class="bg-gray-900 text-white">
         <header class="grid h-14 grid-cols-3 items-center border-b-2 bg-gray-950 p-4">
-            <a href="./index.html">
+            <a href="../index.html">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -30,11 +30,9 @@
                 </svg>
             </a>
             <h1 class="text-center text-2xl font-semibold">CodeGrind</h1>
-            <!-- Login:  -->
+            <!-- Register: om inte har inlogg  -->
             <button class="text-md w-24 justify-self-end rounded-md bg-blue-500 font-semibold">
-                <!-- Vites kompilering tar bort src -->
-                <!-- <a href="./login.html">Login</a> -->
-                <a href="./src/login.html">Login</a>
+                <a href="./register.html">Register</a>
             </button>
         </header>
 
@@ -139,28 +137,66 @@
                 </div>
             </aside>
 
-            <main class="m-4 flex flex-1 flex-col">
-                <!-- Navigation -->
-                <nav>
-                    <ul>
-                        <li>
-                            <a href="./src/addProblem.html">Lägg till problem</a>
-                        </li>
-                    </ul>
-                </nav>
+            <main class="m-4 flex w-screen flex-1 flex-col">
+                <!-- Form container to add problems to -->
+                <section class="mt-12 flex justify-center">
+                    <form class="flex w-full flex-col items-center rounded-md border-2 bg-gray-800 p-4">
+                        <header class="mb-4 w-full border-b text-center text-xl font-semibold">
+                            <h1>Lägg till problem</h1>
+                        </header>
 
-                <!-- Statistics -->
-                <section class="rounded-md border bg-gray-950">
-                    <header>
-                        <h2>Statistics</h2>
-                        <h3>Översikt: hur frekvent</h3>
-                        <button class="rounded-md border bg-blue-500 px-2 hover:bg-blue-600">
-                            <a href="./src/quiz-session.html">Start Quiz</a>
+                        <!-- Title + Description -->
+                        <div class="flex w-full justify-around">
+                            <div class="flex flex-col">
+                                <label for="code-title">Titel</label>
+                                <input
+                                    class="rounded border bg-gray-900 p-2"
+                                    type="text"
+                                    id="code-title"
+                                    placeholder="Kodproblemets titel"
+                                />
+                            </div>
+                            <div class="flex flex-col flex-grow ml-8">
+                                <label for="code-title">Beskrivning</label>
+                                <textarea
+                                    class="rounded border bg-gray-900 p-2"
+                                    type="text"
+                                    id="code-description"
+                                    placeholder="Kodproblemets beskrivning"
+                                ></textarea>
+                            </div>
+                        </div>
+                        <!-- Grid Input container -->
+                        <div class="grid w-full grid-cols-1 gap-6">
+                            <div class="flex flex-col">
+                                <label for="code-question">Kod-fråga</label>
+                                <input
+                                    class="rounded border bg-gray-900 p-2"
+                                    type="text"
+                                    id="code-question"
+                                    placeholder="Skriv in kod-fråga..."
+                                />
+                            </div>
+                            <div class="flex flex-col">
+                                <label for="code-answer">Kod-svar</label>
+                                <textarea
+                                    class="rounded border bg-gray-900 p-2"
+                                    type="text"
+                                    id="code-answer"
+                                    placeholder="Skriv in kod-svar"
+                                ></textarea>
+                            </div>
+                        </div>
+                        <button
+                            class="mt-4 w-1/2 rounded-md border-2 border-blue-600 bg-blue-500 hover:border hover:bg-blue-700"
+                        >
+                            Submit
                         </button>
-                    </header>
+                    </form>
                 </section>
             </main>
         </div>
     </body>
-    <script type="module" src="./src/utilities/sidebar.js"></script>
+    <script type="module" src="./utilities/sidebar.js"></script>
+    <script type="module" src="./addProblem.ts"></script>
 </html>

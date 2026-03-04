@@ -16,13 +16,27 @@ const __dirname = path.dirname(__filename);
 
 const distPath = path.join(__dirname, '../../web/dist');
 const manifestPath = path.join(distPath, '.vite/manifest.json');
+console.log(`distPath: ${distPath}`);
+console.log(`manifestPath: ${manifestPath}`);
 
 let manifest = {};
 try {
-    manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
-    console.log('Manifest loaded:', manifest);
+    if (fs.existsSync(manifestPath)) {
+        manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+        console.log('Manifest loaded:', manifest);
+    } else {
+        console.log(`Manifest not found at: ${manifestPath}`);
+
+        // Vad finns i dist?
+        if (fs.existsSync(distPath)) {
+            console.log('Content in dist/ :', fs.readdirSync(distPath));
+            if (fs.existsSync(path.join(distPath, '.vite'))) {
+                console.log('Innehåll .vite :', fs.readdirSync(path.join(distPath, '.vite')));
+            }
+        }
+    }
 } catch (error: any) {
-    console.warn(error.message);
+    console.warn('Error när laddar manifest:', error.message);
 }
 
 /* app.use(helmet({contentSecurityPolicy: false})) */
@@ -32,14 +46,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(distPath));
 
 //====== Routes ======
-import userRoutes from './routes/users.routes.ts'
-app.use('/api/users', userRoutes)
+import userRoutes from './routes/users.routes.js';
+app.use('/api/users', userRoutes);
 
-import problemRoutes from './routes/problems.routes.ts';
+import problemRoutes from './routes/problems.routes.js';
 app.use('/api/problems', problemRoutes);
 
-import submissionRoutes from './routes/submissions.routes.ts';
+import submissionRoutes from './routes/submissions.routes.js';
 app.use('/api/submissions', submissionRoutes);
+
+import codeQuestionRoutes from './routes/codeQuestion.routes.js';
+app.use('/api/codeQuestions', codeQuestionRoutes);
 
 app.get('/', (_req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
@@ -48,11 +65,14 @@ app.get('/', (_req, res) => {
 app.get('/login', (_req, res) => {
     res.sendFile(path.join(__dirname, '../../web/dist/login.html'));
 });
-
+  
 app.get('/register', (_req, res) => {
     res.sendFile(path.join(__dirname, '../../web/dist/register.html'));
 });
 
+app.get('/addProblem', (_req, res) => {
+    res.sendFile(path.join(distPath, 'addProblem.html'));
+});
 app.get('/src', express.static(path.join(distPath, 'src')));
 
 app.listen(PORT, () => {
@@ -60,15 +80,3 @@ app.listen(PORT, () => {
 });
 
 export default app;
-/* import { insertUser } from './repositories/users.repo.js';
-
-console.log(process.env.MYSQL_PUBLIC_URL);
-
-const result = await insertUser(pool, {
-    username: 'jerryjohnson',
-    email: 'jerry@gmail.com',
-    password_hash: '3848328423KHFDHCsjkdfhajk',
-});
-
-console.log(result);
- */
