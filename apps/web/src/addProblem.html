@@ -149,37 +149,9 @@
                         <div class="flex w-full justify-around">
                             <!-- Kategori -->
                             <div class="flex flex-col">
-                                <select id="code-category" class="bg-gray-900 p-2 border">
+                                <select id="code-category" class="bg-gray-900 p-2">
                                     <option value=""></option>
                                 </select>
-                                <script>
-                                    async function loadCategories() {
-                                        try {
-                                            const response = await fetch('http://localhost:3000/api/categories/get');
-                                            const result = await response.json();
-                                            console.log('Result:', result);
-
-                                            if (result.success && result.data) {
-                                                const select = document.getElementById('code-category');
-                                                select.innerHTML = '<option value="">Välj kategori...</option>';
-
-                                                // Display each category from result.data
-                                                result.data.forEach((category) => {
-                                                    const option = document.createElement('option');
-                                                    option.value = category.id;
-                                                    option.textContent = category.name; // Display name
-                                                    select.appendChild(option);
-                                                });
-
-                                                console.log('Categories loaded:', result.data);
-                                            }
-                                        } catch (error) {
-                                            console.error(`‼️ Error: ${error}`);
-                                        }
-                                    }
-
-                                    loadCategories();
-                                </script>
                             </div>
                             <div class="flex flex-col">
                                 <label for="code-title">Titel</label>
@@ -205,12 +177,13 @@
                             </div>
                             <div class="flex flex-col">
                                 <label for="code-answer">Kod-svar</label>
-                                <textarea
+                                <div id="code-editor-container" class="bg-gray-900 p-2 rounded-md"></div>
+                                <!-- <textarea
                                     class="rounded border bg-gray-900 p-2"
                                     type="text"
                                     id="code-answer"
                                     placeholder="Skriv in kod-svar"
-                                ></textarea>
+                                ></textarea> -->
                             </div>
                         </div>
                         <button

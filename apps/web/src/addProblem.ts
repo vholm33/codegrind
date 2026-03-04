@@ -1,43 +1,89 @@
-addEventListener('DOMContentLoaded', (event) => {
-    const form = document.querySelector('form');
+// addProblem.ts
+import { CodeEditor } from './components/Editor.js';
 
-    form?.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Annars ränsas innehållet
+async function loadCategories() {
+    try {
+        const response = await fetch('http://localhost:3000/api/categories/get');
+        const result = await response.json();
+        console.log('Result:', result);
 
-        const codeTitleInput = document.querySelector<HTMLInputElement>('#code-title');
-        const codeDescriptionInput = document.querySelector<HTMLInputElement>('#code-description');
-        const codeQuestionInput = document.querySelector<HTMLInputElement>('#code-question');
-        const codeAnswerInput = document.querySelector<HTMLInputElement>('#code-answer');
+        if (result.success && result.data) {
+            const select = document.getElementById('code-category') as HTMLSelectElement;
+            /* if (!select) {
+                console.error(`‼️ Select element finns inte`);
+                return;
+            } */
+            select.innerHTML = '<option value="">Välj kategori...</option>';
 
-        if (!codeQuestionInput || !codeAnswerInput || !codeTitleInput || !codeDescriptionInput) {
-            console.error(`‼️ Element för (titel, beskrivning, fråga, svar) finns inte`);
+            // Display each category from result.data
+            result.data.forEach((category: any) => {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.name; // Display name
+                select.appendChild(option);
+            });
+
+            console.log('Categories loaded:', result.data);
         }
+    } catch (error) {
+        console.error(`‼️ Error: ${error}`);
+    }
+}
 
-        const codeTitle = codeTitleInput?.value;
-        const codeDescription = codeDescriptionInput?.value;
-        const codeQuestion = codeQuestionInput?.value;
-        const codeAnswer = codeAnswerInput?.value;
-        console.table({ codeQuestion, codeAnswer });
+loadCategories();
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // Initialize code editor
+    const editorContainer = document.getElementById('code-editor-container');
+
+    if (!editorContainer) {
+        console.error('Editor container not found');
+        return;
+    }
+
+    // Create editor instance
+    const editor = new CodeEditor(editorContainer);
+
+    // Handle form submission
+    const form = document.querySelector('form');
+    form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Get values directly from elements
+        const categoryId = (document.getElementById('code-category') as HTMLSelectElement).value;
+        const codeTitle = (document.getElementById('code-title') as HTMLInputElement).value;
+        const codeQuestion = (document.getElementById('code-question') as HTMLInputElement).value;
+        const codeAnswer = editor.getValue();
+
+        if (!categoryId || !codeTitle || !codeQuestion || !codeAnswer) {
+            alert('All fields are required!');
+            return;
+        }
 
         try {
             const response = await fetch('http://localhost:3000/api/codeQuestions/add', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     codeTitle,
-                    codeDescription,
                     codeQuestion,
                     codeAnswer,
+                    categoryId: parseInt(categoryId),
                 }),
             });
 
             const result = await response.json();
-            console.log('result:', result);
-            console.log('Kod-problem tillaggt!');
+
+            if (result.success) {
+                alert('Problem created successfully!');
+                form.reset();
+                editor.setValue('// Skriv din lösning här...'); // Reset editor
+            } else {
+                alert('Error: ' + result.message);
+            }
         } catch (error) {
-            console.error(`‼️ Error: ${error}`);
+            console.error('Error:', error);
+            alert('Failed to create problem');
         }
     });
 });
