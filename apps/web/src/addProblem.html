@@ -149,15 +149,36 @@
                         <div class="flex w-full justify-around">
                             <!-- Kategori -->
                             <div class="flex flex-col">
-                                <label for="code-category">Kategori</label>
-                                <input
-                                    class="rounded border bg-gray-900 p-2"
-                                    type="text"
-                                    id="code-category"
-                                    placeholder="Kodproblemets titel"
-                                />
+                                <select id="code-category" class="bg-gray-900 p-2 border">
+                                    <option value=""></option>
+                                </select>
                                 <script>
-                                    
+                                    async function loadCategories() {
+                                        try {
+                                            const response = await fetch('http://localhost:3000/api/categories/get');
+                                            const result = await response.json();
+                                            console.log('Result:', result);
+
+                                            if (result.success && result.data) {
+                                                const select = document.getElementById('code-category');
+                                                select.innerHTML = '<option value="">Välj kategori...</option>';
+
+                                                // Display each category from result.data
+                                                result.data.forEach((category) => {
+                                                    const option = document.createElement('option');
+                                                    option.value = category.id;
+                                                    option.textContent = category.name; // Display name
+                                                    select.appendChild(option);
+                                                });
+
+                                                console.log('Categories loaded:', result.data);
+                                            }
+                                        } catch (error) {
+                                            console.error(`‼️ Error: ${error}`);
+                                        }
+                                    }
+
+                                    loadCategories();
                                 </script>
                             </div>
                             <div class="flex flex-col">
@@ -173,6 +194,7 @@
                         <!-- Grid Input container -->
                         <div class="grid w-full grid-cols-1 gap-6">
                             <div class="flex flex-col">
+                                <option value="">Laddar kategorier...</option>
                                 <label for="code-question">Kod-fråga</label>
                                 <input
                                     class="rounded border bg-gray-900 p-2"
