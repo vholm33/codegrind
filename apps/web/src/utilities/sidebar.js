@@ -21,3 +21,6 @@ function toggleSidebar() {
         });
     }
 }
+
+// Gör global
+window.toggleSidebar = toggleSidebar;
