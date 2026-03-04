@@ -24,3 +24,27 @@ export async function getAllCategoriesRepo() {
         };
     }
 }
+
+export async function addCategoriesRepo(input: Category) {
+    try {
+        console.log(`[REPO] addCategoriesRepo()`);
+        const [rows] = await pool.query(
+            `
+            INSERT INTO categories(
+                name, description
+            )
+            VALUES (?, ?)
+        `,
+            [input.name, input.description],
+        );
+        return rows;
+    } catch (error: any) {
+        console.error(`‼️ [REPO] ERROR in addCategoriesRepo: ${error.message}`);
+
+        return {
+            success: false,
+            error: error.message,
+            sqlMessage: error.sqlMessage,
+        };
+    }
+}
