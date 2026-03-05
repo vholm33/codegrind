@@ -4,7 +4,7 @@ import { getAllCategoriesRepo, addCategoriesRepo } from '../repositories/categor
 
 export type Category = {
     name: string;
-    description: string | null;
+    handout: string | null;
 };
 export async function getAllCategoriesController(req: Request, res: Response) {
     try {
@@ -30,16 +30,16 @@ export async function getCategoryById(id: number) {
 export async function addCategoriesController(req: Request, res: Response) {
     try {
         console.log(`[CONTROLLER] addCategoryController(req, res)`);
-        const { name, description } = req.body;
+        const { name, handout } = req.body;
 
-        if (!name || !description) {
+        if (!name || !handout) {
             return res.status(400).json({
                 success: false,
-                message: 'Name or description missing',
+                message: 'Name or handout missing',
             });
         }
 
-        const input = { name, description };
+        const input = { name, handout };
 
         const addedCategory = await addCategoriesRepo(input);
         return res.status(201).json({

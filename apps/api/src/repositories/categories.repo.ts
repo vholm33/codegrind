@@ -7,7 +7,7 @@ export async function getAllCategoriesRepo() {
         console.log('[REPO] addCodeQuestionRepo()');
 
         const [rows] = await pool.query(`
-            SELECT id, name, description
+            SELECT id, name, handout
             FROM categories
             ORDER BY name
         `);
@@ -31,11 +31,11 @@ export async function addCategoriesRepo(input: Category) {
         const [rows] = await pool.query(
             `
             INSERT INTO categories(
-                name, description
+                name, handout
             )
             VALUES (?, ?)
         `,
-            [input.name, input.description],
+            [input.name, input.handout],
         );
         return rows;
     } catch (error: any) {
