@@ -32,3 +32,31 @@ export async function addCodeQuestionRepo(input: AddCodeQuestion) {
         };
     }
 }
+
+export async function getAllCodeQuestionsRepo(id: number) {
+    try {
+        console.log('[REPO] addCodeQuestionRepo()');
+        console.log('[REPO] ID from SQL codeQuestions:', id);
+
+        const [result]: any = await pool.query<ResultSetHeader>(
+            `SELECT * FROM codeQuestions
+            WHERE id = ?
+            `,
+            [id],
+        );
+
+        console.log('[REPO] insert result:', result);
+        return {
+            success: true,
+            data: result,
+        };
+    } catch (error: any) {
+        console.error(`‼️ [REPO] ERROR in addCodeQuestionRepo: ${error.message}`);
+
+        return {
+            success: false,
+            error: error.message,
+            sqlMessage: error.sqlMessage,
+        };
+    }
+}

@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { addCodeQuestionRepo } from '../repositories/codeQuestions.repo.js';
+import { addCodeQuestionRepo, getAllCodeQuestionsRepo } from '../repositories/codeQuestions.repo.js';
 
 export type AddCodeQuestion = {
     codeTitle: string;
@@ -39,6 +39,33 @@ export async function addCodeQuestionController(req: Request, res: Response) {
         return res.status(400).json({
             message: 'addCodeQuestionController failed',
             error: error.message,
+        });
+    }
+}
+
+export async function getCodeQuestionController(req: Request, res: Response) {
+    try {
+        console.log(`[CONTROLLER] getCodeQuestionController(req, res)`);
+
+        const { id } = req.body;
+        if (!id) {
+            return res.status(401).json({
+                success: false,
+                message: 'Missing id from SQL',
+            });
+        }
+
+        const foundId = await getAllCodeQuestionsRepo(id);
+        return res.status(200).json({
+            success: true,
+            message: 'id found',
+            data: foundId,
+        });
+    } catch (error: any) {
+        console.error(`‼️ error: ${error.message}`);
+        return res.status(500).json({
+            success: false,
+            message: 'getAllCodeQuestionController failed',
         });
     }
 }

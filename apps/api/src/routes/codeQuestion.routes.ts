@@ -1,8 +1,12 @@
 import express from 'express';
-import { addCodeQuestionController } from '../controllers/codeQuestions.controller.js';
+import {
+    addCodeQuestionController,
+    getCodeQuestionController
+
+} from '../controllers/codeQuestions.controller.js';
 
 const router = express.Router();
 
 router.post('/add', addCodeQuestionController);
-
+router.get('/getAll', getCodeQuestionController)
 export default router;

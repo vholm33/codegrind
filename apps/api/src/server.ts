@@ -38,6 +38,10 @@ try {
 } catch (error: any) {
     console.warn('Error när laddar manifest:', error.message);
 }
+// ====== MONGODB ======
+/* import { mdbConn } from './mongoose/connection.js';
+console.log('Starting MongoDB connection'); // Starta MongoDB connection
+const ratings = mdbConn.collection('ratings'); */
 
 /* app.use(helmet({contentSecurityPolicy: false})) */
 app.use(cors());
@@ -45,7 +49,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(distPath));
 
-//====== Routes ======
+//====== SQL - Routes ======
 import userRoutes from './routes/users.routes.js';
 app.use('/api/users', userRoutes);
 
@@ -58,8 +62,13 @@ app.use('/api/submissions', submissionRoutes);
 import codeQuestionRoutes from './routes/codeQuestion.routes.js';
 app.use('/api/codeQuestions', codeQuestionRoutes);
 
-import categoriesRoute from './routes/categories.routes.js'
-app.use('/api/categories', categoriesRoute)
+import categoriesRoute from './routes/categories.routes.js';
+app.use('/api/categories', categoriesRoute);
+
+//====== MongoDB - Routes ======
+import ratingRoutes from './mongoose/routes/ratingRoute.js';
+app.use('/api/ratings', ratingRoutes);
+//-----
 
 app.get('/', (_req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
