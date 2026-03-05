@@ -3,7 +3,7 @@
     "compilerOptions": {
         "composite": true,
         // File Layout
-        "rootDir": "./src",
+        "rootDir": "..", // pga /shared
         "outDir": "./dist",
         // Environment Settings
         // See also https://aka.ms/tsconfig/module
@@ -33,6 +33,12 @@
         "isolatedModules": true,
         "noUncheckedSideEffectImports": true,
         "moduleDetection": "force",
-        "skipLibCheck": true
-    }
+        "skipLibCheck": true,
+        // För delade types
+        "paths": {
+            "@shared/*": ["../shared/*"]
+        }
+        // references path?
+    },
+    "include": ["src/**/*", "../shared/**/*"]
 }

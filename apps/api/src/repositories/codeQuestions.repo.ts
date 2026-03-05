@@ -1,8 +1,8 @@
 import type { Pool, ResultSetHeader } from 'mysql2';
 import pool from '../db/mysql.js';
-import type { AddCodeQuestion } from '../controllers/codeQuestions.controller.js';
+import type { CodeQuestion } from '@shared/types.js';
 
-export async function addCodeQuestionRepo(input: AddCodeQuestion) {
+export async function addCodeQuestionRepo(input: CodeQuestion) {
     try {
         console.log('[REPO] addCodeQuestionRepo()');
         console.log('[REPO] input:', input);
@@ -53,6 +53,26 @@ export async function getAllCodeQuestionsRepo(id: number) {
     } catch (error: any) {
         console.error(`‼️ [REPO] ERROR in addCodeQuestionRepo: ${error.message}`);
 
+        return {
+            success: false,
+            error: error.message,
+            sqlMessage: error.sqlMessage,
+        };
+    }
+}
+
+export async function getAllQuestionsRepo() {
+    try {
+        const [result]: any = await pool.query<ResultSetHeader>(`
+            SELECT * FROM codeQuestions
+        `);
+
+        console.log(`[REPO] result: ${result}`);
+        return {
+            success: true,
+            data: result,
+        };
+    } catch (error: any) {
         return {
             success: false,
             error: error.message,

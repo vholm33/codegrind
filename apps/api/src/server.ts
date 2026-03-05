@@ -85,6 +85,7 @@ app.get('/register', (_req, res) => {
 app.get('/addProblem', (_req, res) => {
     res.sendFile(path.join(distPath, 'addProblem.html'));
 });
+
 app.get('/src', express.static(path.join(distPath, 'src')));
 
 app.listen(PORT, () => {

@@ -14,6 +14,8 @@ export default defineConfig({
                 login: resolve(__dirname, 'src/login.html'),
                 register: resolve(__dirname, 'src/register.html'),
                 addProblem: resolve(__dirname, 'src/addProblem.html'),
+                addRating: resolve(__dirname, 'src/addRating.html'),
+                quizSession: resolve(__dirname, 'src/quizSession.html'),
                 // assets: resolve(__dirname, 'assets'), // utilities och css
             },
         },

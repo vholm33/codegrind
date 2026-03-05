@@ -1,11 +1,10 @@
 import type { Request, Response } from 'express';
-import { addCodeQuestionRepo, getAllCodeQuestionsRepo } from '../repositories/codeQuestions.repo.js';
+import {
+    addCodeQuestionRepo,
+    getAllCodeQuestionsRepo,
+    getAllQuestionsRepo,
+} from '../repositories/codeQuestions.repo.js';
 
-export type AddCodeQuestion = {
-    codeTitle: string;
-    codeQuestion: string;
-    codeAnswer: string;
-};
 export async function addCodeQuestionController(req: Request, res: Response) {
     try {
         console.log('[CONTROLLER] addCodeQuestionController()');
@@ -66,6 +65,27 @@ export async function getCodeQuestionController(req: Request, res: Response) {
         return res.status(500).json({
             success: false,
             message: 'getAllCodeQuestionController failed',
+        });
+    }
+}
+
+export async function getAllQuestions(req: Request, res: Response) {
+    try {
+        console.log(`[CONTROLLER] getAllQuestions(req, res)`);
+
+        // Hämta all data från sql
+        const questionData = await getAllQuestionsRepo();
+        console.log('questionData:', questionData);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Lyckades hämta frågedata',
+            data: questionData,
+        });
+    } catch (error: any) {
+        return res.status(500).json({
+            success: false,
+            error: error.message,
         });
     }
 }

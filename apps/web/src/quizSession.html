@@ -4,9 +4,12 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Quiz Session</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>"/>
-        
-        <link rel="stylesheet" href="./index.css">
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>"
+        />
+
+        <link rel="stylesheet" href="./index.css" />
     </head>
     <body class="bg-gray-900 text-white">
         <header class="grid h-14 grid-cols-3 items-center border-b-2 bg-gray-950 p-4">
@@ -41,7 +44,7 @@
                     <!-- Toggle btn -->
                     <button onclick="toggleSidebar()" class="w-full p-4 hover:bg-gray-700 focus:outline-none">
                         <div class="flex items-center">
-                            <span class="text-xl mr-3"
+                            <span class="mr-3 text-xl"
                                 ><svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -57,14 +60,14 @@
                                     />
                                 </svg>
                             </span>
-                            <span data-sidebar-text class="font-semibold hidden">Menu</span>
+                            <span data-sidebar-text class="hidden font-semibold">Menu</span>
                         </div>
                     </button>
 
                     <!-- Navigation icons -->
                     <nav class="mt-6">
                         <a href="#" class="flex items-center px-4 py-3 hover:bg-gray-700">
-                            <span class="text-xl mr-3"
+                            <span class="mr-3 text-xl"
                                 ><svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -88,7 +91,7 @@
                             <span data-sidebar-text class="hidden">Analytics</span>
                         </a>
                         <a href="#" class="flex items-center px-4 py-3 hover:bg-gray-700">
-                            <span class="text-xl mr-3"
+                            <span class="mr-3 text-xl"
                                 ><svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -107,7 +110,7 @@
                             <span data-sidebar-text class="hidden">Users</span>
                         </a>
                         <a href="#" class="flex items-center px-4 py-3 hover:bg-gray-700">
-                            <span class="text-xl mr-3"
+                            <span class="mr-3 text-xl"
                                 ><svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -134,12 +137,53 @@
                 </div>
             </aside>
 
-            <main class="flex flex-1 flex-col m-4">
-                <!-- Code Editor: Add behaviour in separate file -->
-                <div id="editor"></div>
-                <script type="module" src="./app.ts"></script>
+            <main class="m-4 flex w-screen flex-1 flex-col">
+                <!-- Form container to add problems to -->
+                <section class="mt-12 flex justify-center">
+                    <form class="flex w-full flex-col items-center rounded-md border-2 bg-gray-800 p-4">
+                        <header class="mb-4 w-full border-b text-center text-xl font-semibold">
+                            <h1><u>codeQuestion-title</u></h1>
+                            <h3>Random quiz-question</h3>
+                        </header>
+
+                        <!-- Title + Description -->
+                        <div class="flex w-full justify-around">
+                            <!-- Visa vilken kategori -->
+                            <div class="flex flex-col">
+                                <select id="code-category" class="bg-gray-900 p-2">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Grid Input container -->
+                        <div class="grid w-full grid-cols-1 gap-6">
+                            <div class="flex flex-col">
+                                <option value="">Laddar kategorier...</option>
+                                <label for="code-question">Kod-fråga</label>
+                                <p class="rounded border bg-gray-900 p-2" id="code-question"></p>
+                            </div>
+                            <div class="flex flex-col">
+                                <label for="code-answer">Kod-svar</label>
+                                <div id="code-editor-container" class="rounded-md bg-gray-900 p-2"></div>
+                                <!-- <textarea
+                                    class="rounded border bg-gray-900 p-2"
+                                    type="text"
+                                    id="code-answer"
+                                    placeholder="Skriv in kod-svar"
+                                ></textarea> -->
+                            </div>
+                        </div>
+                        <button
+                            class="mt-4 w-1/2 rounded-md border-2 border-blue-600 bg-blue-500 hover:border hover:bg-blue-700"
+                        >
+                            Submit
+                        </button>
+                    </form>
+                </section>
             </main>
         </div>
     </body>
     <script type="module" src="./utilities/sidebar.js"></script>
+    <script type="module" src="./quizSession.ts"></script>
 </html>
