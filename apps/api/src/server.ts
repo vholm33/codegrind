@@ -66,7 +66,7 @@ import categoriesRoute from './routes/categories.routes.js';
 app.use('/api/categories', categoriesRoute);
 
 //====== MongoDB - Routes ======
-import ratingRoutes from './mongoose/routes/ratingRoute.js';
+import ratingRoutes from './mongodb/routes/ratingRoute.js';
 app.use('/api/ratings', ratingRoutes);
 //-----
 

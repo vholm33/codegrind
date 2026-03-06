@@ -34,18 +34,17 @@ async function fetchCodeQuestions(): Promise<CodeQuestion[]> {
         }
 
         // Hämta bara datan
-        const apiResponse = await response.json();
-        const questionData = apiResponse.data as CodeQuestion[];
+        const questions = (await response.json()) as CodeQuestion;
 
-        console.log('Questions:', questionData);
+        console.log('Questions:', questions);
 
-        questionData.forEach((q) => console.log(q.codeQuestion));
+        questions.forEach((q) => console.log(q.codeQuestion));
         /* data.forEach((question) => {
             console.log(question.codeTitle);
             console.log(question.codeQuestion);
         }); */
 
-        return questionData;
+        return questions;
     } catch (error) {
         console.error('Error när hämtar frågor:', error);
         return [];
@@ -59,7 +58,7 @@ async function renderCodeQuestion(questionData: CodeQuestion[]) {
         console.error('codeQuestion element finns inte');
     }
 
-   /*  // Iterate questions
+    /*  // Iterate questions
     for (const question in questionData) {
         console.log('question:', question);
     } */

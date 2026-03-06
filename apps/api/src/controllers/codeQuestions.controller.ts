@@ -78,8 +78,6 @@ export async function getAllQuestions(req: Request, res: Response) {
         console.log('questionData:', questionData);
 
         return res.status(200).json({
-            success: true,
-            message: 'Lyckades hämta frågedata',
             data: questionData,
         });
     } catch (error: any) {
