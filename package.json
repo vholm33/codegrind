@@ -15,7 +15,8 @@
     "type": "module",
     "workspaces": [
         "apps/api/",
-        "apps/web/"
+        "apps/web/",
+        "apps/shared/"
     ],
     "scripts": {
         "dev": "npm run dev --workspace=api",
@@ -24,6 +25,7 @@
         "build": "concurrently --prefix-colors \"cyan,yellow\" --names \"[BACK],[FRONT]\" \"npm run build:front\" \"npm run build:back\"",
         "build:back": "npm run build --workspace=api",
         "build:front": "npm run build --workspace=web",
+        "build:shared": "npm run build --workspace=shared",
         "start:back": "npm run start --workspace=api"
     },
     "dependencies": {
