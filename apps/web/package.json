@@ -17,6 +17,7 @@
     "type": "module",
     "dependencies": {
         "@codemirror/lang-javascript": "^6.2.4",
+        "@lezer/highlight": "^1.2.3",
         "codemirror": "^6.0.2"
     },
     "devDependencies": {

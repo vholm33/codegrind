@@ -19,6 +19,8 @@ const editorContainerEl = document.querySelector('#code-editor-container') as HT
 // const categorySelect = document.getElementById('code-category') as HTMLSelectElement;
 // const submitBtn = document.querySelector('button[type="submit"]') as HTMLButtonElement;
 
+let currentQuestion: CodeQuestion | null = null;
+
 // Editor state ?
 let editor: CodeEditor | null = null;
 
@@ -74,22 +76,23 @@ async function renderCodeQuestion(questionData: CodeQuestion[]) {
     console.log('questionData: ', questionData);
 
     // ====== QUIZ LOOP =====
-    for (const questions of questionData) {
-        console.log(questions);
+    for (const question of questionData) {
+        console.log(question);
         // console.log(questionData[questions]); for in
 
+        currentQuestion = question; // Sätt frågan
+        codeQuestionEl.innerHTML = question.codeQuestion;
+
+        console.log(`nollställ CodeEditor...`);
+        editor?.setValue(''); // Nollställ CodeEditor
         // Display Question
-        codeQuestionEl.innerHTML = `${questions.codeQuestion}`;
+        codeQuestionEl.innerHTML = `${question.codeQuestion}`;
 
         // WAIT for answer
         // get answer from
 
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
-
-            // Hämta värde från Editor
-            console.log('IDE gotten value', editor?.getValue());
-
+        await new Promise<void>((resolve) => {
+            form.addEventListener('submit', () => resolve(), { once: true });
         });
     }
 
@@ -113,18 +116,40 @@ async function renderCodeQuestion(questionData: CodeQuestion[]) {
     } */
 }
 
-/* function handleSubmit(event: Event) {
-    event.preventDefault()
-    if (!)
-} */
+function handleSubmit(event: Event) {
+    event.preventDefault();
 
+    // När submit --> hämtar userInput från Editor
+    const userAnswer = normaliseCode(editor?.getValue() ?? '');
+    const correctAnswer = normaliseCode(currentQuestion?.codeAnswer ?? '');
+
+    if (userAnswer === correctAnswer) {
+        console.log('Korrekt!', correctAnswer);
+
+        // Sätt bakgrundsfärg till grön
+    } else {
+        console.log('FEL!!');
+        console.log(`userAnswer: ${userAnswer}`);
+        console.log(`correctAnswer: ${correctAnswer}`);
+
+        // Sätt bg till röd
+    }
+}
+
+// Normalisera kodsvaret från användaren
+function normaliseCode(code: string): string {
+    return code
+        .replace(/\s+/g, ' ') // Gör om alla nya rader till ' '
+        .trim();
+}
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('Quiz session börjar');
     // initEditor?
 
     const questionData = await fetchCodeQuestions();
     console.log(`calling renderCodeQuestion with questionData`);
-    renderCodeQuestion(questionData); // OK
 
-    // form.addEventListener('submit', handleSubmit);
+    form.addEventListener('submit', handleSubmit);
+
+    renderCodeQuestion(questionData); // OK
 });
