@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import pool from './db/mysql.js';
+import pool from './mysql/db/mysql.js';
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
@@ -50,19 +50,19 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(distPath));
 
 //====== SQL - Routes ======
-import userRoutes from './routes/users.routes.js';
+import userRoutes from './mysql/routes/users.routes.js';
 app.use('/api/users', userRoutes);
 
-import problemRoutes from './routes/problems.routes.js';
+import problemRoutes from './mysql/routes/problems.routes.js';
 app.use('/api/problems', problemRoutes);
 
-import submissionRoutes from './routes/submissions.routes.js';
+import submissionRoutes from './mysql/routes/submissions.routes.js';
 app.use('/api/submissions', submissionRoutes);
 
-import codeQuestionRoutes from './routes/codeQuestion.routes.js';
+import codeQuestionRoutes from './mysql/routes/codeQuestion.routes.js';
 app.use('/api/codeQuestions', codeQuestionRoutes);
 
-import categoriesRoute from './routes/categories.routes.js';
+import categoriesRoute from './mysql/routes/categories.routes.js';
 app.use('/api/categories', categoriesRoute);
 
 //====== MongoDB - Routes ======

@@ -1,7 +1,7 @@
 import type { Response, Request } from 'express';
 import type { Rating } from '../types/ratingTypes.js';
 
-import { getAllCodeQuestionsRepo } from '../../repositories/codeQuestions.repo.js';
+import { getAllCodeQuestionsRepo } from '../../mysql/repositories/codeQuestions.repo.js';
 //! import Rating from '../models/ratingModel.js'; (bara för mongoose)
 import { mdbConn } from '../connection.js';
 
