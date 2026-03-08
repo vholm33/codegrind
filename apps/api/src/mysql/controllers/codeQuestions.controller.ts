@@ -9,18 +9,18 @@ import type { CodeQuestion } from '@shared/types.js';
 export async function addCodeQuestionController(req: Request, res: Response) {
     try {
         console.log('[CONTROLLER] addCodeQuestionController()');
-        const { codeTitle, codeQuestion, codeAnswer } = req.body;
+        const { codeTitle, codeQuestion, codeAnswer, categoryName } = req.body;
 
-        if (!codeTitle || !codeQuestion || !codeAnswer) {
+        if (!codeTitle || !codeQuestion || !codeAnswer || !categoryName) {
             return res.status(400).json({
                 success: false,
-                message: 'titel, fråga eller svar finns inte',
+                message: 'titel, fråga, svar eller kategori finns inte',
             });
         }
 
-        console.table({ codeTitle, codeQuestion, codeAnswer });
+        console.table({ codeTitle, codeQuestion, codeAnswer, categoryName });
 
-        const input = { codeTitle, codeQuestion, codeAnswer };
+        const input = { codeTitle, codeQuestion, codeAnswer, categoryName };
         console.log(input);
 
         console.log('Service/repo function to add to database');
@@ -33,6 +33,7 @@ export async function addCodeQuestionController(req: Request, res: Response) {
                 codeTitle,
                 codeQuestion,
                 codeAnswer,
+                categoryName
             },
         });
     } catch (error: any) {

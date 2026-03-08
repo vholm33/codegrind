@@ -17,3 +17,17 @@
 
 /* Rätta till färgkodssyntax för editor */
 
+/* RÄTT / FEL highligts för CodeEditor */
+.cm-correct-highlight,
+.cm-incorrect-highlight {
+    mix-blend-mode: normal;
+    border-radius: 2px;
+}
+
+.cm-correct-highlight {
+    background-color: rgba(34, 197, 94, 0.25) !important;
+}
+
+.cm-incorrect-highlight {
+    background-color: rgba(239, 68, 68, 0.25) !important;
+}

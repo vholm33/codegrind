@@ -60,11 +60,19 @@ export async function getAllCodeQuestionsRepo(id: number) {
         };
     }
 }
-
+// Get question and categoryName
 export async function getAllQuestionsRepo() {
     try {
         const [result]: any = await pool.query<ResultSetHeader>(`
-            SELECT * FROM codeQuestions
+            SELECT
+                q.id,
+                q.categoryId,
+                q.codeQuestion,
+                q.codeAnswer,
+                c.name as categoryName
+            FROM codeQuestions q
+            LEFT JOIN categories c ON q.categoryId = c.id
+            ORDER BY q.id
         `);
 
         console.log(`[REPO] result: ${result}`);

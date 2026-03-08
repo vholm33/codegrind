@@ -6,7 +6,7 @@ export type Category = {
     name: string;
     handout: string | null;
 };
-export async function getAllCategoriesController(req: Request, res: Response) {
+export async function getAllCategoriesController(_req: Request, res: Response) {
     try {
         console.log('[CONTROLLER] getAllCategories(req,res)');
         const categories = await getAllCategoriesRepo();

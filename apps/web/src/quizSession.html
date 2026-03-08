@@ -142,28 +142,32 @@
                 <section class="mt-12 flex justify-center">
                     <form class="flex w-full flex-col items-center rounded-md border-2 bg-gray-800 p-4">
                         <header class="mb-4 w-full border-b text-center text-xl font-semibold">
-                            <h1><u>codeQuestion-title</u></h1>
-                            <h3>Random quiz-question</h3>
+                            <!-- categoryName of current question -->
+                            <h3 id="category-name"></h3>
                         </header>
 
                         <!-- Title + Description -->
-                        <div class="flex w-full justify-around">
-                            <!-- Visa vilken kategori -->
+                      <!--   <div class="flex w-full justify-around">
+
                             <div class="flex flex-col">
                                 <select id="code-category" class="bg-gray-900 p-2">
                                     <option value=""></option>
                                 </select>
                             </div>
-                        </div>
+                        </div> -->
 
                         <!-- Grid Input container -->
                         <div class="grid w-full grid-cols-1 gap-6">
                             <div class="flex flex-col">
-                                <option value="">Laddar kategorier...</option>
                                 <label for="code-question">Kod-fråga</label>
                                 <p class="rounded border bg-gray-900 p-2" id="code-question"></p>
                             </div>
                             <div class="flex flex-col">
+                                <!-- FEEDBACK om för kort svar -->
+                                <p
+                                    id="feedback"
+                                    class="hidden rounded-md border bg-yellow-900 py-2 text-center text-yellow-400"
+                                ></p>
                                 <label for="code-answer">Kod-svar</label>
                                 <div id="code-editor-container" class="rounded-md bg-gray-900 p-2"></div>
                                 <!-- <textarea
