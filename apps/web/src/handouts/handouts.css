@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Code Editor */
+/* Gutter */
+.cm-gutter,
+.cm-foldGutter,
+.cm-activeLineGutter {
+    @apply !bg-cyan-700 text-white;
+}
+
+/* Kod editorns text-bakgrund */
+.cm-line.cm-activeLine {
+    @apply bg-slate-800;
+}
