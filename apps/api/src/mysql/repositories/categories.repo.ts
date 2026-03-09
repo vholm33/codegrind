@@ -48,3 +48,21 @@ export async function addCategoriesRepo(input: Category) {
         };
     }
 }
+
+export async function removeCategoryRepo(id: number) {
+    try{
+        console.log('[REPO] removeCategoryRepo()');
+        const [result]: any = await pool.query('DELETE FROM categories WHERE id = ?', [id]);
+        return result;
+
+    } catch (error: any) {
+        console.error(`!! [REPO] ERROR in removeCateoryRepo: ${error.message}`);
+
+        return {
+            success: false,
+            error: error.message,
+            sqlMessage: error.sqlMessage
+        };
+    }
+        
+}

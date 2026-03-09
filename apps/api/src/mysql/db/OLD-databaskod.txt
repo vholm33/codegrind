@@ -31,5 +31,5 @@ CREATE TABLE railway.submissions (
     passed BOOLEAN NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (problem_id) REFERENCES railway.problems(id)
+    FOREIGN KEY (problem_id) REFERENCES railway.problems(id) ON DELETE CASCADE
 );

@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import pool from '../db/mysql.js';
-import { getAllCategoriesRepo, addCategoriesRepo } from '../repositories/categories.repo.js';
+import { getAllCategoriesRepo, addCategoriesRepo, removeCategoryRepo } from '../repositories/categories.repo.js';
+import { realpathSync } from 'fs';
 
 export type Category = {
     name: string;
@@ -54,3 +55,34 @@ export async function addCategoriesController(req: Request, res: Response) {
         });
     }
 }
+
+export async function removeCategoryController(req: Request, res: Response) {
+    try {
+        console.log(`[CONTROLLER] removeCategory(req, res)`);
+        const { id } = req.params;
+
+     if(!id) {
+        return res.status(400).json({
+            success: false,
+            message: "Ange id!"
+        });
+    }
+    
+    const result: any = await removeCategoryRepo(Number(id));
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Kategorin kunde inte hittas"
+            })
+        }
+        return res.status(200).json({
+            success: true,
+            message: "Kategorin har raderats"
+        }); 
+        } catch(error) {
+            return res.status(400).json({
+                success: false,
+                message: "Controller: removeCategoryController() misslyckades"
+            })
+        }
+    }
