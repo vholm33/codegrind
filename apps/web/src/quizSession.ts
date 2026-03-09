@@ -25,6 +25,9 @@ let attempts: number = 0;
 const MAX_ATTEMPTS: number = 3;
 let canSubmit: boolean = true;
 
+let points: number = 0;
+let questionResults: QuestionResult[] = [];
+
 // Editor state ?
 let editor: CodeEditor | null = null;
 
@@ -96,6 +99,9 @@ async function renderCodeQuestion(questionData: CodeQuestion[]) {
         console.log(question);
         // console.log(questionData[questions]); for in
 
+        console.debug(`SET currentQuestion`);
+        console.debug(`SET attempts = 0`);
+        console.debug(`SET canSubmit = true`);
         currentQuestion = question; // Sätt frågan
         attempts = 0;
         canSubmit = true;
@@ -175,12 +181,28 @@ interface FeedbackItem {
     // 2.
 } */
 
+interface QuestionResult {
+    questionId: number;
+    categoryId?: number;
+    points: number;
+    attempts: number;
+    isCorrect: boolean;
+}
 function handleSubmit(event: Event): 'correct' | 'incorrect' | 'max-tries' {
     event.preventDefault();
 
+    console.warn('console clear()');
+    //console.clear();
+
     if (!canSubmit) return 'max-tries';
+
+    // Kolla om max innan ökar
+    if (attempts >= MAX_ATTEMPTS) {
+        canSubmit = false;
+        console.debug(`🪳 `);
+    }
     attempts++;
-    console.info(`attempts++`);
+    console.debug(`attempts++ : ${attempts}`);
 
     console.log(`=========( Handle Submit: Attempt: ${attempts}/${MAX_ATTEMPTS} )==========`);
 
@@ -188,10 +210,49 @@ function handleSubmit(event: Event): 'correct' | 'incorrect' | 'max-tries' {
     const userAnswer = normaliseCode(editor?.getValue() ?? '');
     const correctAnswer = normaliseCode(currentQuestion?.codeAnswer ?? '');
 
+    console.log(`? MATCH ? ${userAnswer === correctAnswer}`);
+    const isCorrect = userAnswer === correctAnswer;
+    console.log('isCorrect:', isCorrect);
+
+    // Måste vara rätt först innan sätter poäng
+    if (isCorrect) {
+        if (attempts === 1) points = 5;
+        else if (attempts === 2) points = 3;
+        else if (attempts === 3) points = 1;
+
+        // Spara frågans resultat
+        if (currentQuestion) {
+            questionResults.push({
+                questionId: currentQuestion.id,
+                points: points,
+                attempts: attempts,
+                isCorrect: true,
+            });
+        }
+
+        console.debug(`RÄTT! Du fick ${points} poäng`);
+        console.debug(`🪳 Alla resultat hittills:`, questionResults);
+
+        // räkna alla poäng
+        const totalPoints = questionResults.reduce((sum, result) => sum + result.points, 0);
+        console.debug(`🪳 totalPoints: ${totalPoints}`);
+
+        console.error(`‼️ fortsätt med SUCCESS`);
+    }
+
     // Check if answer is too short
     if (userAnswer.length < correctAnswer.length) {
         if (feedbackEl) {
-            feedbackEl.textContent = `Ditt svar är för kort. Det saknas (${correctAnswer.length - userAnswer.length}) karaktärer`;
+            feedbackEl.innerHTML = `
+            <div class="flex gap-4">
+                <div class="shrink-0 bg-cyan-500 p-2 border rounded-md">
+                    Försök kvar: ${MAX_ATTEMPTS - attempts}
+                </div>
+                <div class="flex-1 rounded-md border bg-yellow-900 py-2 text-center text-yellow-400 p-2">
+                    Ditt svar är för kort. Det saknas (<span class="text-red-400">${correctAnswer.length - userAnswer.length}</span>) karaktärer
+                </div>
+            </div>
+            `;
             console.log('feedback remove "hidden"');
             feedbackEl.classList.remove('hidden'); // Visa
         }
@@ -203,6 +264,27 @@ function handleSubmit(event: Event): 'correct' | 'incorrect' | 'max-tries' {
 
     console.info(`ranges AFTER comparison:`, ranges);
 
+    // Ränka poäng (5, 3, 1, 0)
+    // && vad för att se om korrekt?
+    if (attempts === 1) {
+        console.debug(`attempt 1: == 5 points`);
+        points = 5;
+        console.debug(`points: ${points}`);
+    } else if (attempts === 2) {
+        console.debug(`attempt 2: == 3 points`);
+        points = 3;
+        console.debug(`points: ${points}`);
+    } else if (attempts === 3) {
+        console.debug(`attempt 3 (last): == 1 points`);
+        points = 1;
+        console.debug(`points: ${points}`);
+    } else {
+        console.error(`attempt 4? (failed)`);
+        points = 0;
+        console.debug(`points: ${points}`);
+    }
+
+    console.log(`RETURNS?`);
     // ranges kopplar karaktär med CSS till editor
     // 1. RÄTT "cm-correct-highlight"
     // 1. FEL "cm-incorrect-highlight"

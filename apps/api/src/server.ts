@@ -10,9 +10,31 @@ import { fileURLToPath } from 'url';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
 // Get __dirname for static files
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Använder development/production
+const isProduction = process.env.NODE_ENV === 'production';
+if (!isProduction) {
+    // Development: Allow Vite dev server
+    app.use(
+        cors({
+            origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+            credentials: true,
+        }),
+    );
+    console.log('🔓 CORS enabled for Vite dev server');
+} else {
+    // Production
+    app.use(
+        cors({
+            origin: process.env.FRONTEND_URL || true,
+            credentials: true,
+        }),
+    );
+}
 
 const distPath = path.join(__dirname, '../../web/dist');
 const manifestPath = path.join(distPath, '.vite/manifest.json');
@@ -48,6 +70,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(distPath));
+
 
 //====== SQL - Routes ======
 import userRoutes from './mysql/routes/users.routes.js';

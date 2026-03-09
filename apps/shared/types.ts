@@ -1,4 +1,5 @@
 export type CodeQuestion = {
+    id: number,
     codeTitle: string; // titeln i frontend (dvs kategorinamnet)
     codeQuestion: string;
     codeAnswer: string;

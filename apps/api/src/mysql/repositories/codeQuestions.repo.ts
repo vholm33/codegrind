@@ -61,9 +61,15 @@ export async function getAllCodeQuestionsRepo(id: number) {
     }
 }
 // Get question and categoryName
-export async function getAllQuestionsRepo() {
+export async function getAllQuestionsRepo(): Promise<{
+    success: boolean;
+    data?: CodeQuestion[];
+    error?: string;
+    sqlMessage?: any;
+}> {
     try {
-        const [result]: any = await pool.query<ResultSetHeader>(`
+        //? RowDataPacket[] from mysql2
+        const [rows]: any = await pool.query<ResultSetHeader>(`
             SELECT
                 q.id,
                 q.categoryId,
@@ -75,10 +81,19 @@ export async function getAllQuestionsRepo() {
             ORDER BY q.id
         `);
 
-        console.log(`[REPO] result: ${result}`);
+        console.log('[REPO] result:', rows);
+
+        const questions: CodeQuestion[] = rows.map((row) => ({
+            id: row.id,
+            codeTitle: row.codeTitle,
+            codeQuestion: row.codeQuestion,
+            codeAnswer: row.codeAnswer,
+            categoryName: row.categoryName
+        }));
+        console.log('[REPO] found ' + questions.length + 'questions')
         return {
             success: true,
-            data: result,
+            data: questions,
         };
     } catch (error: any) {
         return {
