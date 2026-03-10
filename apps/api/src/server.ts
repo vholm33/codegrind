@@ -26,7 +26,8 @@ if (!isProduction) {
         }),
     );
     console.log('🔓 CORS enabled for Vite dev server');
-} else {
+}
+if (isProduction){
     console.log(`PRODUCTION running`);
     // Production
     const distPath = path.join(__dirname, '../../web/dist');
@@ -83,9 +84,9 @@ try {
 } */
 
 // ====== MONGODB ======
-/* import { mdbConn } from './mongoose/connection.js';
-console.log('Starting MongoDB connection'); // Starta MongoDB connection
-const ratings = mdbConn.collection('ratings'); */
+// import { mdbConn } from './mongodb/connection.js';
+// console.log('Starting MongoDB connection'); // Starta MongoDB connection
+// const ratings = mdbConn.collection('ratings');
 
 /* app.use(helmet({contentSecurityPolicy: false})) */
 app.use(cors());
@@ -111,6 +112,7 @@ app.use('/api/categories', categoriesRoute);
 //====== MongoDB - Routes ======
 import ratingRoutes from './mongodb/routes/ratingRoute.js';
 app.use('/api/ratings', ratingRoutes);
+console.log('Rating routes --> /api/ratings/');
 
 app.listen(PORT, () => {
     console.log('Server running on port: ', PORT);

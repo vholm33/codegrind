@@ -1,8 +1,13 @@
 import express from 'express';
-import { addRatingController } from '../controllers/ratingController.js';
+import {
+    addRating,
+    getRating
+} from '../controllers/ratingController.js';
 
 const router = express.Router();
 
-router.post('/add', addRatingController);
+router.post('/add', addRating);
+
+router.get('/get', getRating)
 
 export default router;

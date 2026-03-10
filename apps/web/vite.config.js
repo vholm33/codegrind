@@ -16,7 +16,7 @@ export default defineConfig({
                 addProblem: resolve(__dirname, 'src/addProblem.html'),
                 addRating: resolve(__dirname, 'src/addRating.html'),
                 quizSession: resolve(__dirname, 'src/quizSession.html'),
-                ratings: resolve(__dirname, 'src/pages/rating.html'),
+                ratings: resolve(__dirname, 'src/pages/ratings/ratings.html'),
                 // assets: resolve(__dirname, 'assets'), // utilities och css
             },
         },
