@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="sv">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Homepage</title>
+        <title>Rating för varje kodfråga kopplad till användare</title>
         <link
             rel="icon"
             href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>"
@@ -42,10 +42,7 @@
         <div class="flex">
             <!-- Sidebar -->
             <aside class="flex h-screen">
-                <div
-                    id="sidebar-container"
-                    class="w-14 bg-gradient-to-b from-gray-800 to-gray-900 transition-all duration-300"
-                >
+                <div id="sidebar" class="w-14 bg-gradient-to-b from-gray-800 to-gray-900 transition-all duration-300">
                     <!-- Toggle btn -->
                     <button onclick="toggleSidebar()" class="w-full p-4 hover:bg-gray-700 focus:outline-none">
                         <div class="flex items-center">
@@ -70,7 +67,7 @@
                     </button>
 
                     <!-- Navigation icons -->
-                    <nav class="mt-6" id="categoryButtons">
+                    <nav class="mt-6">
                         <a href="./src/handouts/handouts.html" class="flex items-center px-4 py-3 hover:bg-gray-700">
                             <span class="mr-3 text-xl"
                                 ><svg
@@ -147,7 +144,10 @@
                 <nav>
                     <ul>
                         <li>
-                            <a href="./src/addProblem.html">Lägg till problem</a>
+                            <a href="#konstanter">Konstanter</a>
+                            <a href="#loopar">Loopar</a>
+                            <a href="#typescript">TypeScript</a>
+                            <a href="#metoder">Metoder</a>
                         </li>
                     </ul>
                 </nav>
@@ -157,18 +157,9 @@
                     <header>
                         <h2>Statistics</h2>
                         <h3>Översikt: hur frekvent</h3>
-                        <ul>
-                            <li>
-                                <button class="rounded-md border bg-blue-500 px-2 hover:bg-blue-600">
-                                    <a href="./src/quizSession.html">Start Quiz</a>
-                                </button>
-                            </li>
-                            <li>
-                                <button class="rounded-md border bg-blue-500 px-2 hover:bg-blue-600">
-                                    <a href="./src/pages/ratings.html">Se kodfrågor</a>
-                                </button>
-                            </li>
-                        </ul>
+                        <button class="rounded-md border bg-blue-500 px-2 hover:bg-blue-600">
+                            <a href="./src/quizSession.html">Start Quiz</a>
+                        </button>
                     </header>
                 </section>
             </main>

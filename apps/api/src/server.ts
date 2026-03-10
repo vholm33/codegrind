@@ -5,7 +5,6 @@ import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
 /* import helmet from 'helmet' */
 
 const app = express();
@@ -18,6 +17,7 @@ const __dirname = path.dirname(__filename);
 // Använder development/production
 const isProduction = process.env.NODE_ENV === 'production';
 if (!isProduction) {
+    console.log(`DEVELOPMENT running`);
     // Development: Allow Vite dev server
     app.use(
         cors({
@@ -27,19 +27,40 @@ if (!isProduction) {
     );
     console.log('🔓 CORS enabled for Vite dev server');
 } else {
+    console.log(`PRODUCTION running`);
     // Production
+    const distPath = path.join(__dirname, '../../web/dist');
+    const manifestPath = path.join(distPath, '.vite/manifest.json');
+    console.log(`distPath: ${distPath}`);
+    console.log(`manifestPath: ${manifestPath}`);
+
     app.use(
         cors({
             origin: process.env.FRONTEND_URL || true,
             credentials: true,
         }),
     );
-}
+    app.use(express.static(distPath));
 
-const distPath = path.join(__dirname, '../../web/dist');
-const manifestPath = path.join(distPath, '.vite/manifest.json');
-console.log(`distPath: ${distPath}`);
-console.log(`manifestPath: ${manifestPath}`);
+    app.get('/', (_req, res) => {
+        res.sendFile(path.join(distPath, 'index.html'));
+    });
+
+    app.get('/login', (_req, res) => {
+        res.sendFile(path.join(__dirname, '../../web/dist/login.html'));
+    });
+
+    app.get('/register', (_req, res) => {
+        res.sendFile(path.join(__dirname, '../../web/dist/register.html'));
+    });
+
+    app.get('/addProblem', (_req, res) => {
+        res.sendFile(path.join(distPath, 'addProblem.html'));
+    });
+
+    app.get('/src', express.static(path.join(distPath, 'src')));
+}
+/*
 
 let manifest = {};
 try {
@@ -59,7 +80,8 @@ try {
     }
 } catch (error: any) {
     console.warn('Error när laddar manifest:', error.message);
-}
+} */
+
 // ====== MONGODB ======
 /* import { mdbConn } from './mongoose/connection.js';
 console.log('Starting MongoDB connection'); // Starta MongoDB connection
@@ -69,8 +91,6 @@ const ratings = mdbConn.collection('ratings'); */
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(distPath));
-
 
 //====== SQL - Routes ======
 import userRoutes from './mysql/routes/users.routes.js';
@@ -91,25 +111,6 @@ app.use('/api/categories', categoriesRoute);
 //====== MongoDB - Routes ======
 import ratingRoutes from './mongodb/routes/ratingRoute.js';
 app.use('/api/ratings', ratingRoutes);
-//-----
-
-app.get('/', (_req, res) => {
-    res.sendFile(path.join(distPath, 'index.html'));
-});
-
-app.get('/login', (_req, res) => {
-    res.sendFile(path.join(__dirname, '../../web/dist/login.html'));
-});
-
-app.get('/register', (_req, res) => {
-    res.sendFile(path.join(__dirname, '../../web/dist/register.html'));
-});
-
-app.get('/addProblem', (_req, res) => {
-    res.sendFile(path.join(distPath, 'addProblem.html'));
-});
-
-app.get('/src', express.static(path.join(distPath, 'src')));
 
 app.listen(PORT, () => {
     console.log('Server running on port: ', PORT);

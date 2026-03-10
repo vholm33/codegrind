@@ -24,7 +24,10 @@ type Attempts = 0 | 1 | 2 | 3;
 const MAX_ATTEMPTS: number = 3;
 
 // State
+let sessionQuestions: CodeQuestion[] = []; // spara alla frågor i array
+let currentQuestionIndex: number = 0; // spara nuvarande frågas index
 let currentQuestion: CodeQuestion | null = null;
+
 let canSubmit: boolean = true;
 let attempts: Attempts = 0;
 let points: number = 0;
@@ -33,25 +36,31 @@ let questionResults: QuestionResult[] = [];
 // Editor state ?
 let editor: CodeEditor | null = null;
 
-if (editorContainerEl) {
-    editor = new CodeEditor(editorContainerEl);
-    console.log(`CodeEditor initialised`);
-} else {
-    console.error(`‼️ editor contaner not found`);
+function initEditor(): CodeEditor | null {
+    if (editorContainerEl) {
+        editor = new CodeEditor(editorContainerEl);
+        console.log(`CodeEditor initialised`);
+        return editor;
+    } else {
+        console.error(`‼️ editor contaner not found`);
+        return null;
+    }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('Quiz session börjar');
-    // initEditor?
+
+    // 1. Initiera CodeEditor
+    editor = initEditor();
 
     const questionData = await fetchCodeQuestions();
 
     renderCodeQuestion(questionData); // OK
 
-    // Vänta kort
+    // Vänta kort innan fokuserar i editor
     setTimeout(() => {
         editor?.focus();
-    }, 100);
+    }, 150);
 });
 
 async function fetchCodeQuestions(): Promise<CodeQuestion[]> {
@@ -125,13 +134,14 @@ async function renderCodeQuestion(questionData: CodeQuestion[]) {
         categoryEl.innerHTML = question.categoryName;
         // Display Question
         codeQuestionEl.innerHTML = question.codeQuestion;
+        console.info('codeQuestionEl.innerHTML', codeQuestionEl.innerHTML);
         console.log(`currentQuestion:`, currentQuestion);
 
-        console.warn(`nollställ CodeEditor...`);
-        console.log(`ta bort highlights och sätt text till ''`);
+        console.info(`nollställ CodeEditor...`);
+        console.info(`ta bort highlights och sätt text till ''`);
         editor?.clearHighlights();
         editor?.setValue('');
-        console.log(`hide feedback...`);
+        console.info(`hide feedback...`);
         feedbackEl?.classList.add('hidden');
 
         //! (not yet) editor?.setValue(''); // Nollställ CodeEditor
@@ -182,7 +192,18 @@ interface QuestionResult {
     isCorrect: boolean;
 }
 
-
+function calculatePoints(attempts: number): number {
+    switch (attempts) {
+        case 1:
+            return 5;
+        case 2:
+            return 3;
+        case 3:
+            return 1;
+        default:
+            return 0;
+    }
+}
 
 function showSuccessFeedback(feedbackEl: HTMLElement | null, points: number): void {
     if (feedbackEl) {
@@ -207,6 +228,7 @@ function handleSubmit(event: Event, nextQuestion: (() => void) | null): 'correct
 
     if (!canSubmit) return 'max-tries';
 
+    // Tar bort submittion
     if (attempts >= MAX_ATTEMPTS) {
         canSubmit = false;
     }
@@ -219,53 +241,71 @@ function handleSubmit(event: Event, nextQuestion: (() => void) | null): 'correct
     const isCorrect = userAnswer === correctAnswer;
 
     // Om användarens svar är för kort
-    const isTooShort = userAnswer.length < correctAnswer.length;
-    const missingChars = isTooShort ? correctAnswer.length - userAnswer.length : 0;
-
-    // 1. CORRECT
-    if (isCorrect) {
-        if (attempts === 1) points = 5;
-        else if (attempts === 2) points = 3;
-        else if (attempts === 3) points = 1;
-
-        if (currentQuestion) {
-            questionResults.push({
-                questionId: currentQuestion.id,
-                points: points,
-                attempts: attempts,
-                isCorrect: true,
-            });
-        }
-
-        console.log(`RÄTT! Du fick ${points} poäng`);
-        // Show success message
-        showSuccessFeedback(feedbackEl, points);
-
-        canSubmit = false;
-
-        // Move to next question after delay
-        setTimeout(() => {
-            editorContainerEl?.classList.remove('bg-lime-500');
-            if (nextQuestion) nextQuestion();
-        }, 3000);
-
-        return 'correct';
-    }
+    const isTooShort: boolean = userAnswer.length < correctAnswer.length;
+    const missingChars: number = isTooShort ? correctAnswer.length - userAnswer.length : 0;
 
     // 2. MAX TRIES
     // Handle incorrect answer (show feedback, highlight, etc.)
     const ranges = compareAnswers(userAnswer, correctAnswer);
     editor?.highlightText(ranges);
 
-    // Check if max attempts reached
+    // 1. CORRECT
+    if (isCorrect) {
+        return handleCorrectAnswer(nextQuestion);
+    }
+
+    // 2. MAX-TRIES, samma IF: hanterar UI logik
     if (attempts >= MAX_ATTEMPTS) {
-        canSubmit = false;
+        return handleMaxAttempts(correctAnswer, nextQuestion); // RETURNS: 'max-tries'
+    }
 
-        if (feedbackEl) {
-            editor?.setValue(correctAnswer);
-            editorContainerEl?.classList.add('bg-lime-500');
+    // 3. INCORRET
+    if (feedbackEl) {
+        // Show remaining attempts
+        return handleIncorrectAnswer(isTooShort, missingChars); // RETURNS: 'incorrect'
+    } else {
+        console.error('Returning feedback even though feedbackEl does nott exist');
+        return 'incorrect';
+    }
+}
+// 1. CORRECT
+function handleCorrectAnswer(nextQuestion: (() => void) | null): 'correct' {
+    points = calculatePoints(attempts);
 
-            feedbackEl.innerHTML = `
+    if (currentQuestion) {
+        questionResults.push({
+            questionId: currentQuestion.id,
+            points: points,
+            attempts: attempts,
+            isCorrect: true,
+        });
+        console.info('Pushed to questionResults:', questionResults);
+    }
+
+    console.log(`RÄTT! Du fick ${points} poäng`);
+
+    // Show success message
+    showSuccessFeedback(feedbackEl, points);
+
+    console.info('canSubmit satt till ', (canSubmit = false));
+
+    // Move to next question after delay
+    setTimeout(() => {
+        editorContainerEl?.classList.remove('bg-lime-500');
+        if (nextQuestion) nextQuestion();
+    }, 3000);
+
+    return 'correct';
+}
+// 2. MAX-TRIES
+function handleMaxAttempts(correctAnswer: string, nextQuestion: (() => void) | null): 'max-tries' {
+    canSubmit = false;
+
+    if (feedbackEl) {
+        editor?.setValue(correctAnswer);
+        editorContainerEl?.classList.add('bg-lime-500');
+
+        feedbackEl.innerHTML = `
             <div class="flex gap-4">
                 <div class="shrink-0 bg-red-500 p-2 border rounded-md text-white">
                     Inga fler försök
@@ -275,23 +315,22 @@ function handleSubmit(event: Event, nextQuestion: (() => void) | null): 'correct
                 </div>
             </div>
             `;
-            feedbackEl.classList.remove('hidden');
-        }
-
-        setTimeout(() => {
-            editorContainerEl?.classList.remove('bg-lime-500');
-            if (nextQuestion) nextQuestion();
-        }, 8000);
-
-        return 'max-tries';
+        feedbackEl.classList.remove('hidden');
     }
 
-    // 3. INCORRET
+    setTimeout(() => {
+        editorContainerEl?.classList.remove('bg-lime-500');
+        if (nextQuestion) nextQuestion();
+    }, 8000);
+
+    return 'max-tries';
+}
+// 3. INCORRET
+function handleIncorrectAnswer(isTooShort: boolean, missingChars: number): 'incorrect' {
     // Show remaining attempts
-    if (feedbackEl) {
-        if (isTooShort) {
-            // Hur många karaktärer saknas?
-            feedbackEl.innerHTML = `
+    if (isTooShort) {
+        // Hur många karaktärer saknas?
+        feedbackEl.innerHTML = `
             <div class="flex gap-4">
                 <div class="shrink-0 bg-cyan-500 p-2 border rounded-md text-white">
                     Försök kvar: ${MAX_ATTEMPTS - attempts}
@@ -301,9 +340,9 @@ function handleSubmit(event: Event, nextQuestion: (() => void) | null): 'correct
                 </div>
             </div>
         `;
-        } else {
-            // Vanligt felmeddelande
-            feedbackEl.innerHTML = `
+    } else {
+        // Vanligt felmeddelande
+        feedbackEl.innerHTML = `
                 <div class="flex gap-4">
                     <div class="shrink-0 bg-red-500 p-2 border rounded-md text-white">
                         Försök kvar: ${MAX_ATTEMPTS - attempts}
@@ -313,10 +352,11 @@ function handleSubmit(event: Event, nextQuestion: (() => void) | null): 'correct
                     </div>
                 </div>
             `;
-        }
-        feedbackEl.classList.remove('hidden');
-        editor?.focus();
     }
+
+    feedbackEl.classList.remove('hidden');
+    editor?.focus();
+
     return 'incorrect';
 }
 
@@ -373,11 +413,24 @@ function compareAnswers(userAnswer: string, correctAnswer: string) {
     console.groupEnd();
     return ranges;
 }
+
 // Normalisera kodsvaret från användaren
 function normaliseCode(code: string): string {
-    return code
-        .replace(/\s+/g, ' ') // Gör om alla nya rader till ' '
-        .trim();
+    return (
+        code
+            .replace(/\s+/g, ' ') // Gör om alla mellanrum till ett ' '
+            .replace(/\s*:\s*/g, ':') // Normalisera space runt ':'
+            .replace(/\s*,\s*/g, ',') // Normalisera space runt ','
+            .replace(/\s*=>\s*/g, '=>') // Normalisera space runt '=>'
+            .replace(/\s*=\s*/g, '=') // Normalisera space runt '='
+            .replace(/\s*==\s*/g, '==') // Normalisera space runt '=='
+            .replace(/\s*===\s*/g, '===') // Normalisera space runt '==='
+            // OPERATORS
+            .replace(/\s*\+\s*/g, '+') // Normalisera space runt '+'
+            .replace(/\s*-\s*/g, '-') // Normalisera space runt '-'
+            .replace(/\s*\/\s*/g, '/') // Normalisera space runt '/'
+            .trim()
+    );
 }
 
 // Rendera feedback med funktion
