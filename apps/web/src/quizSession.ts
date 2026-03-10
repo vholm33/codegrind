@@ -1,5 +1,4 @@
 import type { CodeQuestion } from '@shared/types.js';
-
 import { CodeEditor } from './components/Editor.js';
 /* Hantera quiz-sessionen */
 
@@ -16,7 +15,7 @@ import { CodeEditor } from './components/Editor.js';
 const codeQuestionEl = document.querySelector('#code-question') as HTMLParagraphElement;
 const form = document.querySelector('form') as HTMLFormElement;
 const editorContainerEl = document.querySelector('#code-editor-container') as HTMLElement | null;
-const feedbackEl = document.querySelector('#feedback');
+const feedbackEl = document.querySelector('#feedback') as HTMLElement;
 const categoryEl = document.querySelector('#category-name') as HTMLElement;
 // const submitBtn = document.querySelector('button[type="submit"]') as HTMLButtonElement;
 const progressbarEl = document.querySelector('#status') as HTMLProgressElement;
@@ -40,6 +39,20 @@ if (editorContainerEl) {
 } else {
     console.error(`‼️ editor contaner not found`);
 }
+
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('Quiz session börjar');
+    // initEditor?
+
+    const questionData = await fetchCodeQuestions();
+
+    renderCodeQuestion(questionData); // OK
+
+    // Vänta kort
+    setTimeout(() => {
+        editor?.focus();
+    }, 100);
+});
 
 async function fetchCodeQuestions(): Promise<CodeQuestion[]> {
     console.groupCollapsed(`fetchCodeQuestions()`);
@@ -169,6 +182,26 @@ interface QuestionResult {
     isCorrect: boolean;
 }
 
+
+
+function showSuccessFeedback(feedbackEl: HTMLElement | null, points: number): void {
+    if (feedbackEl) {
+        editorContainerEl?.classList.add('bg-cyan-500');
+        feedbackEl.innerHTML = `
+            <div class="flex gap-4">
+                <div class="shrink-0 bg-green-500 p-2 border rounded-md text-white">
+                    Rätt!
+                </div>
+                <div class="flex-1 rounded-md border bg-green-900 py-2 text-center text-green-400 p-2">
+                    Du fick ${points} poäng!
+                </div>
+            </div>
+            `;
+
+        feedbackEl.classList.remove('hidden');
+    }
+}
+
 function handleSubmit(event: Event, nextQuestion: (() => void) | null): 'correct' | 'incorrect' | 'max-tries' {
     event.preventDefault();
 
@@ -205,22 +238,8 @@ function handleSubmit(event: Event, nextQuestion: (() => void) | null): 'correct
         }
 
         console.log(`RÄTT! Du fick ${points} poäng`);
-
         // Show success message
-        if (feedbackEl) {
-            editorContainerEl?.classList.add('bg-cyan-500');
-            feedbackEl.innerHTML = `
-            <div class="flex gap-4">
-                <div class="shrink-0 bg-green-500 p-2 border rounded-md text-white">
-                    Rätt!
-                </div>
-                <div class="flex-1 rounded-md border bg-green-900 py-2 text-center text-green-400 p-2">
-                    Du fick ${points} poäng!
-                </div>
-            </div>
-            `;
-            feedbackEl.classList.remove('hidden');
-        }
+        showSuccessFeedback(feedbackEl, points);
 
         canSubmit = false;
 
@@ -354,7 +373,6 @@ function compareAnswers(userAnswer: string, correctAnswer: string) {
     console.groupEnd();
     return ranges;
 }
-
 // Normalisera kodsvaret från användaren
 function normaliseCode(code: string): string {
     return code
@@ -362,19 +380,4 @@ function normaliseCode(code: string): string {
         .trim();
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('Quiz session börjar');
-    // initEditor?
-
-    const questionData = await fetchCodeQuestions();
-    // console.log(`calling renderCodeQuestion with questionData`);
-
-    //! form.addEventListener('submit', handleSubmit);
-
-    renderCodeQuestion(questionData); // OK
-
-    // Vänta kort
-    setTimeout(() => {
-        editor?.focus();
-    }, 100);
-});
+// Rendera feedback med funktion
