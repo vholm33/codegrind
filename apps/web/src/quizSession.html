@@ -142,8 +142,17 @@
                 <section class="mt-12 flex justify-center">
                     <form class="flex w-full flex-col items-center rounded-md border-2 bg-gray-800 p-4">
                         <header class="mb-4 w-full border-b text-center text-xl font-semibold">
-                            <!-- categoryName of current question -->
-                            <h3 id="category-name"></h3>
+                            <!-- Statusbar -->
+                            <!--
+                                1. Progress Bar
+                                2. Questions Left
+                            -->
+                            <div id="progress-bar-container">
+                                <!-- SET value(currentQuestionIndex) max(totalQuestions)  -->
+                                <progress id="status" class="rounded-full"></progress>
+                                <label for="status"></label>
+                            </div>
+
                         </header>
 
                         <!-- Title + Description -->
@@ -158,9 +167,9 @@
 
                         <!-- Grid Input container -->
                         <div class="grid w-full grid-cols-1 gap-6">
-                            <div class="flex flex-col">
-                                <label for="code-question">Kod-fråga</label>
-                                <p class="rounded border bg-gray-900 p-2" id="code-question"></p>
+                            <div class="flex gap-4 items-center">
+                                    <div class="shrink-0 bg-gray-950 p-2 border rounded-full px-4 font-semibold" id="category-name"></div>
+                                    <div class="flex-1 rounded border bg-gray-900 p-4 text-lg" id="code-question"></div>
                             </div>
                             <div class="flex flex-col">
                                 <!-- FEEDBACK om för kort svar -->

@@ -1,8 +1,8 @@
-import type { Pool, ResultSetHeader } from 'mysql2';
+import type { Pool, ResultSetHeader, RowDataPacket } from 'mysql2';
 import pool from '../db/mysql.js';
 import type { CodeQuestion } from '@shared/types.js';
 
-export async function addCodeQuestionRepo(input: CodeQuestion) {
+/* export async function addCodeQuestionRepo(input: CodeQuestion) {
     try {
         console.log('[REPO] addCodeQuestionRepo()');
         console.log('[REPO] input:', input);
@@ -31,7 +31,7 @@ export async function addCodeQuestionRepo(input: CodeQuestion) {
             sqlMessage: error.sqlMessage,
         };
     }
-}
+} */
 
 export async function getAllCodeQuestionsRepo(id: number) {
     try {
@@ -60,6 +60,15 @@ export async function getAllCodeQuestionsRepo(id: number) {
         };
     }
 }
+
+interface QuestionRow extends RowDataPacket {
+    id: number;
+    categoryId: number | null;
+    codeQuestion: string;
+    codeAnswer: string;
+    categoryName: string | null;
+}
+
 // Get question and categoryName
 export async function getAllQuestionsRepo(): Promise<{
     success: boolean;
@@ -69,7 +78,7 @@ export async function getAllQuestionsRepo(): Promise<{
 }> {
     try {
         //? RowDataPacket[] from mysql2
-        const [rows]: any = await pool.query<ResultSetHeader>(`
+        const [rows]: any = await pool.query<QuestionRow[]>(`
             SELECT
                 q.id,
                 q.categoryId,
@@ -83,12 +92,11 @@ export async function getAllQuestionsRepo(): Promise<{
 
         console.log('[REPO] result:', rows);
 
-        const questions: CodeQuestion[] = rows.map((row) => ({
+        const questions: CodeQuestion[] = rows.map((row: any) => ({
             id: row.id,
-            codeTitle: row.codeTitle,
+            categoryName: row.categoryName, // Tidigare codeTitle
             codeQuestion: row.codeQuestion,
             codeAnswer: row.codeAnswer,
-            categoryName: row.categoryName
         }));
         console.log('[REPO] found ' + questions.length + 'questions')
         return {

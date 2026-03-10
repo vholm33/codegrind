@@ -4,6 +4,6 @@ import { getAllCategoriesController, addCategoriesController } from '../controll
 const router = express.Router();
 
 router.get('/get', getAllCategoriesController);
-router.post('/add', addCategoriesController);
+// router.post('/add', addCategoriesController);
 
 export default router;
