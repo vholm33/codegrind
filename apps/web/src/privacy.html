@@ -3,11 +3,12 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Register</title>
+        <title>Login</title>
         <link
             rel="icon"
             href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>"
         />
+
         <link rel="stylesheet" href="./index.css" />
     </head>
     <body class="bg-gray-900 text-white">
@@ -29,10 +30,6 @@
                 </svg>
             </a>
             <h1 class="text-center text-2xl font-semibold">CodeGrind</h1>
-            <!-- Register: om redan har inlogg  -->
-            <button class="text-md w-24 justify-self-end rounded-md bg-blue-500 font-semibold">
-                <a href="./login.html">Login</a>
-            </button>
         </header>
 
         <!-- Container: Sidebar + Main -->
@@ -137,59 +134,107 @@
             </aside>
 
             <main class="m-4 flex flex-1 flex-col">
-                <!-- Form container -->
-                <section class="mt-12 flex justify-center">
-                    <form class="flex w-96 flex-col items-center rounded-md border-2 bg-gray-800 p-4">
-                        <header class="mb-4 w-full border-b text-center text-xl font-semibold">
-                            <h1>Register</h1>
-                        </header>
-                        <!-- Input container -->
-                        <div class="grid w-full grid-rows-3 gap-5">
-                            <div class="flex flex-col">
-                                <label class="flex" for="email">Email:</label>
-                                <input
-                                    class="rounded border bg-gray-900 p-2"
-                                    type="text"
-                                    id="email"
-                                    placeholder="user@me.com..."
-                                />
-                            </div>
-                            <div class="flex flex-col">
-                                <label for="username">Username:</label>
-                                <input
-                                    class="rounded border bg-gray-900 p-2"
-                                    type="text"
-                                    id="username"
-                                    placeholder="CoolCoder"
-                                />
-                            </div>
-                            <div class="flex flex-col">
-                                <label for="password">Password:</label>
-                                <input
-                                    class="rounded border bg-gray-900 p-2"
-                                    type="password"
-                                    id="password"
-                                    placeholder="******"
-                                />
-                            </div>
-                            <p class="text-sm text-gray-300">
-                                By creating an account, you acknowledge that we process your personal data as described
-                                in our
-                                <a href="./privacy.html" class="text-blue-400 underline">Privacy Policy</a>.
-                            </p>
+                <div class="min-h-screen px-4 py-10 sm:px-6">
+                    <section
+                        class="mx-auto w-full max-w-3xl rounded-md border border-white bg-gray-950 p-6 text-sm leading-6 text-gray-200 sm:p-8"
+                    >
+                        <h1 class="mb-4 text-3xl font-bold text-white">Privacy Policy</h1>
 
-                            <label class="flex items-start gap-2 text-sm text-gray-200">
-                                <input type="checkbox" name="consent" required class="mt-1" />
-                                <span>I have read and agree to the Privacy Policy.</span>
-                            </label>
-                        </div>
-                        <button class="mt-4 w-1/2 rounded-md bg-blue-500 hover:bg-blue-700">Submit</button>
-                    </form>
-                </section>
+                        <p class="mb-4">
+                            We value your privacy. This Privacy Policy explains what personal data we collect, why we
+                            process it, and what rights you have as a user.
+                        </p>
+
+                        <p class="mb-8">
+                            This web application is a school project and only processes personal data necessary to
+                            create and manage user accounts.
+                        </p>
+
+                        <h2 class="mb-3 text-xl font-semibold text-white">1. What Personal Data We Collect</h2>
+                        <p class="mb-3">We may collect the following personal data:</p>
+                        <ul class="mb-8 list-disc space-y-2 pl-6">
+                            <li>Name</li>
+                            <li>Email address</li>
+                            <li>Password in hashed form</li>
+                            <li>User ID</li>
+                            <li>Account creation date</li>
+                            <li>Consent information, if consent is used</li>
+                        </ul>
+
+                        <h2 class="mb-3 text-xl font-semibold text-white">2. Why We Process Personal Data</h2>
+                        <p class="mb-3">We process personal data in order to:</p>
+                        <ul class="mb-8 list-disc space-y-2 pl-6">
+                            <li>Create and manage user accounts</li>
+                            <li>Allow users to log in</li>
+                            <li>Give users access to their account information</li>
+                            <li>Allow users to update their personal data</li>
+                            <li>Delete user accounts and related personal data when requested</li>
+                        </ul>
+
+                        <h2 class="mb-3 text-xl font-semibold text-white">3. Legal Basis</h2>
+                        <p class="mb-4">
+                            Personal data is processed in order to provide account functionality in the system.
+                        </p>
+                        <p class="mb-8">
+                            If consent is used as the legal basis for any specific processing, the user will be asked to
+                            actively give consent before that processing takes place.
+                        </p>
+
+                        <h2 class="mb-3 text-xl font-semibold text-white">4. How Long We Keep Personal Data</h2>
+                        <p class="mb-4">
+                            We keep personal data for as long as the user account exists in the system, or for as long
+                            as necessary for the purpose of the project.
+                        </p>
+                        <p class="mb-8">
+                            If a user requests deletion of their account, the related personal data will be removed
+                            unless some data must be retained temporarily for technical or administrative reasons.
+                        </p>
+
+                        <h2 class="mb-3 text-xl font-semibold text-white">5. Who Has Access to the Data</h2>
+                        <p class="mb-8">
+                            Only the project group and system administrators have access to personal data, and only when
+                            necessary to manage the system.
+                        </p>
+
+                        <h2 class="mb-3 text-xl font-semibold text-white">6. Your Rights</h2>
+                        <p class="mb-3">You have the right to:</p>
+                        <ul class="mb-8 list-disc space-y-2 pl-6">
+                            <li>Be informed about how your personal data is processed</li>
+                            <li>Access your personal data</li>
+                            <li>Request correction of inaccurate personal data</li>
+                            <li>Request deletion of your personal data</li>
+                        </ul>
+
+                        <h2 class="mb-3 text-xl font-semibold text-white">7. Access, Correction, and Deletion</h2>
+                        <p class="mb-3">As a user, you can:</p>
+                        <ul class="mb-8 list-disc space-y-2 pl-6">
+                            <li>View your personal data on your account page</li>
+                            <li>Update your personal data through your profile or account settings</li>
+                            <li>Request deletion of your account and related personal data</li>
+                        </ul>
+
+                        <h2 class="mb-3 text-xl font-semibold text-white">8. Security</h2>
+                        <p class="mb-8">
+                            We take reasonable steps to protect personal data. Passwords are not stored in plain text,
+                            but in hashed form.
+                        </p>
+
+                        <h2 class="mb-3 text-xl font-semibold text-white">9. Contact</h2>
+                        <p>
+                            If you have questions about how personal data is handled in this system, please contact the
+                            project group.
+                        </p>
+                    </section>
+                </div>
+                <a
+                    href="./register.html"
+                    class="w-[3rem] cursor-pointer self-center rounded-md border border-white text-center"
+                >
+                    OK
+                </a>
             </main>
         </div>
     </body>
     <script type="module" src="./utilities/sidebar.js"></script>
-    <!-- <script type="module" src="./register.js"></script> -->
-    <script type="module" src="./register.ts"></script>
+    <script type="module" src="./login.ts"></script>
 </html>
