@@ -13,7 +13,6 @@ addEventListener('DOMContentLoaded', async () => {
 
     const sidebar = document.querySelector('#sidebar-container');
 
-    // Add hover events to the sidebar
     sidebar?.addEventListener('mouseenter', () => {
         // Only expand if currently collapsed
         if (sidebar.classList.contains('w-14')) {
@@ -27,22 +26,6 @@ addEventListener('DOMContentLoaded', async () => {
             toggleSidebar();
         }
     });
-
-    /* const button = document.createElement('button');
-    button.onclick = toggleSidebar;
-    button.className = `w-full p-4 hover:bg-gray-700 focus:outline-none`;
-    button.innerHTML = `
-        <div class="flex items-center">
-            <span class="mr-3 text-xl">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
-            </span>
-            <span data-sidebar-text class="hidden font-semibold">Menu</span>
-        </div>
-    `;
-
-    sidebar?.insertBefore(button, sidebar.firstChild); */
 
     toggleSidebar; // om () öppnas direkt. Funkar med bara onClick från button?
 
