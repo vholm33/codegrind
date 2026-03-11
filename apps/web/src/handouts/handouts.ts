@@ -4,7 +4,8 @@ import "highlight.js/styles/atom-one-dark.css"
 
 document.addEventListener("DOMContentLoaded", async() => {
 
-    const handout = document.getElementById("handout") as HTMLElement
+    const title = document.getElementById("handout-title") as HTMLElement
+    const handout = document.getElementById("handout-content") as HTMLElement
 
     const params = new URLSearchParams(window.location.search)
     const selectedCategory = params.get("category")
@@ -17,14 +18,10 @@ document.addEventListener("DOMContentLoaded", async() => {
 
     if (category) {
 
-        console.log(category.handout)
-
         const html = await marked.parse(category.handout)
 
-        handout.innerHTML = `
-        <h1 class="mb-4 text-3xl font-bold text-blue-400">${category.name}</h1> 
-        <div class="prose prose-invert max-w-none">${html}</div>
-        `
+        title.textContent = category.name
+        handout.innerHTML = html
 
         hljs.highlightAll()
     }
