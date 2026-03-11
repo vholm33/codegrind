@@ -45,10 +45,12 @@
                     class="w-14 bg-gradient-to-b from-gray-800 to-gray-900 transition-all duration-300"
                 ></div>
             </aside>
-            <main class="flex min-h-screen bg-gray-900 text-white">
+            <main class="flex flex-1 items-center justify-center min-h-screen bg-gray-900 text-white">
                 <!-- Category container to add handouts to -->
-                <section class="flex flex-1 items-start justify-center p-10">
-                    <div id="handout" class="w-full max-w-3xl rounded-xl bg-gray-800 p-8 shadow-lg">
+                <section class="w-full flex justify-center p-10">
+                    <div class="w-full max-w-5xl rounded-xl bg-gray-800 p-10 shadow-lg">
+                        <h1 id="handout-title" class="mb-6 text-3xl font-bold text-blue-400"></h1>
+                        <div id="handout-content" class="prose prose-invert max-w-none">
                         <!-- Handouts will be dynamically added here -->
                     </div>
                 </section>
