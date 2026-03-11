@@ -3,9 +3,91 @@ interface Categories {
     handout: string;
 }
 
+// [x]  1. Fetch categories
+// [x]  2. Render #sidebar-container
+// [ ]  3. Render button in #sidebar-container
+
+addEventListener('DOMContentLoaded', async () => {
+    const categories = await fetchCategories();
+    console.log(categories);
+
+    const sidebar = document.querySelector('#sidebar-container');
+
+    // Add hover events to the sidebar
+    sidebar?.addEventListener('mouseenter', () => {
+        // Only expand if currently collapsed
+        if (sidebar.classList.contains('w-14')) {
+            toggleSidebar();
+        }
+    });
+
+    sidebar?.addEventListener('mouseleave', () => {
+        // Only collapse if currently expanded
+        if (sidebar.classList.contains('w-64')) {
+            toggleSidebar();
+        }
+    });
+
+    /* const button = document.createElement('button');
+    button.onclick = toggleSidebar;
+    button.className = `w-full p-4 hover:bg-gray-700 focus:outline-none`;
+    button.innerHTML = `
+        <div class="flex items-center">
+            <span class="mr-3 text-xl">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+            </span>
+            <span data-sidebar-text class="hidden font-semibold">Menu</span>
+        </div>
+    `;
+
+    sidebar?.insertBefore(button, sidebar.firstChild); */
+
+    toggleSidebar; // om () öppnas direkt. Funkar med bara onClick från button?
+
+    console.log('Creating NAV');
+
+    const catBtnContainer = document.createElement('nav');
+    console.log('nav:', catBtnContainer);
+
+    catBtnContainer.innerHTML = `
+        <a href="/src/handouts/handouts.html?category=Konstanter" class="flex items-center px-4 py-3 hover:bg-gray-700">
+            <span class="mr-3 text-xl"
+                ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.499 8.248h15m-15 7.501h15" />
+                </svg>
+            </span>
+            <span data-sidebar-text class="hidden">Konstanter</span>
+        </a>
+        <a href="/src/handouts/handouts.html?category=TypeScript" class="flex items-center px-4 py-3 hover:bg-gray-700">
+            <span class="mr-3 text-xl"
+                ><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24">
+                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor">
+                        <path d="M2.5 12c0-4.478 0-6.718 1.391-8.109S7.521 2.5 12 2.5c4.478 0 6.718 0 8.109 1.391S21.5 7.521 21.5 12c0 4.478 0 6.718-1.391 8.109S16.479 21.5 12 21.5c-4.478 0-6.718 0-8.109-1.391S2.5 16.479 2.5 12"/>
+                        <path d="M18 12h-1.8a1.2 1.2 0 0 0-1.2 1.2v.6a1.2 1.2 0 0 0 1.2 1.2h.6a1.2 1.2 0 0 1 1.2 1.2v.6a1.2 1.2 0 0 1-1.2 1.2H15m-6.5-6h2m2 0h-2m0 0v6"/>
+                    </g>
+                </svg>
+            </span>
+            <span data-sidebar-text class="hidden">TypeScript</span>
+        </a>
+        <a href="/src/handouts/handouts.html?category=Loopar" class="flex items-center px-4 py-3 hover:bg-gray-700">
+            <span class="mr-3 text-xl"
+                ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7 48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7 48.656 48.656 0 0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3-3 3" />
+                </svg>
+            </span>
+            <span data-sidebar-text class="hidden">Loopar</span>
+        </a>
+    `;
+    sidebar?.appendChild(catBtnContainer);
+    // renderCategories(categories)
+});
+
+// [x] 1. Fetch categories
 async function fetchCategories(): Promise<Categories[]> {
     try {
-        const url = 'http://localhost:3000/api/categories/all';
+        const url = 'http://localhost:3000/api/categories/get';
         //! get behövs väl inte specifieras?
 
         const response = await fetch(url);
@@ -21,14 +103,7 @@ async function fetchCategories(): Promise<Categories[]> {
     }
 }
 
-addEventListener('DOMContentLoaded', () => {
-    toggleSidebar; // om () öppnas direkt
-    //renderCategories(categories)
-});
-
-function renderCategories(categories: Categories[]) {
-    const catContainer = document.querySelector('#cat-container');
-}
+// [x] 2. Render #sidebar-container
 function toggleSidebar() {
     const sidebarContainer = document.querySelector('#sidebar-container') as HTMLDivElement;
     const textElements = document.querySelectorAll('[data-sidebar-text]');
@@ -52,6 +127,10 @@ function toggleSidebar() {
         });
     }
 }
+
+/* function renderCategories(categories: Categories[]) {
+    const catContainer = document.querySelector('#cat-container');
+} */
 
 // Gör global
 (window as any).toggleSidebar = toggleSidebar;
