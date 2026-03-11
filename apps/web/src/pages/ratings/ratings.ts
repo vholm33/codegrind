@@ -30,9 +30,9 @@ function renderAllQuestions(questionData: CodeQuestion[]): void {
             /* make cards */
             .map(
                 (q, index) => `
-                <div class="bg-slate-900 border my-2">
+                <div class="mb-6">
                     <!-- <div>${q.categoryName}</div> -->
-                    <div class="text-center p-4">${q.codeQuestion}</div>
+                    <div class="text-center mt-2 p-4">${q.codeQuestion}</div>
                     <div data-editor-index="${index}"></div>
                     <div rating-stars-index="${index}"></div
                 </div>
@@ -42,7 +42,7 @@ function renderAllQuestions(questionData: CodeQuestion[]): void {
 
         // Då kan inte renderas
         questionContainer.innerHTML = `
-                <div>
+                <div class="w-full h-full  border my-2 rounded-xl mb-4">
                     ${questionsHTML}
                 </div>
 
