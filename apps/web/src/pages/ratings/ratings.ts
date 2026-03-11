@@ -5,15 +5,19 @@ import { CodeEditor } from '../../components/Editor.js';
 let editor: CodeEditor | null = null;
 
 addEventListener('DOMContentLoaded', async () => {
+    // GET category from url
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get('category');
+    console.log('cat:', category);
+
     const questionData = await fetchCodeQuestions();
     console.log(questionData);
 
-    // Grid Layout
-    // 1. RENDER category
-    // 2. RENDER codeQuestion
-    renderAllQuestions(questionData);
-    // 3. RENDER codeAnswer (in editor without being able to edit?)
+    const filteredQuestions = category ? questionData.filter((q) => q.categoryName === category) : questionData;
+    console.log(`Filtrerade frågor för ${category || 'alla kategorier'}`, filteredQuestions);
 
+    // Grid Layout
+    renderAllQuestions(filteredQuestions);
     //? RENDER stars to click as ratings
     renderRatingStars(questionData.length);
 });

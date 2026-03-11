@@ -9,7 +9,7 @@
             href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>"
         />
 
-        <link rel="stylesheet" href="./handouts.css" />
+        <link rel="stylesheet" href="../index.css">
     </head>
     <body class="bg-gray-900 text-white">
         <header class="grid h-14 grid-cols-3 items-center border-b-2 bg-gray-950 p-4">
@@ -45,16 +45,56 @@
                     class="w-14 bg-gradient-to-b from-gray-800 to-gray-900 transition-all duration-300"
                 ></div>
             </aside>
-            <main class="flex min-h-screen bg-gray-900 text-white">
+            <main class="w-full flex flex-col justify-center min-h-screen bg-gray-900 text-white">
+                <nav class="w-full">
+                    <div class="m-4 flex justify-around">
+                        <button>
+                            <a href="./handouts.html?category=Konstanter">Konstanter</a>
+                        </button>
+                        <button>
+                            <a href="./handouts.html?category=Loopar">Loopar</a>
+                        </button>
+                        <button>
+                            <a href="./handouts.html?category=TypeScript">TypeScript</a>
+                        </button>
+                        <button>
+                            <a href="./handouts.html?category=Metoder">Metoder</a>
+                        </button>
+                    </div>
+                </nav>
+
                 <!-- Category container to add handouts to -->
-                <section class="flex flex-1 items-start justify-center p-10">
+                <section class="w-full flex flex-1 items-start justify-center p-10">
                     <div id="handout" class="w-full max-w-3xl rounded-xl bg-gray-800 p-8 shadow-lg">
                         <!-- Handouts will be dynamically added here -->
                     </div>
+                </section>
+
+                <!-- Dynamic questions & rating -->
+                <section class="h-full rounded-md border bg-gray-950">
+                    <header class="">
+                        <h2>Kodfrågor och betygsättning</h2>
+                    </header>
+                    <main>
+                        <!-- Render questions and rating stars -->
+                        <!-- Are connected through id -->
+                        <!-- Users sqlId is also needed -->
+                        <div id="grid-container">
+                            <div id="question-container"></div>
+                            <!-- rating render sker i question-container för varje fråga -->
+                            <!-- <div id="rating-container"></div> -->
+                        </div>
+                    </main>
+                    <footer>
+                        <button class="rounded-md border bg-blue-500 px-2 hover:bg-blue-600">
+                            <a href="../../quizSession.html">Start Quiz</a>
+                        </button>
+                    </footer>
                 </section>
             </main>
         </div>
     </body>
     <script type="module" src="../utilities/sidebar.js"></script>
     <script type="module" src="./handouts.ts"></script>
+    <script type="module" src="../pages/ratings/ratings.ts"></script>
 </html>

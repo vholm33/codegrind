@@ -16,10 +16,11 @@ document.addEventListener("DOMContentLoaded", async() => {
 
     if (category) {
         handout.innerHTML = `
-        <h1 class="mb-4 text-3xl font-bold text-blue-400">${category.name}</h1> 
+        <header>
+            <h1 class="mb-4 text-3xl text-blue-400">${category.name}</h1>
+        </header>
         <p class="text-lg leading-relaxed text-gray-300">${category.handout}</p>
         `
     }
     console.log('category from url', selectedCategory)
 })
-   
