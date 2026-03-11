@@ -23,6 +23,10 @@ export async function getAllCategoriesController(_req: Request, res: Response) {
     }
 }
 
+export async function funcName(param:any) {
+
+}
+
 export async function getCategoryById(id: number) {
     const [rows]: any = await pool.query('SELECT * FROM categories WHERE id = ?', [id]);
     return rows[0];

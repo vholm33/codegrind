@@ -19,7 +19,7 @@
         "apps/shared/"
     ],
     "scripts": {
-        "dev": "npm run dev --workspace=api",
+        "dev": "concurrently --prefix-colors \"cyan,yellow\" --names \"[BACK],[FRONT]\" \"npm run dev:front\" \"npm run dev:back\"",
         "dev:back": "npm run dev --workspace=api",
         "dev:front": "npm run dev --workspace=web",
         "build": "concurrently --prefix-colors \"cyan,yellow\" --names \"[BACK],[FRONT]\" \"npm run build:front\" \"npm run build:back\"",

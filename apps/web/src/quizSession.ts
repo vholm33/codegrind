@@ -1,5 +1,4 @@
 import type { CodeQuestion } from '@shared/types.js';
-
 import { CodeEditor } from './components/Editor.js';
 /* Hantera quiz-sessionen */
 
@@ -16,24 +15,53 @@ import { CodeEditor } from './components/Editor.js';
 const codeQuestionEl = document.querySelector('#code-question') as HTMLParagraphElement;
 const form = document.querySelector('form') as HTMLFormElement;
 const editorContainerEl = document.querySelector('#code-editor-container') as HTMLElement | null;
-const feedbackEl = document.querySelector('#feedback');
+const feedbackEl = document.querySelector('#feedback') as HTMLElement;
 const categoryEl = document.querySelector('#category-name') as HTMLElement;
 // const submitBtn = document.querySelector('button[type="submit"]') as HTMLButtonElement;
+const progressbarEl = document.querySelector('#status') as HTMLProgressElement;
 
-let currentQuestion: CodeQuestion | null = null;
-let attempts: number = 0;
+type Attempts = 0 | 1 | 2 | 3;
 const MAX_ATTEMPTS: number = 3;
+
+// State
+let sessionQuestions: CodeQuestion[] = []; // spara alla frågor i array
+let currentQuestionIndex: number = 0; // spara nuvarande frågas index
+let currentQuestion: CodeQuestion | null = null;
+
 let canSubmit: boolean = true;
+let attempts: Attempts = 0;
+let points: number = 0;
+let questionResults: QuestionResult[] = [];
 
 // Editor state ?
 let editor: CodeEditor | null = null;
 
-if (editorContainerEl) {
-    editor = new CodeEditor(editorContainerEl);
-    console.log(`CodeEditor initialised`);
-} else {
-    console.error(`‼️ editor contaner not found`);
+function initEditor(): CodeEditor | null {
+    if (editorContainerEl) {
+        editor = new CodeEditor(editorContainerEl);
+        console.log(`CodeEditor initialised`);
+        return editor;
+    } else {
+        console.error(`‼️ editor contaner not found`);
+        return null;
+    }
 }
+
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('Quiz session börjar');
+
+    // 1. Initiera CodeEditor
+    editor = initEditor();
+
+    const questionData = await fetchCodeQuestions();
+
+    renderCodeQuestion(questionData); // OK
+
+    // Vänta kort innan fokuserar i editor
+    setTimeout(() => {
+        editor?.focus();
+    }, 150);
+});
 
 async function fetchCodeQuestions(): Promise<CodeQuestion[]> {
     console.groupCollapsed(`fetchCodeQuestions()`);
@@ -75,56 +103,63 @@ async function renderCodeQuestion(questionData: CodeQuestion[]) {
     console.log(`renderCodeQuestion()...`); // OK
 
     //! const codeQuestionEl = document.querySelector('#code-question');
-    if (!categoryEl) {
-        console.error(`categoryEl finns inte`);
+    if (!categoryEl || !codeQuestionEl || !progressbarEl) {
+        console.error(`Element saknas`);
         return;
     }
-    if (!codeQuestionEl) {
-        console.error('codeQuestion element finns inte');
-        return; // behövs för att TS ska veta att är safe
-    }
-
-    console.log(`hide feedback...`);
-    feedbackEl?.classList.add('hidden');
 
     console.log('questionData: ', questionData);
 
+    const totalQuestions = questionData.length;
+    progressbarEl.max = totalQuestions;
+    progressbarEl.value = 5;
+
+    // Randomise order
+    const shuffledQuestions = [...questionData].sort(() => Math.random() - 0.5);
+
     // ====== QUIZ LOOP =====
-    for (const question of questionData) {
+    for (const question of shuffledQuestions) {
         //! const categoryName = getCategoryName(question.categoryId);
 
         console.log(question);
         // console.log(questionData[questions]); for in
 
+        console.debug(`SET currentQuestion`);
+        console.debug(`SET attempts = 0`);
+        console.debug(`SET canSubmit = true`);
         currentQuestion = question; // Sätt frågan
-        attempts = 0;
+        attempts = 0; // Ställ om till 0
         canSubmit = true;
 
         categoryEl.innerHTML = question.categoryName;
+        // Display Question
         codeQuestionEl.innerHTML = question.codeQuestion;
+        console.info('codeQuestionEl.innerHTML', codeQuestionEl.innerHTML);
         console.log(`currentQuestion:`, currentQuestion);
 
-        console.warn(`nollställ CodeEditor...`);
-        console.log(`ta bort highlights och sätt text till ''`);
+        console.info(`nollställ CodeEditor...`);
+        console.info(`ta bort highlights och sätt text till ''`);
         editor?.clearHighlights();
         editor?.setValue('');
+        console.info(`hide feedback...`);
+        feedbackEl?.classList.add('hidden');
 
         //! (not yet) editor?.setValue(''); // Nollställ CodeEditor
         // ska visa kvar vad som blev fel
 
-        // Display Question
-        codeQuestionEl.innerHTML = `${question.codeQuestion}`;
-
-        // WAIT for answer
-        // get answer from
+        let resolveNext: (() => void) | null = null; // spara resolvefunktionen
 
         await new Promise<void>((resolve) => {
+            resolveNext = resolve;
+
             const submitHandler = (event: Event) => {
                 event.preventDefault();
-
                 if (!canSubmit) return;
 
-                handleSubmit(event);
+                /*
+
+                */
+                handleSubmit(event, resolveNext);
 
                 const keyHandler = (e: KeyboardEvent) => {
                     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
@@ -140,25 +175,6 @@ async function renderCodeQuestion(questionData: CodeQuestion[]) {
             form.addEventListener('submit', submitHandler);
         });
     }
-
-    // 0. Ränsa fråge-paragraf
-    /*    console.log(`writing test in paragraph`);
-    console.log(codeQuestionEl.innerHTML);
-    codeQuestionEl.innerHTML = 'test';
-    console.log(codeQuestionEl.innerHTML); */
-
-    // 1. Visa första frågan
-    // 2. Ränsa fråge-paragraf
-    //codeQuestionEl.innerHTML = '';
-
-    /* questionData.forEach((q) => {
-        console.log(q.codeQuestion);
-        console.log(q.codeAnswer);
-    }); */
-    /*  // Iterate questions
-    for (const question in questionData) {
-        console.log('question:', question);
-    } */
 }
 
 interface FeedbackItem {
@@ -167,80 +183,179 @@ interface FeedbackItem {
     startIndex: number;
     endIndex: number;
 }
-/* function analyseAnswer(): FeedbackItem[] {
-    const feedback: FeedbackItem[] = [];
 
-    // 1. COMPARE userInput with stored answer
+interface QuestionResult {
+    questionId: number;
+    categoryId?: number;
+    points: number;
+    attempts: number;
+    isCorrect: boolean;
+}
 
-    // 2.
-} */
+function calculatePoints(attempts: number): number {
+    switch (attempts) {
+        case 1:
+            return 5;
+        case 2:
+            return 3;
+        case 3:
+            return 1;
+        default:
+            return 0;
+    }
+}
 
-function handleSubmit(event: Event): 'correct' | 'incorrect' | 'max-tries' {
+function showSuccessFeedback(feedbackEl: HTMLElement | null, points: number): void {
+    if (feedbackEl) {
+        editorContainerEl?.classList.add('bg-cyan-500');
+        feedbackEl.innerHTML = `
+            <div class="flex gap-4">
+                <div class="shrink-0 bg-green-500 p-2 border rounded-md text-white">
+                    Rätt!
+                </div>
+                <div class="flex-1 rounded-md border bg-green-900 py-2 text-center text-green-400 p-2">
+                    Du fick ${points} poäng!
+                </div>
+            </div>
+            `;
+
+        feedbackEl.classList.remove('hidden');
+    }
+}
+
+function handleSubmit(event: Event, nextQuestion: (() => void) | null): 'correct' | 'incorrect' | 'max-tries' {
     event.preventDefault();
 
     if (!canSubmit) return 'max-tries';
+
+    // Tar bort submittion
+    if (attempts >= MAX_ATTEMPTS) {
+        canSubmit = false;
+    }
+
     attempts++;
-    console.info(`attempts++`);
+    console.log(`=========( Attempt: ${attempts}/${MAX_ATTEMPTS} )==========`);
 
-    console.log(`=========( Handle Submit: Attempt: ${attempts}/${MAX_ATTEMPTS} )==========`);
-
-    // När submit --> hämtar userInput från Editor
     const userAnswer = normaliseCode(editor?.getValue() ?? '');
     const correctAnswer = normaliseCode(currentQuestion?.codeAnswer ?? '');
+    const isCorrect = userAnswer === correctAnswer;
 
-    // Check if answer is too short
-    if (userAnswer.length < correctAnswer.length) {
-        if (feedbackEl) {
-            feedbackEl.textContent = `Ditt svar är för kort. Det saknas (${correctAnswer.length - userAnswer.length}) karaktärer`;
-            console.log('feedback remove "hidden"');
-            feedbackEl.classList.remove('hidden'); // Visa
-        }
+    // Om användarens svar är för kort
+    const isTooShort: boolean = userAnswer.length < correctAnswer.length;
+    const missingChars: number = isTooShort ? correctAnswer.length - userAnswer.length : 0;
 
-        //! alert(`Svar för kort! Du har ${MAX_ATTEMPTS - attempts} försök kvar.`);
-    }
-
+    // 2. MAX TRIES
+    // Handle incorrect answer (show feedback, highlight, etc.)
     const ranges = compareAnswers(userAnswer, correctAnswer);
+    editor?.highlightText(ranges);
 
-    console.info(`ranges AFTER comparison:`, ranges);
-
-    // ranges kopplar karaktär med CSS till editor
-    // 1. RÄTT "cm-correct-highlight"
-    // 1. FEL "cm-incorrect-highlight"
-    if (editor) {
-        console.log(`trying to clearHighlights()...`);
-        editor.clearHighlights();
-        console.log(`CALL highlight text ranges in editor class`);
-        console.log(`highlightText(ranges) --> ranges:`, ranges);
-        editor.highlightText(ranges);
-
-        console.debug(`🪳 Focus in editor again for next attempt`);
-        editor.focus();
+    // 1. CORRECT
+    if (isCorrect) {
+        return handleCorrectAnswer(nextQuestion);
     }
 
-    // IF correct but characters missing
+    // 2. MAX-TRIES, samma IF: hanterar UI logik
+    if (attempts >= MAX_ATTEMPTS) {
+        return handleMaxAttempts(correctAnswer, nextQuestion); // RETURNS: 'max-tries'
+    }
 
-    /* hanterar redan
-    // 1. IF 100% characters correct
-    if (userAnswer === correctAnswer) {
-        console.log('Korrekt!', correctAnswer);
-
-        // Sätt bakgrundsfärg till grön
-
-        // 2. IF any character correct
+    // 3. INCORRET
+    if (feedbackEl) {
+        // Show remaining attempts
+        return handleIncorrectAnswer(isTooShort, missingChars); // RETURNS: 'incorrect'
     } else {
-        // 3. ELIF 0% characters correct
-
-        console.log('FEL!!');
-        console.log(`userAnswer: ${userAnswer}`);
-        console.log(`correctAnswer: ${correctAnswer}`);
-
-        // Sätt bg till röd
+        console.error('Returning feedback even though feedbackEl does nott exist');
+        return 'incorrect';
     }
-*/
-    // Focus i editor efter submit
+}
+// 1. CORRECT
+function handleCorrectAnswer(nextQuestion: (() => void) | null): 'correct' {
+    points = calculatePoints(attempts);
+
+    if (currentQuestion) {
+        questionResults.push({
+            questionId: currentQuestion.id,
+            points: points,
+            attempts: attempts,
+            isCorrect: true,
+        });
+        console.info('Pushed to questionResults:', questionResults);
+    }
+
+    console.log(`RÄTT! Du fick ${points} poäng`);
+
+    // Show success message
+    showSuccessFeedback(feedbackEl, points);
+
+    console.info('canSubmit satt till ', (canSubmit = false));
+
+    // Move to next question after delay
     setTimeout(() => {
-        editor?.focus();
-    }, 100);
+        editorContainerEl?.classList.remove('bg-lime-500');
+        if (nextQuestion) nextQuestion();
+    }, 3000);
+
+    return 'correct';
+}
+// 2. MAX-TRIES
+function handleMaxAttempts(correctAnswer: string, nextQuestion: (() => void) | null): 'max-tries' {
+    canSubmit = false;
+
+    if (feedbackEl) {
+        editor?.setValue(correctAnswer);
+        editorContainerEl?.classList.add('bg-lime-500');
+
+        feedbackEl.innerHTML = `
+            <div class="flex gap-4">
+                <div class="shrink-0 bg-red-500 p-2 border rounded-md text-white">
+                    Inga fler försök
+                </div>
+                <div class="flex-1 rounded-md border bg-red-900 py-2 text-center text-red-400 p-2">
+                    Rätt svar nedan:
+                </div>
+            </div>
+            `;
+        feedbackEl.classList.remove('hidden');
+    }
+
+    setTimeout(() => {
+        editorContainerEl?.classList.remove('bg-lime-500');
+        if (nextQuestion) nextQuestion();
+    }, 8000);
+
+    return 'max-tries';
+}
+// 3. INCORRET
+function handleIncorrectAnswer(isTooShort: boolean, missingChars: number): 'incorrect' {
+    // Show remaining attempts
+    if (isTooShort) {
+        // Hur många karaktärer saknas?
+        feedbackEl.innerHTML = `
+            <div class="flex gap-4">
+                <div class="shrink-0 bg-cyan-500 p-2 border rounded-md text-white">
+                    Försök kvar: ${MAX_ATTEMPTS - attempts}
+                </div>
+                <div class="flex-1 rounded-md border bg-yellow-900 py-2 text-center text-yellow-400 p-2">
+                    Ditt svar är för kort. Det saknas <span class="text-red-500 rounded-xl bg-red-950 p-1 font-bold">${missingChars}</span> ${missingChars === 1 ? 'karaktär' : 'karaktärer'}
+                </div>
+            </div>
+        `;
+    } else {
+        // Vanligt felmeddelande
+        feedbackEl.innerHTML = `
+                <div class="flex gap-4">
+                    <div class="shrink-0 bg-red-500 p-2 border rounded-md text-white">
+                        Försök kvar: ${MAX_ATTEMPTS - attempts}
+                    </div>
+                    <div class="flex-1 rounded-md border bg-yellow-900 py-2 text-center text-yellow-400 p-2">
+                        Det saknas
+                    </div>
+                </div>
+            `;
+    }
+
+    feedbackEl.classList.remove('hidden');
+    editor?.focus();
 
     return 'incorrect';
 }
@@ -301,24 +416,21 @@ function compareAnswers(userAnswer: string, correctAnswer: string) {
 
 // Normalisera kodsvaret från användaren
 function normaliseCode(code: string): string {
-    return code
-        .replace(/\s+/g, ' ') // Gör om alla nya rader till ' '
-        .trim();
+    return (
+        code
+            .replace(/\s+/g, ' ') // Gör om alla mellanrum till ett ' '
+            .replace(/\s*:\s*/g, ':') // Normalisera space runt ':'
+            .replace(/\s*,\s*/g, ',') // Normalisera space runt ','
+            .replace(/\s*=>\s*/g, '=>') // Normalisera space runt '=>'
+            .replace(/\s*=\s*/g, '=') // Normalisera space runt '='
+            .replace(/\s*==\s*/g, '==') // Normalisera space runt '=='
+            .replace(/\s*===\s*/g, '===') // Normalisera space runt '==='
+            // OPERATORS
+            .replace(/\s*\+\s*/g, '+') // Normalisera space runt '+'
+            .replace(/\s*-\s*/g, '-') // Normalisera space runt '-'
+            .replace(/\s*\/\s*/g, '/') // Normalisera space runt '/'
+            .trim()
+    );
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('Quiz session börjar');
-    // initEditor?
-
-    const questionData = await fetchCodeQuestions();
-    // console.log(`calling renderCodeQuestion with questionData`);
-
-    //! form.addEventListener('submit', handleSubmit);
-
-    renderCodeQuestion(questionData); // OK
-
-    // Vänta kort
-    setTimeout(() => {
-        editor?.focus();
-    }, 100);
-});
+// Rendera feedback med funktion

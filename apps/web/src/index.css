@@ -2,7 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Code Editor */
+h1 {
+    @apply text-2xl;
+}
+h2 {
+    @apply text-xl;
+}
+h3 {
+    @apply text-lg;
+}
+
+button {
+    @apply rounded-md border bg-blue-500 px-2 hover:bg-blue-600;
+}
+
+[data-rating] {
+    @apply text-yellow-700 hover:animate-spin hover:text-yellow-500 hover:transition hover:delay-150 hover:duration-1000;
+}
+
+/* Code Editor !!! flytta till egen css fil och paths där laddas in */
+/* #code-editor-container {
+    @apply text-lg;
+} */
+
+.cm-line,
+.cm-gutterElement {
+    @apply text-lg;
+}
 /* Gutter */
 .cm-gutter,
 .cm-foldGutter,
@@ -21,13 +47,12 @@
 .cm-correct-highlight,
 .cm-incorrect-highlight {
     mix-blend-mode: normal;
-    border-radius: 2px;
 }
 
 .cm-correct-highlight {
-    background-color: rgba(34, 197, 94, 0.25) !important;
+    @apply border-b-2 border-lime-500;
 }
 
 .cm-incorrect-highlight {
-    background-color: rgba(239, 68, 68, 0.25) !important;
+    @apply bg-red-500;
 }

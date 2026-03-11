@@ -1,12 +1,12 @@
 import type { Request, Response } from 'express';
 import {
-    addCodeQuestionRepo,
+    // addCodeQuestionRepo,
     getAllCodeQuestionsRepo,
     getAllQuestionsRepo,
 } from '../repositories/codeQuestions.repo.js';
 import type { CodeQuestion } from '@shared/types.js';
 
-export async function addCodeQuestionController(req: Request, res: Response) {
+/* export async function addCodeQuestionController(req: Request, res: Response) {
     try {
         console.log('[CONTROLLER] addCodeQuestionController()');
         const { codeTitle, codeQuestion, codeAnswer, categoryName } = req.body;
@@ -42,7 +42,7 @@ export async function addCodeQuestionController(req: Request, res: Response) {
             error: error.message,
         });
     }
-}
+} */
 
 export async function getCodeQuestionController(req: Request, res: Response) {
     try {
@@ -80,7 +80,7 @@ export async function getAllQuestions(_req: Request, res: Response<{ data: CodeQ
         console.log('questionData:', questionData);
 
         return res.status(200).json({
-            data: questionData.data,
+            data: questionData.data || [],
         });
     } catch (error: any) {
         return res.status(500).json({

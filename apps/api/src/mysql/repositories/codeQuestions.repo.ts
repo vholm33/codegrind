@@ -1,8 +1,8 @@
-import type { Pool, ResultSetHeader } from 'mysql2';
+import type { Pool, ResultSetHeader, RowDataPacket } from 'mysql2';
 import pool from '../db/mysql.js';
 import type { CodeQuestion } from '@shared/types.js';
 
-export async function addCodeQuestionRepo(input: CodeQuestion) {
+/* export async function addCodeQuestionRepo(input: CodeQuestion) {
     try {
         console.log('[REPO] addCodeQuestionRepo()');
         console.log('[REPO] input:', input);
@@ -31,7 +31,7 @@ export async function addCodeQuestionRepo(input: CodeQuestion) {
             sqlMessage: error.sqlMessage,
         };
     }
-}
+} */
 
 export async function getAllCodeQuestionsRepo(id: number) {
     try {
@@ -60,10 +60,25 @@ export async function getAllCodeQuestionsRepo(id: number) {
         };
     }
 }
+
+interface QuestionRow extends RowDataPacket {
+    id: number;
+    categoryId: number | null;
+    codeQuestion: string;
+    codeAnswer: string;
+    categoryName: string | null;
+}
+
 // Get question and categoryName
-export async function getAllQuestionsRepo() {
+export async function getAllQuestionsRepo(): Promise<{
+    success: boolean;
+    data?: CodeQuestion[];
+    error?: string;
+    sqlMessage?: any;
+}> {
     try {
-        const [result]: any = await pool.query<ResultSetHeader>(`
+        //? RowDataPacket[] from mysql2
+        const [rows]: any = await pool.query<QuestionRow[]>(`
             SELECT
                 q.id,
                 q.categoryId,
@@ -75,10 +90,18 @@ export async function getAllQuestionsRepo() {
             ORDER BY q.id
         `);
 
-        console.log(`[REPO] result: ${result}`);
+        console.log('[REPO] result:', rows);
+
+        const questions: CodeQuestion[] = rows.map((row: any) => ({
+            id: row.id,
+            categoryName: row.categoryName, // Tidigare codeTitle
+            codeQuestion: row.codeQuestion,
+            codeAnswer: row.codeAnswer,
+        }));
+        console.log('[REPO] found ' + questions.length + 'questions')
         return {
             success: true,
-            data: result,
+            data: questions,
         };
     } catch (error: any) {
         return {

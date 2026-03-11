@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-    addCodeQuestionController,
+    // addCodeQuestionController,
     getCodeQuestionController,
     getAllQuestions
 
@@ -8,7 +8,7 @@ import {
 
 const router = express.Router();
 
-router.post('/add', addCodeQuestionController);
+// router.post('/add', addCodeQuestionController);
 router.get('/all', getAllQuestions)
 router.get('/getAll', getCodeQuestionController) // kombination med mongoDB
 export default router;
