@@ -1,6 +1,7 @@
-// 1. fetch mot api (om har route) --> name & handout
+import { marked } from "marked"
+import hljs from "highlight.js"
+import "highlight.js/styles/atom-one-dark.css"
 
-// 2. rendera beroende på klickad kategori från sidebaren
 document.addEventListener("DOMContentLoaded", async() => {
 
     const handout = document.getElementById("handout") as HTMLElement
@@ -15,11 +16,17 @@ document.addEventListener("DOMContentLoaded", async() => {
     const category = categories.find((c: any) => c.name === selectedCategory)
 
     if (category) {
+
+        console.log(category.handout)
+
+        const html = await marked.parse(category.handout)
+
         handout.innerHTML = `
         <h1 class="mb-4 text-3xl font-bold text-blue-400">${category.name}</h1> 
-        <p class="text-lg leading-relaxed text-gray-300">${category.handout}</p>
+        <div class="prose prose-invert max-w-none">${html}</div>
         `
+
+        hljs.highlightAll()
     }
-    console.log('category from url', selectedCategory)
 })
    

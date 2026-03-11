@@ -18,7 +18,9 @@
     "dependencies": {
         "@codemirror/lang-javascript": "^6.2.4",
         "@lezer/highlight": "^1.2.3",
-        "codemirror": "^6.0.2"
+        "codemirror": "^6.0.2",
+        "highlight.js": "^11.11.1",
+        "marked": "^17.0.4"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.27",
