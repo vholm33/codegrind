@@ -15,7 +15,10 @@ document.addEventListener("DOMContentLoaded", async() => {
     const category = categories.find((c: any) => c.name === selectedCategory)
 
     if (category) {
-        handout.innerHTML = `<h2>${category.name}</h2> <p>${category.handout}</p>`
+        handout.innerHTML = `
+        <h1 class="mb-4 text-3xl font-bold text-blue-400">${category.name}</h1> 
+        <p class="text-lg leading-relaxed text-gray-300">${category.handout}</p>
+        `
     }
     console.log('category from url', selectedCategory)
 })
