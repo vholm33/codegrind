@@ -88,6 +88,8 @@ app.get('/addProblem', (_req, res) => {
 
 app.get('/src', express.static(path.join(distPath, 'src')));
 
+app.use('/src', express.static(path.join(__dirname, '../../web/src')));
+
 app.listen(PORT, () => {
     console.log('Server running on port: ', PORT);
 });
