@@ -9,7 +9,7 @@
             href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>"
         />
 
-        <link rel="stylesheet" href="../index.css">
+        <link rel="stylesheet" href="../index.css" />
     </head>
     <body class="bg-gray-900 text-white">
         <header class="grid h-14 grid-cols-3 items-center border-b-2 bg-gray-950 p-4">
@@ -45,7 +45,7 @@
                     class="w-14 bg-gradient-to-b from-gray-800 to-gray-900 transition-all duration-300"
                 ></div>
             </aside>
-            <main class="w-full flex flex-col justify-center min-h-screen bg-gray-900 text-white">
+            <main class="flex min-h-screen w-full flex-1 flex-col items-center justify-center bg-gray-900 text-white">
                 <nav class="w-full">
                     <div class="m-4 flex justify-around">
                         <button>
@@ -64,25 +64,32 @@
                 </nav>
 
                 <!-- Category container to add handouts to -->
-                <section class="w-full flex flex-1 items-start justify-center p-10">
-                    <div id="handout" class="w-full max-w-3xl rounded-xl bg-gray-800 p-8 shadow-lg">
-                        <!-- Handouts will be dynamically added here -->
+                <section class="flex w-full flex-1 items-start justify-center p-10">
+                    <div id="handout" class="w-full max-w-3xl rounded-xl bg-gray-800 p-8 shadow-lg"></div>
+                </section>
+
+                <section class="flex w-full justify-center p-10">
+                    <div class="w-full max-w-5xl rounded-xl bg-gray-800 p-10 shadow-lg">
+                        <h1 id="handout-title" class="mb-6 text-3xl font-bold text-blue-400"></h1>
+                        <div id="handout-content" class="prose prose-invert max-w-none">
+                            <!-- Handouts will be dynamically added here -->
+                        </div>
                     </div>
                 </section>
 
                 <!-- Dynamic questions & rating -->
-                <section class="h-full border bg-gray-950 m-4 p-6 rounded-xl">
+                <section class="m-4 h-full rounded-xl border bg-gray-950 p-6">
                     <header class="p-4">
                         <h2>Kodfrågor och betygsättning</h2>
                     </header>
-                        <!-- Render questions and rating stars -->
-                        <!-- Are connected through id -->
-                        <!-- Users sqlId is also needed -->
-                        <div id="grid-container">
-                            <div id="question-container"></div>
-                            <!-- rating render sker i question-container för varje fråga -->
-                            <!-- <div id="rating-container"></div> -->
-                        </div>
+                    <!-- Render questions and rating stars -->
+                    <!-- Are connected through id -->
+                    <!-- Users sqlId is also needed -->
+                    <div id="grid-container">
+                        <div id="question-container"></div>
+                        <!-- rating render sker i question-container för varje fråga -->
+                        <!-- <div id="rating-container"></div> -->
+                    </div>
                     <footer>
                         <button class="rounded-md border bg-blue-500 px-2 hover:bg-blue-600">
                             <a href="../../quizSession.html">Start Quiz</a>
