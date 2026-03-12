@@ -6,8 +6,8 @@ import {
 
 const router = express.Router();
 
-router.post('/add', addRating);
+router.post('/ratings', addRating);
 
-router.get('/get', getRating)
+router.get('/ratings', getRating)
 
 export default router;

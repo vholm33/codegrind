@@ -1,17 +1,11 @@
 import type { Response, Request } from 'express';
-import type { Rating } from '../types/ratingTypes.js';
+import type { Rating } from '@shared/types.js';
 
 import { getAllCodeQuestionsRepo } from '../../mysql/repositories/codeQuestions.repo.js';
 //! import Rating from '../models/ratingModel.js'; (bara för mongoose)
 import { mdbConn } from '../connection.js';
 import { Db } from 'mongodb';
 
-interface GetRating {
-    sqlQuestionId: number; //
-    sqlUserId: number; // user.id
-    userRating: number;
-    comment?: string;
-}
 
 export async function addRating(req: Request, res: Response) {
     try {
@@ -46,7 +40,7 @@ export async function addRating(req: Request, res: Response) {
         // console.log('Waiting to save new user rating...');
         /* await addedRating.save(); */
 
-        await mdbConn.collection<GetRating>('ratings').insertOne({
+        await mdbConn.collection<Rating>('ratings').insertOne({
             sqlQuestionId: id,
             userRating: userRating,
             sqlUserId: sqlUserId
@@ -77,10 +71,10 @@ export async function getRating(req: Request, res: Response) {
     try {
         console.log('[CONTROLLER] getRatingsC(req, res)');
 
-        const collection = mdbConn.collection<GetRating>('ratings');
+        const collection = mdbConn.collection<Rating>('ratings');
 
         // get all
-        const allRatings: GetRating[] = await collection.find().toArray();
+        const allRatings: Rating[] = await collection.find().toArray();
         console.log(allRatings);
 
         return res.json({

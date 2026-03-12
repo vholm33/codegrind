@@ -41,9 +41,9 @@ addEventListener('DOMContentLoaded', (event) => {
             } */
 
             const result = await response.json();
-            console.log('Login SUCCESS', result);
+            console.log('Login SUCCESS', JSON.stringify(result, null, 2));
 
-            console.log(`Sparar user och token i localStorage`);
+            console.info(`Sparar user och token i localStorage`);
             // Spara användare och token i localStorage
             localStorage.setItem('token', result.token);
             localStorage.setItem('user', JSON.stringify(result.user));
