@@ -4,9 +4,8 @@ import { javascript } from '@codemirror/lang-javascript';
 import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
 import { autocompletion } from '@codemirror/autocomplete';
-
-import { StateEffect, StateEffectType, StateField } from '@codemirror/state';
-import { Decoration } from '@codemirror/view';
+import { StateEffect, StateEffectType, StateField, Prec } from '@codemirror/state';
+import { Decoration, keymap } from '@codemirror/view';
 
 // Override autocomplete
 const noAutocomplete = autocompletion({
@@ -16,6 +15,8 @@ const noAutocomplete = autocompletion({
 });
 
 type DecorationSet = ReturnType<typeof Decoration.set>;
+
+// [ ] Stoppa cmd+enter från att hoppa till nytt steg
 
 export class CodeEditor {
     private view: EditorView;
@@ -66,17 +67,28 @@ export class CodeEditor {
             if (update.docChanged) {
                 // Document changed, can emit events here
             }
-        })
+        });
 
         this.view = new EditorView({
             doc: initialDoc,
             extensions: [
                 basicSetup,
                 noAutocomplete,
+                Prec.highest(
+                    keymap.of([
+                        {
+                            key: 'Mod-Enter',
+                            run: () => {
+                                document.dispatchEvent(new CustomEvent('quiz:submit'));
+                                return true;
+                            },
+                        },
+                    ]),
+                ),
                 javascript({ typescript: true }),
                 syntaxHighlighting(ayuHighlightStyle),
                 this.highlightField,
-                inputListener
+                inputListener,
             ],
             parent: element,
         });
@@ -90,12 +102,12 @@ export class CodeEditor {
     }
 
     getValue(): string {
-        console.log(`getValue()`)
+        console.log(`getValue()`);
         return this.view?.state.doc.toString() || '';
     }
 
     setValue(newText: string): void {
-        if (!this.view) return
+        if (!this.view) return;
 
         this.view.dispatch({
             changes: {
@@ -144,22 +156,19 @@ export class CodeEditor {
 
         // Filter valid ranges
         const docLength = this.view.state.doc.length;
-        const validRanges = ranges.filter(({ from, to }) =>
-            from >= 0 && to <= docLength && from < to
-        )
+        const validRanges = ranges.filter(({ from, to }) => from >= 0 && to <= docLength && from < to);
         if (validRanges.length === 0) {
             this.clearHighlights();
-            return
+            return;
         }
-
 
         const decorations = Decoration.set(
             validRanges.map(({ from, to, className }) => Decoration.mark({ class: className }).range(from, to)),
         );
 
-         this.view.dispatch({
-             effects: this.setHighlights.of(decorations),
-         });
+        this.view.dispatch({
+            effects: this.setHighlights.of(decorations),
+        });
     }
 
     clearHighlights(): void {

@@ -1,13 +1,10 @@
 import express from 'express';
-import {
-    addRating,
-    getRating
-} from '../controllers/ratingController.js';
+import { addRating, getRating } from '../controllers/ratingController.js';
+import { verifyToken } from '../../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/ratings', addRating);
-
-router.get('/ratings', getRating)
+router.post('/ratings', verifyToken, addRating);
+router.get('/ratings', verifyToken, getRating);
 
 export default router;

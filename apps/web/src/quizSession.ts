@@ -19,6 +19,8 @@ const feedbackEl = document.querySelector('#feedback') as HTMLElement;
 const categoryEl = document.querySelector('#category-name') as HTMLElement;
 // const submitBtn = document.querySelector('button[type="submit"]') as HTMLButtonElement;
 const progressbarEl = document.querySelector('#status') as HTMLProgressElement;
+const progBarPercentageEl = document.querySelector('#progress-percentage') as HTMLSpanElement;
+const progressXN = document.querySelector('#progress-xn');
 
 type Attempts = 0 | 1 | 2 | 3;
 const MAX_ATTEMPTS: number = 3;
@@ -50,9 +52,45 @@ let attempts: Attempts = 0;
 let points: number = 0;
 let questionResults: QuestionResult[] = [];
 
-// Editor state ?
+//====== STATE ======
+let currentIndex: number = 0;
+let resolveNext: (() => void) | null = null;
+
 let editor: CodeEditor | null = null;
 
+// [x] 1. INIT CodeEditor
+// [x] 2. FETCH codeQuestions for quizSession
+// [x] 3. RENDER codeQuestions
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('Quiz session börjar');
+
+    // [x] 1. Initiera CodeEditor
+    editor = initEditor();
+
+    // [x] 2. FETCH codeQuestions
+    const codeQuestions = await fetchCodeQuestions();
+
+    /* form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleSubmit(e, resolveNext);
+    }); */
+    //? behövdes inte "quiz:submit"
+    document.addEventListener('submit', (e) => {
+        handleSubmit(e, resolveNext);
+    });
+
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            handleSubmit(e, resolveNext);
+        }
+    });
+
+    // [x] 3. RENDER codeQuestions
+    renderCodeQuestion(codeQuestions); // OK
+});
+
+// [x] 1. Init Editor
 function initEditor(): CodeEditor | null {
     if (editorContainerEl) {
         editor = new CodeEditor(editorContainerEl);
@@ -64,25 +102,7 @@ function initEditor(): CodeEditor | null {
     }
 }
 
-
-// 1. FETCH codeQuestions for quizSession
-// 2. RENDER codeQuestions
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('Quiz session börjar');
-
-    // 1. Initiera CodeEditor
-    editor = initEditor();
-
-    const questionData = await fetchCodeQuestions();
-
-    renderCodeQuestion(questionData); // OK
-
-    // Vänta kort innan fokuserar i editor
-    setTimeout(() => {
-        editor?.focus();
-    }, 150);
-});
-
+// [x] 2. FETCH codeQuestions
 async function fetchCodeQuestions(): Promise<CodeQuestion[]> {
     console.groupCollapsed(`fetchCodeQuestions()`);
 
@@ -110,64 +130,98 @@ async function fetchCodeQuestions(): Promise<CodeQuestion[]> {
             console.log(question.codeTitle);
             console.log(question.codeQuestion);
         }); */
-        console.groupEnd();
-
         return questions.data;
     } catch (error) {
         console.error('Error när hämtar frågor:', error);
         return [];
+    } finally {
+        console.groupEnd();
     }
 }
 
-async function renderCodeQuestion(questionData: CodeQuestion[]) {
+// [x] 3. RENDER codeQuestions
+async function renderCodeQuestion(codeQuestions: CodeQuestion[]) {
     console.log(`renderCodeQuestion()...`); // OK
 
     //! const codeQuestionEl = document.querySelector('#code-question');
-    if (!categoryEl || !codeQuestionEl || !progressbarEl) {
+    if (!categoryEl || !codeQuestionEl) {
         console.error(`Element saknas`);
         return;
     }
 
-    console.log('questionData: ', questionData);
-
-    const totalQuestions = questionData.length;
-    progressbarEl.max = totalQuestions;
-    progressbarEl.value = 5;
+    console.log('codeQuestions: ', codeQuestions);
 
     // Randomise order
-    const shuffledQuestions = [...questionData].sort(() => Math.random() - 0.5);
+    const shuffledQuestions = [...codeQuestions].sort(() => Math.random() - 0.5);
 
-    // ====== QUIZ LOOP =====
-    for (const question of shuffledQuestions) {
+    await quizLoop(shuffledQuestions);
+
+    // 0. Ränsa fråge-paragraf
+    /*    console.log(`writing test in paragraph`);
+    console.log(codeQuestionEl.innerHTML);
+    codeQuestionEl.innerHTML = 'test';
+    console.log(codeQuestionEl.innerHTML); */
+
+    // 1. Visa första frågan
+    // 2. Ränsa fråge-paragraf
+    //codeQuestionEl.innerHTML = '';
+
+    /* codeQuestions.forEach((q) => {
+        console.log(q.codeQuestion);
+        console.log(q.codeAnswer);
+    }); */
+    /*  // Iterate questions
+    for (const question in codeQuestions) {
+        console.log('question:', question);
+    } */
+}
+
+async function quizLoop(shuffledQuestions: CodeQuestion[]) {
+    loadQuestion(shuffledQuestions, 0);
+}
+function loadQuestion(questions: CodeQuestion[], index: number) {
+    console.group(`loadQuestion`);
+
+    let questionsLength = questions.length;
+
+    // Om quiz är slut
+    if (index >= questionsLength) {
+        return;
+    }
+
+    currentQuestion = questions[index] ?? null; // Blir null om undefined
+    // currentQuestionIndex = question
+    attempts = 0;
+    canSubmit = true;
+    updateQuestionUI(currentQuestion!, questionsLength, index); // Är inte null
+    setTimeout(() => editor?.focus(), 150);
+    resolveNext = () => loadQuestion(questions, index + 1);
+    console.groupEnd();
+}
+
+// ====== QUIZ LOOP =====
+/* async function quizLoop(shuffledQuestions: CodeQuestion[]) {
+    console.group(`quizLoop`);
+
+    for (const [index, question] of shuffledQuestions.entries()) {
+        console.group(`Fråga ${index + 1}/${shuffledQuestions.length}`);
+
         //! const categoryName = getCategoryName(question.categoryId);
-
         console.log(question);
-        // console.log(questionData[questions]); for in
+        // console.log(codeQuestions[questions]); for in
 
-        console.debug(`SET currentQuestion`);
-        console.debug(`SET attempts = 0`);
-        console.debug(`SET canSubmit = true`);
+        // Förbered nästa fråga
+        console.info(`FÖRBEREDER nästa fråga...`);
         currentQuestion = question; // Sätt frågan
         attempts = 0; // Ställ om till 0
         canSubmit = true;
+        console.info(`SPARA aktuell fråga i currentQuestion`);
+        console.info(`NOLSTÄLL räknare`);
+        console.info(`TILLÅT inlämning`);
 
-        categoryEl.innerHTML = question.categoryName;
-        // Display Question
-        codeQuestionEl.innerHTML = question.codeQuestion;
-        console.info('codeQuestionEl.innerHTML', codeQuestionEl.innerHTML);
-        console.log(`currentQuestion:`, currentQuestion);
+        updateQuestionUI(question);
 
-        console.info(`nollställ CodeEditor...`);
-        console.info(`ta bort highlights och sätt text till ''`);
-        editor?.clearHighlights();
-        editor?.setValue('');
-        console.info(`hide feedback...`);
-        feedbackEl?.classList.add('hidden');
-
-        //! (not yet) editor?.setValue(''); // Nollställ CodeEditor
-        // ska visa kvar vad som blev fel
-
-        let resolveNext: (() => void) | null = null; // spara resolvefunktionen
+        let resolveNext: (() => void) | null = null; // spara resolve-funktionen
 
         await new Promise<void>((resolve) => {
             resolveNext = resolve;
@@ -177,9 +231,6 @@ async function renderCodeQuestion(questionData: CodeQuestion[]) {
 
                 if (!canSubmit) return;
 
-                /*
-
-                */
                 handleSubmit(event, resolveNext);
 
                 const keyHandler = (e: KeyboardEvent) => {
@@ -195,26 +246,41 @@ async function renderCodeQuestion(questionData: CodeQuestion[]) {
             // once, true removes more attempts listeners
             form.addEventListener('submit', submitHandler);
         });
+        console.groupEnd();
     }
+    console.groupEnd();
+} */
 
-    // 0. Ränsa fråge-paragraf
-    /*    console.log(`writing test in paragraph`);
-    console.log(codeQuestionEl.innerHTML);
-    codeQuestionEl.innerHTML = 'test';
-    console.log(codeQuestionEl.innerHTML); */
+function updateQuestionUI(question: CodeQuestion, questionsLength: number, index: number) {
+    if (!categoryEl || !codeQuestionEl || !feedbackEl || !editor || !progressbarEl || !progBarPercentageEl || !progressXN) return;
+    // 1. Progress x/n
+    progressXN.innerHTML = `${index+1}/${questionsLength}`;
 
-    // 1. Visa första frågan
-    // 2. Ränsa fråge-paragraf
-    //codeQuestionEl.innerHTML = '';
+    // 2. Progress Bar
+    console.info(`updateQuestionUI - question`, question);
+    progressbarEl.max = questionsLength;
+    progressbarEl.value = index;
 
-    /* questionData.forEach((q) => {
-        console.log(q.codeQuestion);
-        console.log(q.codeAnswer);
-    }); */
-    /*  // Iterate questions
-    for (const question in questionData) {
-        console.log('question:', question);
-    } */
+    // 3. Progressbar Percentage
+    console.info('progBarPercentageEl:', progBarPercentageEl);
+    const percentage = Math.round((index / questionsLength) * 100);
+    progBarPercentageEl.innerHTML = `${percentage}%`;
+
+    categoryEl.innerHTML = question.categoryName;
+    // Display Question
+    codeQuestionEl.innerHTML = question.codeQuestion;
+    console.info('codeQuestionEl.innerHTML', codeQuestionEl.innerHTML);
+    console.log(`currentQuestion:`, currentQuestion);
+
+    console.info(`nollställ CodeEditor...`);
+    console.info(`ta bort highlights och sätt text till ''`);
+    editor?.clearHighlights();
+    editor?.setValue('');
+    console.info(`hide feedback...`);
+    feedbackEl?.classList.add('hidden');
+
+    //! (not yet) editor?.setValue(''); // Nollställ CodeEditor
+    // ska visa kvar vad som blev fel
 }
 
 interface FeedbackItem {
@@ -232,6 +298,7 @@ interface QuestionResult {
     isCorrect: boolean;
 }
 
+// ?
 function calculatePoints(attempts: number): number {
     switch (attempts) {
         case 1:
@@ -245,67 +312,65 @@ function calculatePoints(attempts: number): number {
     }
 }
 
-function showSuccessFeedback(feedbackEl: HTMLElement | null, points: number): void {
-    if (feedbackEl) {
-        editorContainerEl?.classList.add('bg-cyan-500');
-        feedbackEl.innerHTML = `
-            <div class="flex gap-4">
-                <div class="shrink-0 bg-green-500 p-2 border rounded-md text-white">
-                    Rätt!
-                </div>
-                <div class="flex-1 rounded-md border bg-green-900 py-2 text-center text-green-400 p-2">
-                    Du fick ${points} poäng!
-                </div>
-            </div>
-            `;
-
-        feedbackEl.classList.remove('hidden');
-    }
-}
-
+/**======( handleSubmit )======
+ *
+ * FUNCTIONS:
+ *  1. normaliseCode() # from userInput and correctAnswer
+ *  2. compareAnswers(userAnswer, correctAnswer) >> ranges
+ *  3. >> EDITOR.highlightText(ranges)
+ *
+ * IF CORRECT       --> handleCorrectAnswer(nextQuestion)                   --> showSuccessFeedback(feedbackEl, points)
+ * IF MAX-TRIES     --> handleMaxAttempts(correctAnswer, nextQuestion)
+ * IF INCORRECT     --> hanleIncorrectAnswer(isTooShort, missingChars)
+ */
 function handleSubmit(event: Event, nextQuestion: (() => void) | null): 'correct' | 'incorrect' | 'max-tries' {
     event.preventDefault();
+    console.group(`handleSubmit(event)`);
 
-    if (!canSubmit) return 'max-tries';
+    try {
+        if (!canSubmit) return 'max-tries';
 
-    // Tar bort submittion
-    if (attempts >= MAX_ATTEMPTS) {
-        canSubmit = false;
-    }
-
-    attempts++;
-    console.log(`=========( Attempt: ${attempts}/${MAX_ATTEMPTS} )==========`);
-
-    const userAnswer = normaliseCode(editor?.getValue() ?? '');
-    const correctAnswer = normaliseCode(currentQuestion?.codeAnswer ?? '');
-    const isCorrect = userAnswer === correctAnswer;
-
-    // Om användarens svar är för kort
-    const isTooShort: boolean = userAnswer.length < correctAnswer.length;
-    const missingChars: number = isTooShort ? correctAnswer.length - userAnswer.length : 0;
-
-    // 2. MAX TRIES
-    // Handle incorrect answer (show feedback, highlight, etc.)
-    const ranges = compareAnswers(userAnswer, correctAnswer);
-    editor?.highlightText(ranges);
-
-    // 1. CORRECT
-    if (isCorrect) {
-        return handleCorrectAnswer(nextQuestion);
+        // Tar bort submittion
+        if (attempts >= MAX_ATTEMPTS) {
+            canSubmit = false;
         }
 
-    // 2. MAX-TRIES, samma IF: hanterar UI logik
-    if (attempts >= MAX_ATTEMPTS) {
-        return handleMaxAttempts(correctAnswer, nextQuestion); // RETURNS: 'max-tries'
-    }
+        attempts++;
+        console.log(`=========( Attempt: ${attempts}/${MAX_ATTEMPTS} )==========`);
 
-    // 3. INCORRET
-    if (feedbackEl) {
-        // Show remaining attempts
-        return handleIncorrectAnswer(isTooShort, missingChars); // RETURNS: 'incorrect'
-    } else {
-        console.error('Returning feedback even though feedbackEl does nott exist');
-        return 'incorrect';
+        const userAnswer = normaliseCode(editor?.getValue() ?? '');
+        const correctAnswer = normaliseCode(currentQuestion?.codeAnswer ?? '');
+        const isCorrect = userAnswer === correctAnswer;
+
+        // Om användarens svar är för kort
+        const isTooShort: boolean = userAnswer.length < correctAnswer.length;
+        const missingChars: number = isTooShort ? correctAnswer.length - userAnswer.length : 0;
+
+        // 2. MAX TRIES
+        // Handle incorrect answer (show feedback, highlight, etc.)
+        const ranges = compareAnswers(userAnswer, correctAnswer);
+        editor?.highlightText(ranges);
+
+        // 1. CORRECT
+        if (isCorrect) {
+            return handleCorrectAnswer(nextQuestion);
+        }
+
+        // 2. MAX-TRIES, samma IF: hanterar UI logik
+        if (attempts >= MAX_ATTEMPTS) {
+            return handleMaxAttempts(correctAnswer, nextQuestion); // RETURNS: 'max-tries'
+        }
+
+        // 3. INCORRET
+        if (feedbackEl) {
+            // Show remaining attempts
+            return handleIncorrectAnswer(isTooShort, missingChars); // RETURNS: 'incorrect'
+        } else {
+            console.error('Returning feedback even though feedbackEl does nott exist');
+            return 'incorrect';
+        }
+    } finally {
+        console.groupEnd();
     }
 }
 // 1. CORRECT
@@ -337,6 +402,24 @@ function handleCorrectAnswer(nextQuestion: (() => void) | null): 'correct' {
 
     return 'correct';
 }
+function showSuccessFeedback(feedbackEl: HTMLElement | null, points: number): void {
+    if (feedbackEl) {
+        editorContainerEl?.classList.add('bg-cyan-500');
+        feedbackEl.innerHTML = `
+            <div class="flex gap-4">
+                <div class="shrink-0 bg-green-500 p-2 border rounded-md text-white">
+                    Rätt!
+                </div>
+                <div class="flex-1 rounded-md border bg-green-900 py-2 text-center text-green-400 p-2">
+                    Du fick ${points} poäng!
+                </div>
+            </div>
+            `;
+
+        feedbackEl.classList.remove('hidden');
+    }
+}
+
 // 2. MAX-TRIES
 function handleMaxAttempts(correctAnswer: string, nextQuestion: (() => void) | null): 'max-tries' {
     canSubmit = false;
@@ -395,7 +478,7 @@ function handleIncorrectAnswer(isTooShort: boolean, missingChars: number): 'inco
     }
 
     feedbackEl.classList.remove('hidden');
-        editor?.focus();
+    editor?.focus();
 
     return 'incorrect';
 }
@@ -460,11 +543,14 @@ function normaliseCode(code: string): string {
         code
             .replace(/\s+/g, ' ') // Gör om alla mellanrum till ett ' '
             .replace(/\s*:\s*/g, ':') // Normalisera space runt ':'
+            .replace(/\s*;\s*/g, ';') // Normalisera space runt ';'
             .replace(/\s*,\s*/g, ',') // Normalisera space runt ','
             .replace(/\s*=>\s*/g, '=>') // Normalisera space runt '=>'
             .replace(/\s*=\s*/g, '=') // Normalisera space runt '='
             .replace(/\s*==\s*/g, '==') // Normalisera space runt '=='
             .replace(/\s*===\s*/g, '===') // Normalisera space runt '==='
+            .replace(/\s*{\s*/g, '{') // Normalisera space runt {'
+            .replace(/\s*}\s*/g, '}') // Normalisera space runt }'
             // OPERATORS
             .replace(/\s*\+\s*/g, '+') // Normalisera space runt '+'
             .replace(/\s*-\s*/g, '-') // Normalisera space runt '-'

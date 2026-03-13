@@ -5,21 +5,27 @@ import { CodeEditor } from '../../components/Editor.js';
 let editor: CodeEditor | null = null;
 
 addEventListener('DOMContentLoaded', async () => {
-    // GET category from url
-    const urlParams = new URLSearchParams(window.location.search);
-    const category = urlParams.get('category');
-    console.log('cat:', category);
+    console.group(`Ratings Init()`);
+    
+    try {
+        // GET category from url
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get('category');
+        console.log('cat:', category);
 
-    const questionData = await fetchCodeQuestions();
-    console.log(questionData);
+        const questionData = await fetchCodeQuestions();
+        console.log(questionData);
 
-    const filteredQuestions = category ? questionData.filter((q) => q.categoryName === category) : questionData;
-    console.log(`Filtrerade frågor för ${category || 'alla kategorier'}`, filteredQuestions);
+        const filteredQuestions = category ? questionData.filter((q) => q.categoryName === category) : questionData;
+        console.log(`Filtrerade frågor för ${category || 'alla kategorier'}`, filteredQuestions);
 
-    // Grid Layout
-    renderAllQuestions(filteredQuestions);
-    //? RENDER stars to click as ratings
-    renderRatingStars(filteredQuestions);
+        // Grid Layout
+        renderAllQuestions(filteredQuestions);
+        //? RENDER stars to click as ratings
+        renderRatingStars(filteredQuestions);
+    } finally {
+        console.groupEnd();
+    }
 });
 
 function renderAllQuestions(questionData: CodeQuestion[]): void {
@@ -64,7 +70,7 @@ function renderAllQuestions(questionData: CodeQuestion[]): void {
 } */
 
 function renderRatingStars(questions: CodeQuestion[]): void {
-    console.groupCollapsed(`renderRatingStars()`);
+    console.group(`renderRatingStars()`);
 
     console.log('renderRatingStars(questions):', questions);
 
@@ -72,10 +78,13 @@ function renderRatingStars(questions: CodeQuestion[]): void {
     console.log('token', token);
 
     const userObj = localStorage.getItem('user');
-    console.log('user', userObj);
+    console.info('userObj', userObj);
 
     const user = userObj ? JSON.parse(userObj) : null;
-    console.log('user:', user);
+    const userId = user.id
+    console.info(`userId:`, userId)
+
+    //const userId
 
     const isLoggedIn = !!token && !!user; // hur skillnad token && user?
     if (!isLoggedIn) console.error('Användare inte inloggad. Visar ej ratings');
@@ -94,7 +103,7 @@ function renderRatingStars(questions: CodeQuestion[]): void {
         });
     }
 
-    questions.forEach((question, index) => {
+    questions.forEach((question: CodeQuestion, index: number) => {
         const ratingStarsContainer = document.querySelector(`[rating-stars-index="${index}"]`);
         if (ratingStarsContainer) {
             ratingStarsContainer.setAttribute('data-question-id', question.id.toString());
@@ -134,17 +143,18 @@ function renderRatingStars(questions: CodeQuestion[]): void {
                         const ratingValue = parseInt(rating);
 
                         try {
+                            const ratingData: Rating = {
+                                sqlQuestionId: questionId,
+                                sqlUserId: userId,
+                                userRating: ratingValue
+                            }
                             const response = await fetch('http://localhost:3000/api/ratings', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
                                     Authorization: `Bearer ${token}`,
                                 },
-                                body: JSON.stringify({
-                                    userId: user.id,
-                                    questionId: questionId,
-                                    rating: ratingValue,
-                                }),
+                                body: JSON.stringify(ratingData),
                             });
 
                             if (!response.ok) {

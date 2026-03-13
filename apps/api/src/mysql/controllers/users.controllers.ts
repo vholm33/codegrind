@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import type { AuthRequest } from '../../middleware/authMiddleware.js';
 import pool from '../db/mysql.js';
 
 import bcrypt from 'bcrypt';
@@ -97,4 +98,12 @@ export async function loginUserController(req: Request, res: Response) {
             error: error.message,
         });
     }
+}
+
+export function verifyTokenhandler(req: AuthRequest, res: Response): void {
+    res.status(200).json({
+        success: true,
+        message: 'Token är giltig',
+        user: req.user,
+    });
 }

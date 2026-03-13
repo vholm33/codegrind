@@ -12,3 +12,4 @@ export interface Rating {
     userRating: number; // Användarens betygsättning
     // comment?: string; # lägga till kommentar?
 }
+export interface RequestRatintg {}
