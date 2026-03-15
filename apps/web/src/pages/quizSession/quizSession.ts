@@ -238,6 +238,10 @@ async function postQuizResults(session: QuizSessions, answers: QuizAnswers[]) {
         });
         const result = await response.json();
         console.log('result:', result);
+
+        console.info('Omdirigerar användare till results.html');
+        //! hel väg
+        window.location.href = '/src/pages/results/results.html';
     } catch (error: any) {
         console.error('Error vid POST av quiz resultat:', error);
     } finally {
