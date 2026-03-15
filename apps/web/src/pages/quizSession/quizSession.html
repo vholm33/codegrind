@@ -9,7 +9,7 @@
             href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>"
         />
 
-        <link rel="stylesheet" href="./index.css" />
+        <link rel="stylesheet" href="../../index.css" />
     </head>
     <body class="bg-gray-900 text-white">
         <header id="toolbar" class="grid h-14 grid-cols-3 items-center border-b-2 bg-gray-950 p-4"></header>
@@ -37,12 +37,12 @@
                             <div class="flex gap-2" id="progress-bar-container">
                                 <!-- Fråga n/x -->
                                 <div
-                                    class="flex flex-1 rounded-md border bg-slate-800 p-2 px-4 text-blue-500"
+                                    class="flex flex-1 tracking-widest rounded-md border bg-slate-800 p-2 px-4 text-blue-500"
                                     id="progress-xn"
                                 ></div>
 
                                 <div class="w-full">
-                                    <progress id="status" class="ml-4 h-3 w-4/5 rounded-full"></progress>
+                                    <progress id="status" class="ml-4 h-3 w-4/5 rounded-full"></progress> <!-- bg-slate-600 !accent-green-500 -->
                                     <label for="status"></label>
                                     <span class="p-4 text-sm" id="progress-percentage"></span>
                                 </div>
@@ -66,7 +66,7 @@
                                     class="shrink-0 text-xl rounded-full border bg-gray-950 p-2 m-2 px-4 font-semibold"
                                     id="category-name"
                                 ></div>
-                                <div class="flex-1 mr-2 rounded border bg-gray-900 p-4 text-lg" id="code-question"></div>
+                                <div class="flex-1 tracking-wider mr-2 text-balande rounded border bg-gray-900 p-6 text-xl" id="code-question"></div>
                             </div>
                             <div class="flex flex-col">
                                 <!-- FEEDBACK om för kort svar -->
@@ -91,6 +91,6 @@
             </main>
         </div>
     </body>
-    <script type="module" src="./utilities/initToolbarSidebar.ts"></script>
+    <script type="module" src="../../utilities/initToolbarSidebar.ts"></script>
     <script type="module" src="./quizSession.ts"></script>
 </html>

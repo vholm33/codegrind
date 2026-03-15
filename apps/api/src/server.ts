@@ -109,6 +109,9 @@ app.use('/api/codeQuestions', codeQuestionRoutes);
 import categoriesRoute from './mysql/routes/categories.routes.js';
 app.use('/api/categories', categoriesRoute);
 
+import quizSessionRoutes from './mysql/routes/quizSessions.routes.js'
+app.use('/api/quiz', quizSessionRoutes)
+
 //====== MongoDB - Routes ======
 import ratingRoutes from './mongodb/routes/ratingRoute.js';
 app.use('/api/', ratingRoutes);

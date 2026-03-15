@@ -1,5 +1,5 @@
-import type { CodeQuestion } from '@shared/types.js';
-import { CodeEditor } from './components/Editor.js';
+import type { CodeQuestion, QuizSessions, QuizAnswers } from '@shared/types.js';
+import { CodeEditor } from '../../components/Editor.js';
 /* Hantera quiz-sessionen */
 
 // 0. GET DOM elements
@@ -26,23 +26,8 @@ type Attempts = 0 | 1 | 2 | 3;
 const MAX_ATTEMPTS: number = 3;
 
 // 1. Kopplar till varje HEL quiz session
-interface QuizSessions {
-    userId: number; // Användaren som kört quiz
-    totalQuestions: number; // Totalt antal frågor
-    questionsAnswered: number; // Antal besvarade frågor
-    totalPoints: number; // Antal poäng för hela quiz-sessionen
-}
-
-// 2. Kopplas till varje fråga i quiz-sessionen
-interface QuizAnswers {
-    sessionId: number; // Användarens quiz-session
-    questionId: number; // Användarens fråga i sessionen
-    attempts: number; // Användarens försök per fråga
-    points: number; // Användarens poäng per fråga
-    isCorrect: boolean; // Lyckades användaren få rätt?
-}
-
 let quizSessions: QuizSessions[] = []; // Array med sessioner
+// 2. Kopplas till varje fråga i quiz-sessionen
 let quizAnswers: QuizAnswers[] = []; // Array med svar
 
 let currentQuestion: CodeQuestion | null = null;
@@ -87,6 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // [x] 3. RENDER codeQuestions
+    console.debug('🪳 RENDER codeQuestions');
     renderCodeQuestion(codeQuestions); // OK
 });
 
@@ -155,30 +141,110 @@ async function renderCodeQuestion(codeQuestions: CodeQuestion[]) {
     const shuffledQuestions = [...codeQuestions].sort(() => Math.random() - 0.5);
 
     await quizLoop(shuffledQuestions);
-
-    // 0. Ränsa fråge-paragraf
-    /*    console.log(`writing test in paragraph`);
-    console.log(codeQuestionEl.innerHTML);
-    codeQuestionEl.innerHTML = 'test';
-    console.log(codeQuestionEl.innerHTML); */
-
-    // 1. Visa första frågan
-    // 2. Ränsa fråge-paragraf
-    //codeQuestionEl.innerHTML = '';
-
-    /* codeQuestions.forEach((q) => {
-        console.log(q.codeQuestion);
-        console.log(q.codeAnswer);
-    }); */
-    /*  // Iterate questions
-    for (const question in codeQuestions) {
-        console.log('question:', question);
-    } */
 }
 
 async function quizLoop(shuffledQuestions: CodeQuestion[]) {
-    loadQuestion(shuffledQuestions, 0);
+    console.debug('quizLoop(shuffledQuestions: CodeQuestion[])');
+    console.debug('🪳 run through all questions first');
+
+    for (let i = 0; i < shuffledQuestions.length; i++) {
+        await new Promise<void>((resolve) => {
+            resolveNext = resolve;
+            loadQuestion(shuffledQuestions, i);
+        });
+    }
+    console.debug('🪳 Quiz is over');
+    endQuizSession(shuffledQuestions.length);
 }
+/*
+quizSessions =
+sessionAnswer.length = 0
+
+*/
+async function endQuizSession(totalQuestions: number) {
+    console.group(`endQuizSession(totalQuestions: number)`);
+    try {
+        // Get userId
+        const userJson = localStorage.getItem('user');
+        if (!userJson) {
+            console.error('userId not found in localStorage');
+            // return; // return can only be used within a function body
+        }
+
+        if (userJson) {
+            const userId = JSON.parse(userJson);
+            if (userId?.id) {
+                console.debug('🪳 userId:', userId);
+                console.debug('🪳 userId.id:', userId?.id);
+
+                const totalPoints = questionResults.reduce((sum, q) => sum + q.points, 0);
+
+                //! const userId = localStorage.getItem('user')
+
+                // Spara session
+                console.debug('🪳 SPARA SESSION');
+                const session: QuizSessions = {
+                    userId: userId.id, //? but ut genom använda auth
+                    totalQuestions,
+                    questionsAnswered: questionResults.length,
+                    totalPoints,
+                };
+                console.debug('🪳 quizSessions BEFORE push', quizSessions);
+                console.debug('🪳 Pushing to quizSessions:', session);
+                quizSessions.push(session);
+                console.debug('🪳 quizSessions AFTER push:', session);
+
+                console.debug('🪳 SPARA användarens SVAR');
+                questionResults.forEach((result, index) => {
+                    const answer: QuizAnswers = {
+                        sessionId: quizSessions.length,
+                        questionId: result.questionId,
+                        attempts: result.attempts,
+                        points: result.points,
+                        isCorrect: result.isCorrect,
+                    };
+                    console.debug('🪳 quizAnswers BEFORE push', quizAnswers);
+                    quizAnswers.push(answer);
+                    console.debug('🪳 answer:', answer);
+                    console.debug('🪳 quizAnswers AFTER push', quizAnswers);
+                });
+
+                console.info('quizSesions', quizSessions);
+                console.info('quisAnswers', quizAnswers);
+
+                console.debug('🪳 POST session och answers till server');
+                await postQuizResults(session, quizAnswers);
+            } else {
+                console.error('user objektet saknar ID');
+            }
+        } else {
+            console.error('Cant find userId from localStorage');
+        }
+    } finally {
+        console.groupEnd();
+    }
+}
+
+// [x] SUCCESS lyckas spara resultat i quizSessions TABLE
+async function postQuizResults(session: QuizSessions, answers: QuizAnswers[]) {
+    console.debug('🪳 postQuizResults()');
+    try {
+        const response = await fetch('http://localhost:3000/api/quiz/session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ session, answers }), // utan {} blir det inget objekt!
+        });
+        const result = await response.json();
+        console.log('result:', result);
+    } catch (error: any) {
+        console.error('Error vid POST av quiz resultat:', error);
+    } finally {
+        console.groupEnd();
+    }
+}
+
 function loadQuestion(questions: CodeQuestion[], index: number) {
     console.group(`loadQuestion`);
 
@@ -195,7 +261,9 @@ function loadQuestion(questions: CodeQuestion[], index: number) {
     canSubmit = true;
     updateQuestionUI(currentQuestion!, questionsLength, index); // Är inte null
     setTimeout(() => editor?.focus(), 150);
-    resolveNext = () => loadQuestion(questions, index + 1);
+
+    // FLyttad till loadQuestion()
+    // (overwrites promise's relove) resolveNext = () => loadQuestion(questions, index + 1);
     console.groupEnd();
 }
 
@@ -252,9 +320,18 @@ function loadQuestion(questions: CodeQuestion[], index: number) {
 } */
 
 function updateQuestionUI(question: CodeQuestion, questionsLength: number, index: number) {
-    if (!categoryEl || !codeQuestionEl || !feedbackEl || !editor || !progressbarEl || !progBarPercentageEl || !progressXN) return;
+    if (
+        !categoryEl ||
+        !codeQuestionEl ||
+        !feedbackEl ||
+        !editor ||
+        !progressbarEl ||
+        !progBarPercentageEl ||
+        !progressXN
+    )
+        return;
     // 1. Progress x/n
-    progressXN.innerHTML = `${index+1}/${questionsLength}`;
+    progressXN.innerHTML = `${index + 1}/${questionsLength}`;
 
     // 2. Progress Bar
     console.info(`updateQuestionUI - question`, question);
@@ -328,7 +405,10 @@ function handleSubmit(event: Event, nextQuestion: (() => void) | null): 'correct
     console.group(`handleSubmit(event)`);
 
     try {
-        if (!canSubmit) return 'max-tries';
+        console.log('Just before max-tries end');
+        if (!canSubmit) {
+            return 'max-tries';
+        }
 
         // Tar bort submittion
         if (attempts >= MAX_ATTEMPTS) {
@@ -375,16 +455,20 @@ function handleSubmit(event: Event, nextQuestion: (() => void) | null): 'correct
 }
 // 1. CORRECT
 function handleCorrectAnswer(nextQuestion: (() => void) | null): 'correct' {
+    console.group(`handleCorrectAnswer()`);
+
     points = calculatePoints(attempts);
 
+    // [ ] Ska jag bara pusha när rätt?
     if (currentQuestion) {
+        console.debug('🪳 pushing to questionResults');
         questionResults.push({
             questionId: currentQuestion.id,
             points: points,
             attempts: attempts,
             isCorrect: true,
         });
-        console.info('Pushed to questionResults:', questionResults);
+        console.debug('Pushed to questionResults:', questionResults);
     }
 
     console.log(`RÄTT! Du fick ${points} poäng`);
@@ -398,8 +482,9 @@ function handleCorrectAnswer(nextQuestion: (() => void) | null): 'correct' {
     setTimeout(() => {
         editorContainerEl?.classList.remove('bg-lime-500');
         if (nextQuestion) nextQuestion();
-    }, 3000);
+    }, 2000); // var 3000 innan
 
+    console.groupEnd();
     return 'correct';
 }
 function showSuccessFeedback(feedbackEl: HTMLElement | null, points: number): void {
@@ -444,7 +529,7 @@ function handleMaxAttempts(correctAnswer: string, nextQuestion: (() => void) | n
     setTimeout(() => {
         editorContainerEl?.classList.remove('bg-lime-500');
         if (nextQuestion) nextQuestion();
-    }, 8000);
+    }, 4000); // var 8000
 
     return 'max-tries';
 }

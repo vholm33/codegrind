@@ -8,10 +8,10 @@ interface Categories {
 // [ ]  3. Render button in #sidebar-container
 
 export async function initSidebar() {
-    console.groupCollapsed('Sidebar Init()');
+    // console.groupCollapsed('Sidebar Init()');
     try {
         const categories = await fetchCategories();
-        console.log(categories);
+       // console.log(categories);
 
         const sidebar = document.querySelector('#sidebar-container');
 
@@ -31,10 +31,10 @@ export async function initSidebar() {
 
         toggleSidebar; // om () öppnas direkt. Funkar med bara onClick från button?
 
-        console.log('Creating NAV');
+        // console.log('Creating NAV');
 
         const catBtnContainer = document.createElement('nav');
-        console.log('nav:', catBtnContainer);
+        // console.log('nav:', catBtnContainer);
 
         catBtnContainer.innerHTML = `
         <a href="/src/handouts/handouts.html?category=Konstanter" class="flex items-center px-4 py-3 hover:bg-gray-700">
@@ -75,13 +75,13 @@ export async function initSidebar() {
         sidebar?.appendChild(catBtnContainer);
         // renderCategories(categories)
     } finally {
-        console.groupEnd();
+        // console.groupEnd();
     }
 };
 
 // [x] 1. Fetch categories
 async function fetchCategories(): Promise<Categories[]> {
-    console.group(`fetchCategories()`);
+    // console.group(`fetchCategories()`);
 
     try {
         const url = 'http://localhost:3000/api/categories/get';
@@ -91,14 +91,14 @@ async function fetchCategories(): Promise<Categories[]> {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         const result = await response.json();
-        console.log(result);
+        // console.log(result);
 
         return result.data || result;
     } catch (error) {
         console.error('Error:', error);
         return [];
     } finally {
-        console.groupEnd();
+        // console.groupEnd();
     }
 }
 

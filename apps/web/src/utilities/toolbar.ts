@@ -1,10 +1,10 @@
 export async function initToolbar() {
-    console.groupCollapsed(`Toolbar Init()`);
+    // console.groupCollapsed(`Toolbar Init()`);
     try {
         const toolbar = document.querySelector('#toolbar');
         const baseUrl = window.location.origin;
 
-        console.info('baseUrl:', baseUrl);
+        // console.info('baseUrl:', baseUrl);
 
         if (toolbar) {
             toolbar.innerHTML = `
@@ -33,7 +33,7 @@ export async function initToolbar() {
         </button>
     `;
         }
-        console.info('await isLoggedIn()');
+        // console.info('await isLoggedIn()');
 
         const isLoggedIn: boolean = await isUserLoggedIn();
 
@@ -45,7 +45,7 @@ export async function initToolbar() {
             await renderLogin(baseUrl);
         }
     } finally {
-        console.groupEnd();
+        // console.groupEnd();
     }
 }
 
@@ -55,15 +55,15 @@ IF logged in        --> logout (red)
 */
 
 async function isUserLoggedIn(): Promise<boolean> {
-    console.group(`isUserLoggedIn()`);
+    // console.group(`isUserLoggedIn()`);
 
     const token = localStorage.getItem('token');
     const userJson = localStorage.getItem('user');
-    console.log('token:', token);
-    console.log('userJson:', userJson);
+    // console.log('token:', token);
+    // console.log('userJson:', userJson);
 
     if (!token || !userJson) {
-        console.groupEnd();
+        // console.groupEnd();
         return false;
     }
 
@@ -91,7 +91,7 @@ async function isUserLoggedIn(): Promise<boolean> {
         console.error('Error vid verifiering:', error);
         return false;
     } finally {
-        console.groupEnd();
+        // console.groupEnd();
     }
 }
 
@@ -125,7 +125,7 @@ async function renderLogout() {
 }
 
 async function renderLogin(baseUrl: string) {
-    console.log(`renderLogin()`);
+    // console.log(`renderLogin()`);
     const loginBtn = document.querySelector('#login-btn') as HTMLButtonElement;
     const loginBtnAnchor = document.querySelector('#login-btn-anchor') as HTMLAnchorElement;
 
@@ -138,7 +138,7 @@ async function renderLogin(baseUrl: string) {
         loginBtn.onclick = null; // utan () ska bara anropas när knappen clickas
     }
     if (loginBtnAnchor) {
-        console.log(`href SET to login.html`);
+        // console.log(`href SET to login.html`);
         loginBtnAnchor.textContent = 'Login';
         loginBtnAnchor.href = `${baseUrl}/src/login.html`;
     }
