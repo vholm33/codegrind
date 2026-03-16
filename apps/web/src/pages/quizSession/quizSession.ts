@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         handleSubmit(e, resolveNext);
     }); */
-    //? behövdes inte "quiz:submit"
+    //? behövdes inte "quiz:submit" från Editor.ts
     document.addEventListener('submit', (e) => {
         handleSubmit(e, resolveNext);
     });
@@ -156,11 +156,7 @@ async function quizLoop(shuffledQuestions: CodeQuestion[]) {
     console.debug('🪳 Quiz is over');
     endQuizSession(shuffledQuestions.length);
 }
-/*
-quizSessions =
-sessionAnswer.length = 0
 
-*/
 async function endQuizSession(totalQuestions: number) {
     console.group(`endQuizSession(totalQuestions: number)`);
     try {
@@ -271,58 +267,6 @@ function loadQuestion(questions: CodeQuestion[], index: number) {
     console.groupEnd();
 }
 
-// ====== QUIZ LOOP =====
-/* async function quizLoop(shuffledQuestions: CodeQuestion[]) {
-    console.group(`quizLoop`);
-
-    for (const [index, question] of shuffledQuestions.entries()) {
-        console.group(`Fråga ${index + 1}/${shuffledQuestions.length}`);
-
-        //! const categoryName = getCategoryName(question.categoryId);
-        console.log(question);
-        // console.log(codeQuestions[questions]); for in
-
-        // Förbered nästa fråga
-        console.info(`FÖRBEREDER nästa fråga...`);
-        currentQuestion = question; // Sätt frågan
-        attempts = 0; // Ställ om till 0
-        canSubmit = true;
-        console.info(`SPARA aktuell fråga i currentQuestion`);
-        console.info(`NOLSTÄLL räknare`);
-        console.info(`TILLÅT inlämning`);
-
-        updateQuestionUI(question);
-
-        let resolveNext: (() => void) | null = null; // spara resolve-funktionen
-
-        await new Promise<void>((resolve) => {
-            resolveNext = resolve;
-
-            const submitHandler = (event: Event) => {
-                event.preventDefault();
-
-                if (!canSubmit) return;
-
-                handleSubmit(event, resolveNext);
-
-                const keyHandler = (e: KeyboardEvent) => {
-                    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                        document.removeEventListener('keydown', keyHandler);
-                        form.removeEventListener('submit', submitHandler);
-                        resolve();
-                    }
-                };
-                document.addEventListener('keydown', keyHandler);
-            };
-            //! form.addEventListener('submit', submitHandler, { once: true });
-            // once, true removes more attempts listeners
-            form.addEventListener('submit', submitHandler);
-        });
-        console.groupEnd();
-    }
-    console.groupEnd();
-} */
-
 function updateQuestionUI(question: CodeQuestion, questionsLength: number, index: number) {
     if (
         !categoryEl ||
@@ -364,12 +308,12 @@ function updateQuestionUI(question: CodeQuestion, questionsLength: number, index
     // ska visa kvar vad som blev fel
 }
 
-interface FeedbackItem {
+/* interface FeedbackItem {
     text: string;
     isCorrect: boolean;
     startIndex: number;
     endIndex: number;
-}
+} */
 
 interface QuestionResult {
     questionId: number;
