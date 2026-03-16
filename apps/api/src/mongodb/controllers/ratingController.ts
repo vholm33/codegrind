@@ -6,7 +6,6 @@ import { getAllCodeQuestionsRepo } from '../../mysql/repositories/codeQuestions.
 import { mdbConn } from '../connection.js';
 import { Db } from 'mongodb';
 
-
 export async function addRating(req: Request, res: Response) {
     try {
         console.log(`[CONTROLLER] addRatingController(req, res)`);
@@ -18,7 +17,8 @@ export async function addRating(req: Request, res: Response) {
         // [x] userRating - användarens rating
         // [ ] sqlUserId - inloggad användares ID: users.id
         const { id, userRating, sqlUserId } = req.body;
-        //! sqlUserId
+        console.log('req.body', req.body);
+
         if (!id || !userRating || !sqlUserId) {
             return res.status(401).json({
                 success: false,
@@ -43,7 +43,7 @@ export async function addRating(req: Request, res: Response) {
         await mdbConn.collection<Rating>('ratings').insertOne({
             sqlQuestionId: id,
             userRating: userRating,
-            sqlUserId: sqlUserId
+            sqlUserId: sqlUserId,
         });
 
         (await existingRatings.find().toArray()).forEach((rating: any) => {

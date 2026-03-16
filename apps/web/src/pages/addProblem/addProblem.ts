@@ -1,5 +1,5 @@
 // addProblem.ts
-import { CodeEditor } from './components/Editor.js';
+import { CodeEditor } from '../../components/Editor.js';
 
 async function loadCategories() {
     try {

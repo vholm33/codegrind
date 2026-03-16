@@ -1,4 +1,4 @@
-import type { CodeQuestion } from '@shared/types.js';
+import type { CodeQuestion } from '@shared/types.ts';
 import { CodeEditor } from './components/Editor.js';
 /* Hantera quiz-sessionen */
 

@@ -7,34 +7,36 @@ interface Categories {
 // [x]  2. Render #sidebar-container
 // [ ]  3. Render button in #sidebar-container
 
-addEventListener('DOMContentLoaded', async () => {
-    const categories = await fetchCategories();
-    console.log(categories);
+export async function initSidebar() {
+    // console.groupCollapsed('Sidebar Init()');
+    try {
+        const categories = await fetchCategories();
+       // console.log(categories);
 
-    const sidebar = document.querySelector('#sidebar-container');
+        const sidebar = document.querySelector('#sidebar-container');
 
-    sidebar?.addEventListener('mouseenter', () => {
-        // Only expand if currently collapsed
-        if (sidebar.classList.contains('w-14')) {
-            toggleSidebar();
-        }
-    });
+        sidebar?.addEventListener('mouseenter', () => {
+            // Only expand if currently collapsed
+            if (sidebar.classList.contains('w-14')) {
+                toggleSidebar();
+            }
+        });
 
-    sidebar?.addEventListener('mouseleave', () => {
-        // Only collapse if currently expanded
-        if (sidebar.classList.contains('w-64')) {
-            toggleSidebar();
-        }
-    });
+        sidebar?.addEventListener('mouseleave', () => {
+            // Only collapse if currently expanded
+            if (sidebar.classList.contains('w-64')) {
+                toggleSidebar();
+            }
+        });
 
-    toggleSidebar; // om () öppnas direkt. Funkar med bara onClick från button?
+        toggleSidebar; // om () öppnas direkt. Funkar med bara onClick från button?
 
-    console.log('Creating NAV');
+        // console.log('Creating NAV');
 
-    const catBtnContainer = document.createElement('nav');
-    console.log('nav:', catBtnContainer);
+        const catBtnContainer = document.createElement('nav');
+        // console.log('nav:', catBtnContainer);
 
-    catBtnContainer.innerHTML = `
+        catBtnContainer.innerHTML = `
         <a href="/src/handouts/handouts.html?category=Konstanter" class="flex items-center px-4 py-3 hover:bg-gray-700">
             <span class="mr-3 text-xl"
                 ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -70,12 +72,17 @@ addEventListener('DOMContentLoaded', async () => {
             <span data-sidebar-text class="hidden">Metoder</span>
         </a>
     `;
-    sidebar?.appendChild(catBtnContainer);
-    // renderCategories(categories)
-});
+        sidebar?.appendChild(catBtnContainer);
+        // renderCategories(categories)
+    } finally {
+        // console.groupEnd();
+    }
+};
 
 // [x] 1. Fetch categories
 async function fetchCategories(): Promise<Categories[]> {
+    // console.group(`fetchCategories()`);
+
     try {
         const url = 'http://localhost:3000/api/categories/get';
         //! get behövs väl inte specifieras?
@@ -84,12 +91,14 @@ async function fetchCategories(): Promise<Categories[]> {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         const result = await response.json();
-        console.log(result);
+        // console.log(result);
 
         return result.data || result;
     } catch (error) {
         console.error('Error:', error);
         return [];
+    } finally {
+        // console.groupEnd();
     }
 }
 
