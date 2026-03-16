@@ -1,5 +1,7 @@
 USE railway;
 
+DROP TABLE IF EXISTS quizAnswers;;
+DROP TABLE IF EXISTS quizSessions;
 DROP TABLE IF EXISTS codeQuestions;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS users;
@@ -8,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
    id int PRIMARY KEY AUTO_INCREMENT,
    username VARCHAR(50) NOT NULL,
    email VARCHAR(50) NOT NULL,
-   password_hash VARCHAR(100) NOT NULL,
+   passwordHash VARCHAR(100) NOT NULL,
    created_at DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NULL
 );
 

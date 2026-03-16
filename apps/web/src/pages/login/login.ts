@@ -49,7 +49,7 @@ addEventListener('DOMContentLoaded', (event) => {
             localStorage.setItem('user', JSON.stringify(result.user));
 
             // Omdirigera till hem
-            window.location.href = '../index.html';
+            window.location.href = '../../../index.html';
         } catch (error) {
             console.error('Error:', error);
         }

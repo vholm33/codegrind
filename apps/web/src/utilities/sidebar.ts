@@ -85,7 +85,6 @@ async function fetchCategories(): Promise<Categories[]> {
 
     try {
         const url = 'http://localhost:3000/api/categories/get';
-        //! get behövs väl inte specifieras?
 
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);

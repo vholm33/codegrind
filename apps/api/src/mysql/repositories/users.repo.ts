@@ -5,19 +5,19 @@ import bcrypt from 'bcrypt'; // flytta till middleware?
 export type InsertUserInput = {
     username: string;
     email: string;
-    password_hash: string;
+    passwordHash: string;
 };
 
 export async function insertUser(pool: Pool, input: InsertUserInput) {
     console.log('[REPO] insertUser - input:', input);
-    console.log('[REPO] password_hash length:', input.password_hash.length);
+    console.log('[REPO] passwordHash length:', input.passwordHash.length);
 
     const sql = `
-      INSERT INTO users(username, email, password_hash)
+      INSERT INTO users(username, email, passwordHash)
       VALUES (?, ?, ?)
   `;
 
-    const params = [input.username, input.email, input.password_hash];
+    const params = [input.username, input.email, input.passwordHash];
 
     const result = await pool.execute<ResultSetHeader>(sql, params);
 
@@ -54,7 +54,7 @@ export async function loginUser(pool: Pool, input: LoginUserInput) {
 
         console.log('Jämför password input med hashat lösenord från databasen');
         // Jämför med lagrat hashat lösen
-        const isPasswordValid = await bcrypt.compare(input.password, user.password_hash);
+        const isPasswordValid = await bcrypt.compare(input.password, user.passwordHash);
         if (!isPasswordValid) {
             console.error('lösenord inte giltligt!');
             return {

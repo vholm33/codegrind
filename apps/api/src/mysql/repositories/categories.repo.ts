@@ -12,7 +12,7 @@ export async function getAllCategoriesRepo() {
             ORDER BY name
         `);
 
-        console.log('[REPO] existing categories:', rows);
+        // console.log('[REPO] existing categories:', rows); # visar alla rader i terminalen
         return rows;
     } catch (error: any) {
         console.error(`‼️ [REPO] ERROR in addCodeQuestionRepo: ${error.message}`);
@@ -64,5 +64,5 @@ export async function removeCategoryRepo(id: number) {
             sqlMessage: error.sqlMessage
         };
     }
-        
+
 }

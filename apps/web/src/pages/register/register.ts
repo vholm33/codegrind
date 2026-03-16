@@ -57,7 +57,7 @@ addEventListener('DOMContentLoaded', (event) => {
 
             //? Borde autofylla genom datan här?
             // Omdirigeras till login direkt efter registrering
-            window.location.href = './login.html';
+            window.location.href = '../login/login.html';
         } catch (error) {
             console.error('Error:', error);
         }

@@ -19,15 +19,15 @@ export async function registerUser(req: Request, res: Response) {
         const { username, email, password } = req.body;
 
         // [ ] ta bara emot password och sen hasha
-        const password_hash = await bcrypt.hash(password, 10);
+        const passwordHash = await bcrypt.hash(password, 10);
 
-        console.log(`Hashed password: ${password_hash}`);
+        console.log(`Hashed password: ${passwordHash}`);
 
         // input måste vara ett objekt
         const input: InsertUserInput = {
             username,
             email,
-            password_hash,
+            passwordHash,
         };
         console.log('Input:', input);
 

@@ -6,18 +6,19 @@ let editor: CodeEditor | null = null;
 
 addEventListener('DOMContentLoaded', async () => {
     console.group(`Ratings Init()`);
-    
+
     try {
         // GET category from url
         const urlParams = new URLSearchParams(window.location.search);
         const category = urlParams.get('category');
-        console.log('cat:', category);
+        // const category = undefined;
+        console.debug('cat:', category);
 
         const questionData = await fetchCodeQuestions();
-        console.log(questionData);
+        console.debug('AFTER fetch questionData:', questionData);
 
         const filteredQuestions = category ? questionData.filter((q) => q.categoryName === category) : questionData;
-        console.log(`Filtrerade frågor för ${category || 'alla kategorier'}`, filteredQuestions);
+        console.debug(`Filtrerade frågor för ${category || 'alla kategorier'}`, filteredQuestions);
 
         // Grid Layout
         renderAllQuestions(filteredQuestions);
@@ -29,6 +30,8 @@ addEventListener('DOMContentLoaded', async () => {
 });
 
 function renderAllQuestions(questionData: CodeQuestion[]): void {
+    console.debug('🪳 renderAllQuestions()');
+
     const questionContainer = document.querySelector('#question-container');
 
     if (questionContainer) {
@@ -61,13 +64,8 @@ function renderAllQuestions(questionData: CodeQuestion[]): void {
             }
         });
     }
-}
 
-/* interface Rating {
-    userId: number;
-    questionId: number;
-    rating: number;
-} */
+}
 
 function renderRatingStars(questions: CodeQuestion[]): void {
     console.group(`renderRatingStars()`);
@@ -81,8 +79,8 @@ function renderRatingStars(questions: CodeQuestion[]): void {
     console.info('userObj', userObj);
 
     const user = userObj ? JSON.parse(userObj) : null;
-    const userId = user.id
-    console.info(`userId:`, userId)
+    const userId = user.id;
+    console.info(`userId:`, userId);
 
     //const userId
 
@@ -146,8 +144,8 @@ function renderRatingStars(questions: CodeQuestion[]): void {
                             const ratingData: Rating = {
                                 sqlQuestionId: questionId,
                                 sqlUserId: userId,
-                                userRating: ratingValue
-                            }
+                                userRating: ratingValue,
+                            };
                             const response = await fetch('http://localhost:3000/api/ratings', {
                                 method: 'POST',
                                 headers: {
@@ -178,8 +176,6 @@ function renderRatingStars(questions: CodeQuestion[]): void {
     console.groupEnd();
 }
 
-
-
 function colorStars(container: Element, userRating: number) {
     const stars = container.querySelectorAll('[data-rating]');
     stars.forEach((star) => {
@@ -202,14 +198,16 @@ function updateAllStarDisplays(questions: CodeQuestion[], userRatings: Map<numbe
     });
 }
 
+//====== FETCH ======
+
 async function fetchUserRatings(userId: number, questionIds: number[]): Promise<Rating[]> {
     console.groupCollapsed(`fetchUserRatings(userId, questionIds)`);
     try {
-        console.log('fetchUserRatings()');
+        console.debug('fetchUserRatings()');
         const token = localStorage.getItem('token');
 
         const queryParams = new URLSearchParams();
-        queryParams.append('userId', userId.toString())
+        queryParams.append('userId', userId.toString());
         questionIds.forEach((id) => queryParams.append('questionId', id.toString()));
 
         const response = await fetch(`http://localhost:3000/api/ratings/?${queryParams.toString()}`, {
@@ -221,7 +219,7 @@ async function fetchUserRatings(userId: number, questionIds: number[]): Promise<
         if (!response.ok) throw new Error(`Failed to get ratings : HTTP error! status: ${response.status}`);
 
         const result = await response.json();
-        console.log('result:', result);
+        console.debug('result:', result);
         return result.data || [];
     } catch (error: any) {
         console.error('Error:', error);

@@ -6,7 +6,58 @@ import { getAllCodeQuestionsRepo } from '../../mysql/repositories/codeQuestions.
 import { mdbConn } from '../connection.js';
 import { Db } from 'mongodb';
 
+// update/post
 export async function addRating(req: Request, res: Response) {
+    try {
+        console.log('addRating() handling update/post');
+        const { sqlQuestionId, userRating, sqlUserId } = req.body;
+        console.log('red.body', req.body);
+
+        if (!sqlQuestionId || !userRating || !sqlUserId) {
+            return res.status(401).json({
+                success: false,
+                message: 'Saknar sqlQuestionId eller userRating',
+            });
+        }
+
+        const ratingsCollection = mdbConn.collection<Rating>('ratings');
+
+        const filter = {
+            sqlQuestionId: sqlQuestionId,
+            sqlUserId: sqlUserId, // Måste matcha båda.
+        };
+
+        const update = {
+            $set: {
+                userRating: userRating,
+                updatedAt: new Date(),
+            },
+            $setOnInsert: {
+                createdAt: new Date(), // bara vid insert
+            },
+        };
+
+        const result = await ratingsCollection.updateOne(filter, update, {
+            upsert: true, // insert om inte hittas, annars uppdatera hittad
+        });
+
+        const wasUpdated = result.matchedCount > 0;
+        const wasInserted = result.upsertedCount > 0;
+
+        return res.status(wasInserted ? 201 : 200).json({
+            success: true,
+            message: wasUpdated ? 'Rating uppdaterad' : 'Lade till ny rating',
+        });
+    } catch (error: any) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+}
+
+//* SUCCESS
+/* export async function addRating(req: Request, res: Response) {
     try {
         console.log(`[CONTROLLER] addRatingController(req, res)`);
 
@@ -16,32 +67,25 @@ export async function addRating(req: Request, res: Response) {
         // [x] id - code question ID
         // [x] userRating - användarens rating
         // [ ] sqlUserId - inloggad användares ID: users.id
-        const { id, userRating, sqlUserId } = req.body;
+        const { sqlQuestionId, userRating, sqlUserId } = req.body;
         console.log('req.body', req.body);
 
-        if (!id || !userRating || !sqlUserId) {
+        if (!sqlQuestionId || !userRating || !sqlUserId) {
             return res.status(401).json({
                 success: false,
                 message: 'Saknar SQLs fråge ID eller userRating',
             });
         }
         console.log('fråge ID och userRating hittat');
-        const foundId = getAllCodeQuestionsRepo(id);
+        const foundId = getAllCodeQuestionsRepo(sqlQuestionId);
         console.log('foundId from SQL:', foundId);
 
         console.log('Använd id för att sätta rating i MongoDB');
         const existingRatings = mdbConn.collection('ratings');
         console.log('existingRatings:', existingRatings);
-        /* const addedRating = new Rating({
-            questionId: id, //? foundId
-            userRating: userRating,
-        }); */
-
-        // console.log('Waiting to save new user rating...');
-        /* await addedRating.save(); */
 
         await mdbConn.collection<Rating>('ratings').insertOne({
-            sqlQuestionId: id,
+            sqlQuestionId: sqlQuestionId,
             userRating: userRating,
             sqlUserId: sqlUserId,
         });
@@ -49,7 +93,7 @@ export async function addRating(req: Request, res: Response) {
         (await existingRatings.find().toArray()).forEach((rating: any) => {
             console.log('============');
             console.log(rating._id); //* new ObjectId('69a98a32f1586786271c1934')
-            console.log(rating.id); //! undefined
+            console.log(rating.sqlQuestionId); //! undefined
             console.log(rating.userRating); //* 5
             console.log('============');
         });
@@ -65,11 +109,11 @@ export async function addRating(req: Request, res: Response) {
             error: error.message,
         });
     }
-}
+} */
 
-export async function getRating(req: Request, res: Response) {
+export async function getRating(_req: Request, res: Response) {
     try {
-        console.log('[CONTROLLER] getRatingsC(req, res)');
+        console.log('[CONTROLLER] getRating(req, res)');
 
         const collection = mdbConn.collection<Rating>('ratings');
 

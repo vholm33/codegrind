@@ -1,10 +1,10 @@
 export async function initToolbar() {
-    // console.groupCollapsed(`Toolbar Init()`);
+    console.group(`Toolbar Init()`);
     try {
         const toolbar = document.querySelector('#toolbar');
         const baseUrl = window.location.origin;
 
-        // console.info('baseUrl:', baseUrl);
+        console.info('baseUrl:', baseUrl);
 
         if (toolbar) {
             toolbar.innerHTML = `
@@ -33,19 +33,19 @@ export async function initToolbar() {
         </button>
     `;
         }
-        // console.info('await isLoggedIn()');
+        console.info('await isLoggedIn()');
 
         const isLoggedIn: boolean = await isUserLoggedIn();
-
+        console.debug('🪳 isLoggedIn() result:', isLoggedIn);
         if (isLoggedIn) {
             console.warn(`Användare är inloggad`);
-            await renderLogout();
+            await renderLogout(baseUrl);
         } else {
             console.warn(`Användare är inte inloggad!`);
             await renderLogin(baseUrl);
         }
     } finally {
-        // console.groupEnd();
+        console.groupEnd();
     }
 }
 
@@ -59,8 +59,8 @@ async function isUserLoggedIn(): Promise<boolean> {
 
     const token = localStorage.getItem('token');
     const userJson = localStorage.getItem('user');
-    // console.log('token:', token);
-    // console.log('userJson:', userJson);
+    console.log('token:', token);
+    console.log('userJson:', userJson);
 
     if (!token || !userJson) {
         // console.groupEnd();
@@ -86,6 +86,8 @@ async function isUserLoggedIn(): Promise<boolean> {
             return false;
         }
         console.info(`Användare är inloggad: ${result.user?.username}`);
+        console.debug('Omdirigerar till login?');
+        //? window.location.href = 'src/pages/login/login.html';
         return true;
     } catch (error: any) {
         console.error('Error vid verifiering:', error);
@@ -95,7 +97,8 @@ async function isUserLoggedIn(): Promise<boolean> {
     }
 }
 
-async function renderLogout() {
+// IF isLogggedIn
+async function renderLogout(baseUrl: string) {
     console.group(`renderLogout()`);
     try {
         const loginBtn = document.querySelector('#login-btn') as HTMLButtonElement;
@@ -116,6 +119,7 @@ async function renderLogout() {
         }
         if (loginBtnAnchor) {
             loginBtnAnchor.textContent = 'Logout';
+            loginBtnAnchor.href = `${baseUrl}/src/pages/register/register.html`;
         }
     } catch (error) {
         console.error('Error:', error);
@@ -124,11 +128,16 @@ async function renderLogout() {
     }
 }
 
+// IF isn't logged in
 async function renderLogin(baseUrl: string) {
-    // console.log(`renderLogin()`);
+    console.log(`renderLogin()`);
     const loginBtn = document.querySelector('#login-btn') as HTMLButtonElement;
     const loginBtnAnchor = document.querySelector('#login-btn-anchor') as HTMLAnchorElement;
 
+    const isOnLogin: boolean = document.URL.includes('login.html') || false;
+    console.debug('🪳 isOnLogin:', isOnLogin);
+
+    // IF on login.html render register btn
     if (loginBtn) {
         // Color change
         loginBtn.classList.remove('bg-red-500');
@@ -138,9 +147,15 @@ async function renderLogin(baseUrl: string) {
         loginBtn.onclick = null; // utan () ska bara anropas när knappen clickas
     }
     if (loginBtnAnchor) {
-        // console.log(`href SET to login.html`);
-        loginBtnAnchor.textContent = 'Login';
-        loginBtnAnchor.href = `${baseUrl}/src/login.html`;
+        if (isOnLogin) {
+            console.debug('🪳 Är på login.html --> då visa register');
+            loginBtnAnchor.textContent = 'Register';
+            loginBtnAnchor.href = `${baseUrl}/src/pages/register/register.html`;
+        } else {
+            console.debug('Är inte på login.html --> då visa login');
+            loginBtnAnchor.textContent = 'Login';
+            loginBtnAnchor.href = `${baseUrl}/src/pages/login/login.html`;
+        }
     }
 }
 
