@@ -60,7 +60,7 @@ Core principles for all technical decisions:
 
 # 3. Projectstruktur
 
-<pre>
+<pre><code>
 apps/
 ├── shared/types.ts
 ├── api/
@@ -82,7 +82,7 @@ apps/
 ├── dist/
 ├── package.json
 ├── tsconfig.json
-</pre>
+</code></pre>
 
 ### Layer Responsibilities
 
