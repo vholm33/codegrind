@@ -81,3 +81,45 @@ export async function loginUser(pool: Pool, input: LoginUserInput) {
         };
     }
 }
+
+export async function getUserProfileById(pool: Pool, userId: number) {
+    const [rows]: any = await pool.execute(
+        `
+            SELECT id, username, email
+            FROM users
+            WHERE id = ?
+            LIMIT 1
+        `,
+        [userId],
+    );
+
+    return rows[0] ?? null;
+}
+
+export type UpdateUserProfileInput = {
+    userId: number;
+    username: string;
+    email: string;
+    passwordHash?: string;
+};
+
+export async function updateUserProfile(pool: Pool, input: UpdateUserProfileInput) {
+    const sql = input.passwordHash
+        ? `
+              UPDATE users
+              SET username = ?, email = ?, passwordHash = ?
+              WHERE id = ?
+          `
+        : `
+              UPDATE users
+              SET username = ?, email = ?
+              WHERE id = ?
+          `;
+
+    const params = input.passwordHash
+        ? [input.username, input.email, input.passwordHash, input.userId]
+        : [input.username, input.email, input.userId];
+
+    const [result] = await pool.execute<ResultSetHeader>(sql, params);
+    return result;
+}

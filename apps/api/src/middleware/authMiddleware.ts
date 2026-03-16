@@ -26,14 +26,7 @@ export function verifyToken(req: AuthRequest, res: Response, next: NextFunction)
         return;
     }
 
-    const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) {
-        res.status(500).json({
-            success: false,
-            message: 'JWT_SECRET missing',
-        });
-        return;
-    }
+    const jwtSecret = process.env.JWT_SECRET || 'segredo-grande';
 
     // const token = authHeader.split(' ')[1]!; # non-null assertion
     // const [, token] = authHeader.split(' ')[1]; # destructuring
