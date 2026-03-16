@@ -58,26 +58,31 @@ Core principles for all technical decisions:
 
 ---
 
-# 3. Folder Structure
+# 3. Projectstruktur
 
-Example backend structure:
-
-apps/api
-├── src
-│ ├── app.ts
+<pre>
+apps/
+├── shared/types.ts
+├── api/
+│ ├── dist/
+│ ├── src/
+│ │ ├── middleware/authMiddleware.ts
+│ │ ├── mongodb/{routes/, controllers/, connection.ts}
+│ │ └── mysql/{routes/, controllers/, services/, repositories/, db/}
 │ ├── server.ts
-│ ├── config/
-│ ├── db/
-│ ├── routes/
-│ ├── controllers/
-│ ├── services/
-│ ├── repositories/
-│ ├── domain/ -- MAYBE
-│ ├── middleware/
-│ └── utils/
-├── dist
+│ ├── tsconfig.json
+│ └── .env
+├── web/
+│ ├── dist/
+│ ├── src/
+│ │  ├── components/
+│ │  ├── handouts/
+│ │  ├── pages/...
+│ └── utils/initToolbarSidebar.ts
+├── dist/
 ├── package.json
 ├── tsconfig.json
+</pre>
 
 ### Layer Responsibilities
 
