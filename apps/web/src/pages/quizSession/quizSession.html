@@ -37,12 +37,13 @@
                             <div class="flex gap-2" id="progress-bar-container">
                                 <!-- Fråga n/x -->
                                 <div
-                                    class="flex flex-1 tracking-widest rounded-md border bg-slate-800 p-2 px-4 text-blue-500"
+                                    class="flex flex-1 rounded-md border bg-slate-800 p-2 px-4 tracking-widest text-blue-500"
                                     id="progress-xn"
                                 ></div>
 
                                 <div class="w-full">
-                                    <progress id="status" class="ml-4 h-3 w-4/5 rounded-full"></progress> <!-- bg-slate-600 !accent-green-500 -->
+                                    <progress id="status" class="ml-4 h-3 w-4/5 rounded-full"></progress>
+                                    <!-- bg-slate-600 !accent-green-500 -->
                                     <label for="status"></label>
                                     <span class="p-4 text-sm" id="progress-percentage"></span>
                                 </div>
@@ -63,16 +64,22 @@
                         <div class="grid w-full grid-cols-1 gap-6">
                             <div class="flex items-center gap-4">
                                 <div
-                                    class="shrink-0 text-xl rounded-full border bg-gray-950 p-2 m-2 px-4 font-semibold"
+                                    class="m-2 shrink-0 rounded-full border bg-gray-950 p-2 px-4 text-xl font-semibold"
                                     id="category-name"
                                 ></div>
-                                <div class="flex-1 tracking-wider mr-2 text-balande rounded border bg-gray-900 p-6 text-xl" id="code-question"></div>
+                                <div
+                                    class="text-balande mr-2 flex-1 rounded border-2 border-cyan-500 bg-gray-900 p-6 text-xl tracking-wider"
+                                    id="code-question"
+                                ></div>
                             </div>
                             <div class="flex flex-col">
                                 <!-- FEEDBACK om för kort svar -->
-                                <div id="feedback" class="hidden"></div>
+                                <div id="feedback" class="mb-4 hidden"></div>
                                 <label for="code-answer">Kod-svar</label>
-                                <div id="code-editor-container" class="rounded-md bg-gray-900 p-2"></div>
+                                <div
+                                    id="code-editor-container"
+                                    class="rounded-md border-2 border-cyan-500 bg-gray-900 p-2"
+                                ></div>
                                 <!-- <textarea
                                     class="rounded border bg-gray-900 p-2"
                                     type="text"

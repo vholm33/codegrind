@@ -368,6 +368,7 @@ function handleSubmit(event: Event, nextQuestion: (() => void) | null): 'correct
 
         const userAnswer = normaliseCode(editor?.getValue() ?? '');
         const correctAnswer = normaliseCode(currentQuestion?.codeAnswer ?? '');
+        const nonNormalisedAnswer = currentQuestion?.codeAnswer ?? '';
         const isCorrect = userAnswer === correctAnswer;
 
         // Om användarens svar är för kort
@@ -386,7 +387,7 @@ function handleSubmit(event: Event, nextQuestion: (() => void) | null): 'correct
 
         // 2. MAX-TRIES, samma IF: hanterar UI logik
         if (attempts >= MAX_ATTEMPTS) {
-            return handleMaxAttempts(correctAnswer, nextQuestion); // RETURNS: 'max-tries'
+            return handleMaxAttempts(nonNormalisedAnswer, nextQuestion); // RETURNS: 'max-tries'
         }
 
         // 3. INCORRET
@@ -440,7 +441,7 @@ function showSuccessFeedback(feedbackEl: HTMLElement | null, points: number): vo
         editorContainerEl?.classList.add('bg-cyan-500');
         feedbackEl.innerHTML = `
             <div class="flex gap-4">
-                <div class="shrink-0 bg-green-500 p-2 border rounded-md text-white">
+                <div class="shrink-0 text-black bg-green-500 p-2 border rounded-md">
                     Rätt!
                 </div>
                 <div class="flex-1 rounded-md border bg-green-900 py-2 text-center text-green-400 p-2">
