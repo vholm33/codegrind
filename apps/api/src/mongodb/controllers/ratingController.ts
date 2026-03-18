@@ -1,13 +1,12 @@
 import type { Response, Request } from 'express';
-import type { Rating } from '@shared/types.js';
-
-import { getAllCodeQuestionsRepo } from '../../mysql/repositories/codeQuestions.repo.js';
-//! import Rating from '../models/ratingModel.js'; (bara för mongoose)
+import type { Rating, ApiResponse } from '@shared/types.js';
 import { mdbConn } from '../connection.js';
-import { Db } from 'mongodb';
 
-// update/post
-export async function addRating(req: Request, res: Response) {
+// UPDATE / POST
+export async function addRating(
+    req: Request,
+    res: Response<ApiResponse>
+): Promise<Response<ApiResponse>> {
     try {
         console.log('addRating() handling update/post');
         const { sqlQuestionId, userRating, sqlUserId } = req.body;
@@ -111,8 +110,7 @@ export async function addRating(req: Request, res: Response) {
     }
 } */
 
-
-export async function getRating(_req: Request, res: Response) {
+export async function getRating(_req: Request, res: Response<ApiResponse<Rating[]>>): Promise<Response> {
     try {
         console.log('[CONTROLLER] getRating(req, res)');
 
@@ -125,6 +123,8 @@ export async function getRating(_req: Request, res: Response) {
 
         return res.status(200).json({
             success: true,
+            message: 'Skickar tillbaks alla ratings.',
+            // måste ha message
             data: allRatings,
         });
     } catch (error: any) {

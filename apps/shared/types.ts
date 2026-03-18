@@ -14,7 +14,6 @@ export interface Rating {
 }
 // export interface RequestRatintg {}
 
-
 // 1. Kopplar till varje HEL quiz session
 export interface QuizSessions {
     userId: number; // Användaren som kört quiz
@@ -31,3 +30,15 @@ export interface QuizAnswers {
     points: number; // Användarens poäng per fråga
     isCorrect: boolean; // Lyckades användaren få rätt?
 }
+
+// API RESPONSE
+export type ApiResponse<T = any> =
+    | {
+          success: boolean;
+          message: string;
+          data?: T;
+      }
+    | {
+          success: false;
+          error: string;
+      };
