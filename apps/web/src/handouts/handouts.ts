@@ -17,10 +17,16 @@ document.addEventListener("DOMContentLoaded", async() => {
     const category = categories.find((c: any) => c.name === selectedCategory)
 
     if (category) {
-        handout.innerHTML = `
-        <h1 class="mb-4 text-3xl font-bold text-blue-400">${category.name}</h1>
-        <p class="text-lg leading-relaxed text-gray-300">${category.handout}</p>
-        `
+        
+        title.innerText = category.name
+        
+        const html = marked.parse(category.handout) as string
+
+        handout.innerHTML = html 
+
+        handout.querySelectorAll("pre code").forEach((block) => {
+            hljs.highlightElement(block as HTMLElement)
+        })
     }
     console.log('category from url', selectedCategory)
 })
