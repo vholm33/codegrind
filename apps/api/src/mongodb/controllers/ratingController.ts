@@ -111,17 +111,19 @@ export async function addRating(req: Request, res: Response) {
     }
 } */
 
+
 export async function getRating(_req: Request, res: Response) {
     try {
         console.log('[CONTROLLER] getRating(req, res)');
 
         const collection = mdbConn.collection<Rating>('ratings');
 
+        console.log('getting all ratings...');
         // get all
         const allRatings: Rating[] = await collection.find().toArray();
-        console.log(allRatings);
+        console.log('All ratings', allRatings);
 
-        return res.json({
+        return res.status(200).json({
             success: true,
             data: allRatings,
         });

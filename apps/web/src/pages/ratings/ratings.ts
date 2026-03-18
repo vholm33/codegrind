@@ -64,7 +64,6 @@ function renderAllQuestions(questionData: CodeQuestion[]): void {
             }
         });
     }
-
 }
 
 function renderRatingStars(questions: CodeQuestion[]): void {
@@ -201,13 +200,18 @@ function updateAllStarDisplays(questions: CodeQuestion[], userRatings: Map<numbe
 //====== FETCH ======
 
 async function fetchUserRatings(userId: number, questionIds: number[]): Promise<Rating[]> {
-    console.groupCollapsed(`fetchUserRatings(userId, questionIds)`);
+    console.group(`fetchUserRatings(userId, questionIds)`);
     try {
         console.debug('fetchUserRatings()');
         const token = localStorage.getItem('token');
-
         const queryParams = new URLSearchParams();
+        console.debug('🪳 fetchUserRatings queryParams:', queryParams);
+
+        if (!token || !queryParams) throw new Error('token eller queryParams är fel');
+
         queryParams.append('userId', userId.toString());
+        //! ska userId vara här?
+        // array börjar på 1 med userID som 0
         questionIds.forEach((id) => queryParams.append('questionId', id.toString()));
 
         const response = await fetch(`http://localhost:3000/api/ratings/?${queryParams.toString()}`, {
@@ -216,7 +220,9 @@ async function fetchUserRatings(userId: number, questionIds: number[]): Promise<
             },
         });
 
-        if (!response.ok) throw new Error(`Failed to get ratings : HTTP error! status: ${response.status}`);
+        //? if (!response.ok) throw new Error(`Failed to get ratings : HTTP error! status: ${response.status}`);
+
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         const result = await response.json();
         console.debug('result:', result);
