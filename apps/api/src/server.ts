@@ -27,7 +27,7 @@ if (!isProduction) {
     );
     console.log('🔓 CORS enabled for Vite dev server');
 }
-if (isProduction){
+if (isProduction) {
     console.log(`PRODUCTION running`);
     // Production
     const distPath = path.join(__dirname, '../../web/dist');
@@ -124,6 +124,7 @@ app.use('/src', express.static(path.join(__dirname, '../../web/src')));
 
 app.listen(PORT, () => {
     console.log('Server running on port: ', PORT);
+    console.log(`Env: ${isProduction ? 'production' : 'development'}`);
 });
 
 export default app;
