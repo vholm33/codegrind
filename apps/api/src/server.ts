@@ -35,6 +35,26 @@ if (isProduction) {
     console.log(`distPath: ${distPath}`);
     console.log(`manifestPath: ${manifestPath}`);
 
+    let manifest = {};
+    try {
+        if (fs.existsSync(manifestPath)) {
+            manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+            console.log('Manifest loaded:', manifest);
+        } else {
+            console.log(`Manifest not found at: ${manifestPath}`);
+
+            // Vad finns i dist?
+            if (fs.existsSync(distPath)) {
+                console.log('Content in dist/ :', fs.readdirSync(distPath));
+                if (fs.existsSync(path.join(distPath, '.vite'))) {
+                    console.log('Innehåll .vite :', fs.readdirSync(path.join(distPath, '.vite')));
+                }
+            }
+        }
+    } catch (error: any) {
+        console.warn('Error när laddar manifest:', error.message);
+    }
+
     app.use(
         cors({
             origin: process.env.FRONTEND_URL || true,
@@ -61,59 +81,28 @@ if (isProduction) {
 
     app.get('/src', express.static(path.join(distPath, 'src')));
 }
-/*
 
-let manifest = {};
-try {
-    if (fs.existsSync(manifestPath)) {
-        manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
-        console.log('Manifest loaded:', manifest);
-    } else {
-        console.log(`Manifest not found at: ${manifestPath}`);
-
-        // Vad finns i dist?
-        if (fs.existsSync(distPath)) {
-            console.log('Content in dist/ :', fs.readdirSync(distPath));
-            if (fs.existsSync(path.join(distPath, '.vite'))) {
-                console.log('Innehåll .vite :', fs.readdirSync(path.join(distPath, '.vite')));
-            }
-        }
-    }
-} catch (error: any) {
-    console.warn('Error när laddar manifest:', error.message);
-} */
-
-// ====== MONGODB ======
-// import { mdbConn } from './mongodb/connection.js';
-// console.log('Starting MongoDB connection'); // Starta MongoDB connection
-// const ratings = mdbConn.collection('ratings');
-
-/* app.use(helmet({contentSecurityPolicy: false})) */
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 //====== SQL - Routes ======
 import userRoutes from './mysql/routes/users.routes.js';
-app.use('/api/users', userRoutes);
-
 import problemRoutes from './mysql/routes/problems.routes.js';
-app.use('/api/problems', problemRoutes);
-
 import submissionRoutes from './mysql/routes/submissions.routes.js';
-app.use('/api/submissions', submissionRoutes);
-
 import codeQuestionRoutes from './mysql/routes/codeQuestion.routes.js';
-app.use('/api/codeQuestions', codeQuestionRoutes);
-
 import categoriesRoute from './mysql/routes/categories.routes.js';
-app.use('/api/categories', categoriesRoute);
-
 import quizSessionRoutes from './mysql/routes/quizSessions.routes.js';
-app.use('/api/quiz', quizSessionRoutes);
-
 import quizStatsRoutes from './mysql/routes/quizStats.routes.js';
+
+app.use('/api/users', userRoutes);
+app.use('/api/problems', problemRoutes);
+app.use('/api/submissions', submissionRoutes);
+app.use('/api/codeQuestions', codeQuestionRoutes);
+app.use('/api/categories', categoriesRoute);
+app.use('/api/quiz', quizSessionRoutes);
 app.use('/api/quiz-stats', quizStatsRoutes);
+
 
 //====== MongoDB - Routes ======
 import ratingRoutes from './mongodb/routes/ratingRoute.js';
