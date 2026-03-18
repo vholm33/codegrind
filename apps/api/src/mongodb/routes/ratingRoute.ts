@@ -6,5 +6,5 @@ const router = express.Router();
 
 router.post('/ratings', verifyToken, addRating);
 router.get('/ratings', verifyToken, getRating);
-// router.patch('/ratings', verifyToken, patchRating)
+
 export default router;
