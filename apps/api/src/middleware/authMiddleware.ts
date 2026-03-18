@@ -14,7 +14,7 @@ export interface DecodedToken {
     username: string;
 }
 export function verifyToken(req: AuthRequest, res: Response, next: NextFunction): void {
-    console.group(`verifyToken(req, res, next)`);
+    console.log(`verifyToken(req, res, next)`);
 
     const authHeader = req.header('Authorization');
 
@@ -28,8 +28,6 @@ export function verifyToken(req: AuthRequest, res: Response, next: NextFunction)
 
     const jwtSecret = process.env.JWT_SECRET || 'segredo-grande';
 
-    // const token = authHeader.split(' ')[1]!; # non-null assertion
-    // const [, token] = authHeader.split(' ')[1]; # destructuring
     const token = authHeader.split(' ')[1];
     if (!token) {
         res.status(401).json({
@@ -47,9 +45,7 @@ export function verifyToken(req: AuthRequest, res: Response, next: NextFunction)
         next();
     } catch (error) {
         res.status(403).json({ error: 'Invalid token' });
-    } finally {
-        console.groupEnd();
-    }
+    } 
 }
 
 // module.exports = verifyToken;
