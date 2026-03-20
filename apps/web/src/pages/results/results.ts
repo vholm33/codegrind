@@ -132,8 +132,8 @@ function getHighlightCards(data: QuizSession): HighlightCard[] {
     const firstTryCount = getFirstTryCount(data);
 
     return [
-        { title: 'Best category', text: `${bestCategory.name} · ${bestCategory.points} points` },
-        { title: 'Lowest accuracy', text: lowestAccuracyCategory.name },
+        { title: 'Best category', text: `${bestCategory?.name} · ${bestCategory?.points} points` },
+        { title: 'Lowest accuracy', text: lowestAccuracyCategory?.name || 'Lowest accuracy not found' },
         { title: 'Correct on first try', text: `${firstTryCount} questions` },
     ];
 }
