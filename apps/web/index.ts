@@ -8,6 +8,7 @@ addEventListener('DOMContentLoaded', async () => {
 
     const categoriesAmount = categoryQuestionAmount(allQuestions);
 
+    // UI
     setCategoryAmount(categoriesAmount);
 });
 
@@ -15,7 +16,7 @@ addEventListener('DOMContentLoaded', async () => {
 async function getAllQuestions(): Promise<CodeQuestion[]> {
     const response = await fetch('http://localhost:3000/api/codeQuestions/all');
     const json = await response.json();
-    // console.log('response:', response);
+    console.debug('response:', response);
 
 
     //! const allQuestions: CodeQuestion = json.data;

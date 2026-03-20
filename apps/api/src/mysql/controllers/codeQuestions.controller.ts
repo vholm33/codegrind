@@ -79,6 +79,10 @@ export async function getAllQuestions(_req: Request, res: Response<{ data: CodeQ
         const questionData = await getAllQuestionsRepo();
         console.log('questionData:', questionData);
 
+        if (!questionData) {
+            console.error('Hittar inte questionData');
+        }
+
         return res.status(200).json({
             data: questionData.data || [],
         });
