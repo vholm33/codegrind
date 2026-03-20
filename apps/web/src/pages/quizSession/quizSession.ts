@@ -55,6 +55,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     // [x] 2. FETCH codeQuestions
     const codeQuestions = await fetchCodeQuestions();
 
+    // If has url parameter filter for that category
+    const filteredCodeQuestions = await filterQuizByCategory(codeQuestions);
+
+    if (!filteredCodeQuestions) {
+        console.error('filteredCodeQuestions finns inte');
+    }
+    console.debug('🪳 filteredQuestions:', filteredCodeQuestions);
     /* form.addEventListener('submit', (e) => {
         e.preventDefault();
         handleSubmit(e, resolveNext);
@@ -73,7 +80,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // [x] 3. RENDER codeQuestions
     console.debug('🪳 RENDER codeQuestions');
-    renderCodeQuestion(codeQuestions); // OK
+    renderCodeQuestion(filteredCodeQuestions); // OK
 });
 
 // [x] 1. Init Editor
@@ -125,6 +132,29 @@ async function fetchCodeQuestions(): Promise<CodeQuestion[]> {
     }
 }
 
+async function filterQuizByCategory(codeQuestions: CodeQuestion[]): Promise<CodeQuestion[]> {
+    try {
+        console.log('getQuizByCategory');
+        const categoryParam = new URLSearchParams(window.location.search);
+        const category = categoryParam.get('category');
+        console.info('🪳 category:', category);
+
+        if (!category) {
+            console.info('ingen url parameter av kategori ==> master quiz');
+            console.info('skickar tillbaka ofiltrerade kodfrågor med alla kategorier.');
+            return codeQuestions;
+        }
+
+        // console.debug('🪳 Innan filter', codeQuestions);
+        const filteredQuestions = codeQuestions.filter((q) => q.categoryName.toLowerCase() === category?.toLowerCase());
+
+        return filteredQuestions;
+    } catch (error) {
+        console.error('Kunde inte filtrera frågor i kategorin. Error:', error);
+        return [];
+    }
+}
+
 // [x] 3. RENDER codeQuestions
 async function renderCodeQuestion(codeQuestions: CodeQuestion[]) {
     console.log(`renderCodeQuestion()...`); // OK
@@ -154,6 +184,8 @@ async function quizLoop(shuffledQuestions: CodeQuestion[]) {
         });
     }
     console.debug('🪳 Quiz is over');
+
+    console.warn('Kommenterat ut endQuizSession');
     endQuizSession(shuffledQuestions.length);
 }
 
