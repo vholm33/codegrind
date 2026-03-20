@@ -10,4 +10,4 @@ Thumbs.db
 **/*.tsbuildinfo
 
 # Bara för lokal config
-apps/api/src/mysql/db/mysql.ts
+**/*/mysql.ts
