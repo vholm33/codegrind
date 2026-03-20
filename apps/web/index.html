@@ -37,24 +37,76 @@
                 <!-- Statistics -->
                 <section class="rounded-md border bg-gray-950">
                     <header>
-                        <h2 class="p-4">Statistik</h2>
-                        <h3>Översikt: hur frekvent</h3>
-                        <ul class="mb-6 flex justify-around">
-                            <li>
-                                <button class="rounded-md border bg-blue-500 p-4 hover:bg-blue-600">
-                                    <a href="./src/pages/quizSession/quizSession.html">Start Quiz</a>
-                                </button>
-                            </li>
-                            <li>
-                                <button class="rounded-md border bg-blue-500 p-4 hover:bg-blue-600">
-                                    <a href="./src/pages/ratings/ratings.html">Se kodfrågor</a>
-                                </button>
-                            </li>
-                        </ul>
+                        <button
+                            class="m-4 rounded-full border bg-blue-500 p-6 text-2xl font-semibold hover:bg-blue-600"
+                        >
+                            <a href="./src/pages/quizSession/quizSession.html">Master Quiz</a>
+                        </button>
                     </header>
+
+                    <ul class="mb-6 flex justify-around">
+                        <li></li>
+                        <li>
+                            <button class="rounded-md border bg-blue-500 p-4 hover:bg-blue-600">
+                                <a href="./src/pages/ratings/ratings.html">Se kodfrågor</a>
+                            </button>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Individuella Quiz -->
+                <section class="mt-4 rounded-md border bg-gray-950 p-4">
+                    <header class="m-4">Starta individuella quiz</header>
+                    <div class="m-4 grid grid-rows-4 gap-2 rounded-md bg-slate-800 p-2">
+                        <div class="grid grid-cols-2 items-center">
+                            <div class="flex justify-center">
+                                <button
+                                    class="flex w-1/2 justify-center rounded-md border bg-blue-500 p-4 hover:bg-blue-600"
+                                >
+                                    <a href="./src/pages/quizSession/quizSession.html?category=Konstanter"
+                                        >Konstanter</a
+                                    >
+                                </button>
+                            </div>
+                            <p class="text-center">Frågor: <span id="konstanter-amount"></span></p>
+                        </div>
+                        <div class="grid grid-cols-2 items-center">
+                            <div class="flex justify-center">
+                                <button
+                                    class="flex w-1/2 justify-center rounded-md border bg-blue-500 p-4 hover:bg-blue-600"
+                                >
+                                    <a href="./src/pages/quizSession/quizSession.html?category=Typescript"
+                                        >TypeScript</a
+                                    >
+                                </button>
+                            </div>
+                            <p class="text-center">Frågor: <span id="ts-amount"></span></p>
+                        </div>
+                        <div class="grid grid-cols-2 items-center">
+                            <div class="flex justify-center">
+                                <button
+                                    class="flex w-1/2 justify-center rounded-md border bg-blue-500 p-4 hover:bg-blue-600"
+                                >
+                                    <a href="./src/pages/quizSession/quizSession.html?category=Loopar">Loopar</a>
+                                </button>
+                            </div>
+                            <p class="text-center">Frågor: <span id="loopar-amount"></span></p>
+                        </div>
+                        <div class="grid grid-cols-2 items-center">
+                            <div class="flex justify-center">
+                                <button
+                                    class="flex w-1/2 justify-center rounded-md border bg-blue-500 p-4 hover:bg-blue-600"
+                                >
+                                    <a href="./src/pages/quizSession/quizSession.html?category=Metoder">Metoder</a>
+                                </button>
+                            </div>
+                            <p class="text-center">Frågor: <span id="metoder-amount"></span></p>
+                        </div>
+                    </div>
                 </section>
             </main>
         </div>
     </body>
     <script type="module" src="./src/utils/initToolbarSidebar.ts"></script>
+    <script type="module" src="./index.ts"></script>
 </html>
