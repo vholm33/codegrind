@@ -1,5 +1,4 @@
 import 'dotenv/config';
-import pool from './mysql/db/mysql.js';
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
