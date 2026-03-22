@@ -5,7 +5,7 @@ import { CodeEditor } from '../../components/Editor.js';
 let editor: CodeEditor | null = null;
 
 addEventListener('DOMContentLoaded', async () => {
-    console.group(`Ratings Init()`);
+    // console.group(`Ratings Init()`);
 
     try {
         // GET category from url
@@ -28,13 +28,13 @@ addEventListener('DOMContentLoaded', async () => {
 
 
     } finally {
-        console.groupEnd();
+        // console.groupEnd();
     }
 });
 
 
 function renderAllQuestions(questionData: CodeQuestion[]): void {
-    console.debug('🪳 renderAllQuestions()');
+    // console.debug('🪳 renderAllQuestions()');
 
     const questionContainer = document.querySelector('#question-container');
 
@@ -71,19 +71,19 @@ function renderAllQuestions(questionData: CodeQuestion[]): void {
 }
 
 function renderRatingStars(questions: CodeQuestion[]): void {
-    console.group(`renderRatingStars()`);
+    /* console.group(`renderRatingStars()`);
 
-    console.log('renderRatingStars(questions):', questions);
+    console.log('renderRatingStars(questions):', questions); */
 
     const token = localStorage.getItem('token');
     console.log('token', token);
 
     const userObj = localStorage.getItem('user');
-    console.info('userObj', userObj);
+    // console.info('userObj', userObj);
 
     const user = userObj ? JSON.parse(userObj) : null;
     const userId = user.id;
-    console.info(`userId:`, userId);
+    // console.info(`userId:`, userId);
 
     //const userId
 
@@ -176,7 +176,7 @@ function renderRatingStars(questions: CodeQuestion[]): void {
         }
     });
 
-    console.groupEnd();
+    // console.groupEnd();
 }
 
 function colorStars(container: Element, userRating: number) {
@@ -204,7 +204,7 @@ function updateAllStarDisplays(questions: CodeQuestion[], userRatings: Map<numbe
 //====== FETCH ======
 
 async function fetchUserRatings(userId: number, questionIds: number[]): Promise<Rating[]> {
-    console.group(`fetchUserRatings(userId, questionIds)`);
+    // console.group(`fetchUserRatings(userId, questionIds)`);
     try {
         console.debug('fetchUserRatings()');
         const token = localStorage.getItem('token');
@@ -235,12 +235,12 @@ async function fetchUserRatings(userId: number, questionIds: number[]): Promise<
         console.error('Error:', error);
         return [];
     } finally {
-        console.groupEnd();
+        // console.groupEnd();
     }
 }
 
 async function fetchCodeQuestions(): Promise<CodeQuestion[]> {
-    console.groupCollapsed(`fetchCodeQuestions()`);
+    // console.groupCollapsed(`fetchCodeQuestions()`);
 
     try {
         const url = 'http://localhost:3000/api/codeQuestions/all';
@@ -259,14 +259,14 @@ async function fetchCodeQuestions(): Promise<CodeQuestion[]> {
         // Hämta bara datan
         const questions: { data: CodeQuestion[] } = await response.json(); // # blir assertion, och typen görs om utan errors
 
-        console.log('questions.data :', questions.data);
+        // console.log('questions.data :', questions.data);
 
         // questions.forEach((q) => console.log(q.codeQuestion));
         /* data.forEach((question) => {
             console.log(question.codeTitle);
             console.log(question.codeQuestion);
         }); */
-        console.groupEnd();
+        // console.groupEnd();
 
         return questions.data;
     } catch (error) {
