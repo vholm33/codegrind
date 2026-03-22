@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Railway cloud koppling
-const pool = createPool({
+/* const pool = createPool({
     host: env.MYSQL_HOST,
     port: Number(env.MYSQL_PORT),
     user: env.MYSQL_USER,
@@ -17,10 +17,10 @@ const pool = createPool({
     connectTimeout: 60000,
     waitForConnections: true,
     connectionLimit: 10,
-});
+}); */
 
 // Lokal mysql koppling
-/* const pool = createPool({
+const pool = createPool({
     host: process.env.LOC_MYSQL_HOST ?? '',
     port: Number(process.env.LOC_MYSQL_PORT) || 3306,
     user: process.env.LOC_MYSQL_USER || '',
@@ -32,6 +32,6 @@ const pool = createPool({
     connectTimeout: 60000,
     waitForConnections: true,
     connectionLimit: 10,
-}); */
+});
 
 export default pool;
