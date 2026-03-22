@@ -11,6 +11,7 @@ addEventListener('DOMContentLoaded', async () => {
         // GET category from url
         const urlParams = new URLSearchParams(window.location.search);
         const category = urlParams.get('category');
+        const startQuizLink = document.querySelector('#start-quiz-link') as HTMLAnchorElement;
         // const category = undefined;
         console.debug('cat:', category);
 
@@ -24,10 +25,13 @@ addEventListener('DOMContentLoaded', async () => {
         renderAllQuestions(filteredQuestions);
         //? RENDER stars to click as ratings
         renderRatingStars(filteredQuestions);
+
+
     } finally {
         console.groupEnd();
     }
 });
+
 
 function renderAllQuestions(questionData: CodeQuestion[]): void {
     console.debug('🪳 renderAllQuestions()');
