@@ -16,11 +16,27 @@ export async function saveQuizSession(req: Request, res: Response) {
         } = req.body;
 
         // Saknas något från quizSession?
-        if (!session?.userId || !session?.totalQuestions || !session?.questionsAnswered || !session?.totalPoints) {
-            console.error('Något till sessionen saknas');
+        if (!session?.userId || !session?.totalQuestions) {
+            console.error('userId eller totalQuestions till sessionen saknas');
             return res.status(400).json({
-                ok: false,
-                message: 'session krävs. (userId, totalQuestions, questionsAnswered, totalPoints) saknas!',
+                success: false,
+                message: 'session krävs. (userId, totalQuestions) saknas!',
+            });
+        }
+        if (!session?.questionsAnswered) {
+            console.error('questionsAnswered  till sessionen saknas');
+            return res.status(400).json({
+                success: false,
+                message: 'session krävs. (questionsAnswered) saknas!',
+            });
+        }
+
+        //! points 0 är falsy
+        if (!session?.totalPoints === undefined) {
+            console.error('totalPoints till sessionen saknas');
+            return res.status(400).json({
+                success: false,
+                message: 'session krävs. (totalPoints) saknas!',
             });
         }
 

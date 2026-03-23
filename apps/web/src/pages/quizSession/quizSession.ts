@@ -32,7 +32,6 @@ let quizSessions: QuizSessions[] = []; // Array med sessioner
 type QuizAnswersPost = Omit<QuizAnswers, 'sessionId'>;
 let quizAnswers: QuizAnswersPost[] = []; // questionId behövs i backend, inte frontend
 
-
 let currentQuestion: CodeQuestion | null = null;
 
 let canSubmit: boolean = true;
@@ -224,9 +223,9 @@ async function endQuizSession(totalQuestions: number) {
                 console.debug('🪳 Skapa SESSION');
                 const session: QuizSessions = {
                     userId: userId.id, //? but ut genom använda auth
-                    totalQuestions,
+                    totalQuestions: totalQuestions,
                     questionsAnswered: quizAnswers.length,
-                    totalPoints,
+                    totalPoints: totalPoints,
                 };
                 console.debug('🪳 quizSessions BEFORE push', quizSessions);
                 console.debug('🪳 Pushing to quizSessions:', session);
@@ -278,7 +277,7 @@ async function postQuizResults(session: QuizSessions, answers: QuizAnswersPost[]
         });
         const result = await response.json();
 
-        if (!response.ok) {
+        if (!result.success) {
             throw new Error(result.message || 'Misslyckades att spara quiz resultatet');
         }
 
@@ -454,7 +453,6 @@ function normaliseCode(code: string): string {
             .trim()
     );
 }
-
 
 /**======( handleSubmit )======
  *
