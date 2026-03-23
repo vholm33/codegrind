@@ -140,7 +140,7 @@ export async function updateMyProfileController(req: AuthRequest, res: Response)
         if (!userId) return res.status(401).json({ message: 'Unauthorized' });
 
         if (!username || !email) {
-            return res.status(400).json({
+            return res.status(401).json({
                 message: 'Username and email are required',
             });
         }
