@@ -11,6 +11,7 @@ addEventListener('DOMContentLoaded', async () => {
         // GET category from url
         const urlParams = new URLSearchParams(window.location.search);
         const category = urlParams.get('category');
+        const startQuizLink = document.querySelector('#start-quiz-link') as HTMLAnchorElement;
         // const category = undefined;
         console.debug('cat:', category);
 
@@ -24,10 +25,26 @@ addEventListener('DOMContentLoaded', async () => {
         renderAllQuestions(filteredQuestions);
         //? RENDER stars to click as ratings
         renderRatingStars(filteredQuestions);
+
+        changeQuizLink(category, startQuizLink);
     } finally {
         console.groupEnd();
     }
 });
+
+function changeQuizLink(category: string | null, startQuizLink: HTMLAnchorElement): void {
+    console.debug('changeQuizLink()')
+
+    if (!category || startQuizLink) {
+        console.error('Hittar inte kategori eller startQuizLink');
+    }
+    if (startQuizLink && category) {
+        startQuizLink.href = `../../quizSession/quizSession.html?category=${encodeURIComponent(category)}`;
+        console.debug('🪳 startQuizLink.href:', startQuizLink.href);
+    } else if (startQuizLink) {
+        startQuizLink.href = '../../quizSession/quizSession.html';
+    }
+}
 
 function renderAllQuestions(questionData: CodeQuestion[]): void {
     console.debug('🪳 renderAllQuestions()');

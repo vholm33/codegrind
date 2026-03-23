@@ -1,14 +1,14 @@
 /* FORM SUBMIT to login user */
 addEventListener('DOMContentLoaded', (event) => {
     const form = document.querySelector('form');
+    const usernameInput = document.querySelector<HTMLInputElement>('input#username');
+    const passwordInput = document.querySelector<HTMLInputElement>('input#password');
+    const feedbackEl = document.querySelector<HTMLElement>('#feedback');
 
     form?.addEventListener('submit', async (event) => {
         event.preventDefault();
 
-        const usernameInput = document.querySelector<HTMLInputElement>('input#username');
         console.log('usernameInput:', usernameInput);
-
-        const passwordInput = document.querySelector<HTMLInputElement>('input#password');
         console.log(`password: ${passwordInput}`);
 
         const username = usernameInput?.value;
@@ -19,8 +19,16 @@ addEventListener('DOMContentLoaded', (event) => {
             password: password,
         });
 
+        // Ta bort tidigare feedback
+        if (feedbackEl) {
+            feedbackEl.innerHTML = '';
+            // Återställ styling
+            feedbackEl.className = '';
+        }
+
         if (!username || !password) {
             console.error(`‼️ email, username or password is missing`);
+            showFeedback(feedbackEl as HTMLElement, 'Användarnamn och lösenord krävs', 'error');
             return;
         }
 
@@ -41,8 +49,13 @@ addEventListener('DOMContentLoaded', (event) => {
             } */
 
             const result = await response.json();
-            console.log('Login SUCCESS', JSON.stringify(result, null, 2));
 
+            if (response.status === 401) {
+                showFeedback(feedbackEl as HTMLElement, 'Fel användarnamn eller lösenord', 'error');
+                return;
+            }
+
+            console.log('Login SUCCESS', JSON.stringify(result, null, 2));
             console.info(`Sparar user och token i localStorage`);
             // Spara användare och token i localStorage
             localStorage.setItem('token', result.token);
@@ -56,3 +69,23 @@ addEventListener('DOMContentLoaded', (event) => {
         console.log(`All input OK`);
     });
 });
+
+function showFeedback(element: HTMLElement, message: string, type: 'success' | 'error') {
+    element.innerHTML = message;
+
+    if (type === 'success') {
+        element.className = 'text-center text-sm text-green-400 bg-green-900/50 p-2 rounded';
+    } else {
+        element.className = 'text-center text-sm text-red-400 bg-red-900/50 p-2 rounded';
+    }
+
+    /* Borde feedback försvinna egentligen?
+    if (type === 'error') {
+        setTimeout(() => {
+            if (element.innerHTML === message) {
+                element.innerHTML = '';
+                element.className = 'mt-4 text-center text-sm';
+            }
+        }, 3000);
+    } */
+}
