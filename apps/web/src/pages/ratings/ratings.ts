@@ -26,13 +26,14 @@ addEventListener('DOMContentLoaded', async () => {
         //? RENDER stars to click as ratings
         renderRatingStars(filteredQuestions);
 
-        changeQuizLink(category, startQuizLink);
+        //! Görs i handout
+        // changeQuizLink(category, startQuizLink);
     } finally {
         console.groupEnd();
     }
 });
 
-function changeQuizLink(category: string | null, startQuizLink: HTMLAnchorElement): void {
+/* function changeQuizLink(category: string | null, startQuizLink: HTMLAnchorElement): void {
     console.debug('changeQuizLink()')
 
     if (!category || startQuizLink) {
@@ -44,7 +45,7 @@ function changeQuizLink(category: string | null, startQuizLink: HTMLAnchorElemen
     } else if (startQuizLink) {
         startQuizLink.href = '../../quizSession/quizSession.html';
     }
-}
+} */
 
 function renderAllQuestions(questionData: CodeQuestion[]): void {
     console.debug('🪳 renderAllQuestions()');
@@ -106,10 +107,7 @@ function renderRatingStars(questions: CodeQuestion[]): void {
     const userRatings = new Map<number, number>();
 
     if (isLoggedIn) {
-        fetchUserRatings(
-            user.id,
-            questions.map((q) => q.id),
-        ).then((ratings) => {
+        fetchUserRatings().then((ratings) => {
             ratings.forEach((r) => userRatings.set(r.sqlQuestionId, r.userRating));
 
             // Update stars with rating
@@ -178,7 +176,9 @@ function renderRatingStars(questions: CodeQuestion[]): void {
                             // Update star colors
                             colorStars(ratingStarsContainer, ratingValue);
 
-                            console.log(`Rated question ${questionId} with ${ratingValue} stars`);
+                            console.debug(
+                                `User(${questionId}) betygsatte frågeID ${questionId} som ${ratingValue} stjärnor`,
+                            );
                         } catch (error) {
                             console.error('Error saving rating:', error);
                             alert(error);
@@ -216,22 +216,24 @@ function updateAllStarDisplays(questions: CodeQuestion[], userRatings: Map<numbe
 
 //====== FETCH ======
 
-async function fetchUserRatings(userId: number, questionIds: number[]): Promise<Rating[]> {
-    console.group(`fetchUserRatings(userId, questionIds)`);
+// async function fetchUserRatings(userId: number, questionIds: number[]): Promise<Rating[]> {
+async function fetchUserRatings(): Promise<Rating[]> {
+    // console.group(`fetchUserRatings(userId, questionIds)`);
     try {
-        console.debug('fetchUserRatings()');
+        // console.debug('fetchUserRatings()');
         const token = localStorage.getItem('token');
-        const queryParams = new URLSearchParams();
-        console.debug('🪳 fetchUserRatings queryParams:', queryParams);
+        // const queryParams = new URLSearchParams();
+        // console.debug('🪳 fetchUserRatings queryParams:', queryParams);
 
-        if (!token || !queryParams) throw new Error('token eller queryParams är fel');
+        // if (!token || !queryParams) throw new Error('token eller queryParams är fel');
+        if (!token) throw new Error('Token saknas');
 
-        queryParams.append('userId', userId.toString());
-        //! ska userId vara här?
+        // queryParams.append('userId', userId.toString());
+
         // array börjar på 1 med userID som 0
-        questionIds.forEach((id) => queryParams.append('questionId', id.toString()));
+        // questionIds.forEach((id) => queryParams.append('questionId', id.toString()));
 
-        const response = await fetch(`http://localhost:3000/api/ratings/?${queryParams.toString()}`, {
+        const response = await fetch(`http://localhost:3000/api/ratings/`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -242,18 +244,18 @@ async function fetchUserRatings(userId: number, questionIds: number[]): Promise<
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         const result = await response.json();
-        console.debug('result:', result);
+        console.debug('Hämta ratings med specifik anvädnare från -- result.data:', result.data);
         return result.data || [];
     } catch (error: any) {
         console.error('Error:', error);
         return [];
     } finally {
-        console.groupEnd();
+        // console.groupEnd();
     }
 }
 
 async function fetchCodeQuestions(): Promise<CodeQuestion[]> {
-    console.groupCollapsed(`fetchCodeQuestions()`);
+    // console.groupCollapsed(`fetchCodeQuestions()`);
 
     try {
         const url = 'http://localhost:3000/api/codeQuestions/all';
@@ -272,7 +274,7 @@ async function fetchCodeQuestions(): Promise<CodeQuestion[]> {
         // Hämta bara datan
         const questions: { data: CodeQuestion[] } = await response.json(); // # blir assertion, och typen görs om utan errors
 
-        console.log('questions.data :', questions.data);
+        // console.log('questions.data :', questions.data);
 
         // questions.forEach((q) => console.log(q.codeQuestion));
         /* data.forEach((question) => {

@@ -90,7 +90,7 @@ export async function getAllQuestionsRepo(): Promise<{
             ORDER BY q.id
         `);
 
-        console.log('[REPO] result:', rows);
+        // console.log('[REPO] result:', rows);
 
         const questions: CodeQuestion[] = rows.map((row: any) => ({
             id: row.id,

@@ -28,15 +28,26 @@ const MAX_ATTEMPTS: number = 3;
 // 1. Kopplar till varje HEL quiz session
 let quizSessions: QuizSessions[] = []; // Array med sessioner
 // 2. Kopplas till varje fråga i quiz-sessionen
-let quizAnswers: QuizAnswers[] = []; // Array med svar
+// let quizAnswers: Omit<QuizAnswers, 'sessionId'>[] = []; // questionId behövs i backend, inte frontend
+type QuizAnswersPost = Omit<QuizAnswers, 'sessionId'>;
+let quizAnswers: QuizAnswersPost[] = []; // questionId behövs i backend, inte frontend
+
 
 let currentQuestion: CodeQuestion | null = null;
 
 let canSubmit: boolean = true;
 let attempts: Attempts = 0;
 let points: number = 0;
-let questionResults: QuestionResult[] = [];
 
+//? Blandade ihop quizAnswers: QuizAnswers[] och QuestionResult[]
+//let quizAnswers: QuestionResult[] = [];
+/* interface QuestionResult {
+    questionId: number;
+    categoryId?: number;
+    points: number;
+    attempts: number;
+    isCorrect: boolean;
+} */
 //====== STATE ======
 let currentIndex: number = 0;
 let resolveNext: (() => void) | null = null;
@@ -205,16 +216,16 @@ async function endQuizSession(totalQuestions: number) {
                 console.debug('🪳 userId:', userId);
                 console.debug('🪳 userId.id:', userId?.id);
 
-                const totalPoints = questionResults.reduce((sum, q) => sum + q.points, 0);
+                const totalPoints = quizAnswers.reduce((sum, q) => sum + q.points, 0);
 
                 //! const userId = localStorage.getItem('user')
 
                 // Spara session
-                console.debug('🪳 SPARA SESSION');
+                console.debug('🪳 Skapa SESSION');
                 const session: QuizSessions = {
                     userId: userId.id, //? but ut genom använda auth
                     totalQuestions,
-                    questionsAnswered: questionResults.length,
+                    questionsAnswered: quizAnswers.length,
                     totalPoints,
                 };
                 console.debug('🪳 quizSessions BEFORE push', quizSessions);
@@ -222,11 +233,12 @@ async function endQuizSession(totalQuestions: number) {
                 quizSessions.push(session);
                 console.debug('🪳 quizSessions AFTER push:', session);
 
-                console.debug('🪳 SPARA användarens SVAR');
-                questionResults.forEach((result, index) => {
+                /* console.debug('🪳 SPARA användarens SVAR');
+                quizAnswers.forEach((result, index) => {
                     const answer: QuizAnswers = {
                         sessionId: quizSessions.length,
                         questionId: result.questionId,
+                        categoryName: currentQuestion?.categoryName,
                         attempts: result.attempts,
                         points: result.points,
                         isCorrect: result.isCorrect,
@@ -235,12 +247,12 @@ async function endQuizSession(totalQuestions: number) {
                     quizAnswers.push(answer);
                     console.debug('🪳 answer:', answer);
                     console.debug('🪳 quizAnswers AFTER push', quizAnswers);
-                });
+                }); */
 
                 console.info('quizSesions', quizSessions);
                 console.info('quisAnswers', quizAnswers);
 
-                console.debug('🪳 POST session och answers till server');
+                console.warn('🪳 POST session och answers till server');
                 await postQuizResults(session, quizAnswers);
             } else {
                 console.error('user objektet saknar ID');
@@ -254,7 +266,7 @@ async function endQuizSession(totalQuestions: number) {
 }
 
 // [x] SUCCESS lyckas spara resultat i quizSessions TABLE
-async function postQuizResults(session: QuizSessions, answers: QuizAnswers[]) {
+async function postQuizResults(session: QuizSessions, answers: QuizAnswersPost[]) {
     console.debug('🪳 postQuizResults()');
     try {
         const response = await fetch('http://localhost:3000/api/quiz/session', {
@@ -265,15 +277,21 @@ async function postQuizResults(session: QuizSessions, answers: QuizAnswers[]) {
             body: JSON.stringify({ session, answers }), // utan {} blir det inget objekt!
         });
         const result = await response.json();
-        console.log('result:', result);
+
+        if (!response.ok) {
+            throw new Error(result.message || 'Misslyckades att spara quiz resultatet');
+        }
+
+        console.log('Resultatet sparades:', result);
 
         console.info('Omdirigerar användare till results.html');
         //! hel väg
+
         window.location.href = '/src/pages/results/results.html';
     } catch (error: any) {
         console.error('Error vid POST av quiz resultat:', error);
     } finally {
-        console.groupEnd();
+        // console.groupEnd();
     }
 }
 
@@ -347,14 +365,6 @@ function updateQuestionUI(question: CodeQuestion, questionsLength: number, index
     endIndex: number;
 } */
 
-interface QuestionResult {
-    questionId: number;
-    categoryId?: number;
-    points: number;
-    attempts: number;
-    isCorrect: boolean;
-}
-
 // ?
 function calculatePoints(attempts: number): number {
     switch (attempts) {
@@ -367,186 +377,6 @@ function calculatePoints(attempts: number): number {
         default:
             return 0;
     }
-}
-
-/**======( handleSubmit )======
- *
- * FUNCTIONS:
- *  1. normaliseCode() # from userInput and correctAnswer
- *  2. compareAnswers(userAnswer, correctAnswer) >> ranges
- *  3. >> EDITOR.highlightText(ranges)
- *
- * IF CORRECT       --> handleCorrectAnswer(nextQuestion)                   --> showSuccessFeedback(feedbackEl, points)
- * IF MAX-TRIES     --> handleMaxAttempts(correctAnswer, nextQuestion)
- * IF INCORRECT     --> hanleIncorrectAnswer(isTooShort, missingChars)
- */
-function handleSubmit(event: Event, nextQuestion: (() => void) | null): 'correct' | 'incorrect' | 'max-tries' {
-    event.preventDefault();
-    console.group(`handleSubmit(event)`);
-
-    try {
-        console.log('Just before max-tries end');
-        if (!canSubmit) {
-            return 'max-tries';
-        }
-
-        // Tar bort submittion
-        if (attempts >= MAX_ATTEMPTS) {
-            canSubmit = false;
-        }
-
-        attempts++;
-        console.log(`=========( Attempt: ${attempts}/${MAX_ATTEMPTS} )==========`);
-
-        const userAnswer = normaliseCode(editor?.getValue() ?? '');
-        const correctAnswer = normaliseCode(currentQuestion?.codeAnswer ?? '');
-        const nonNormalisedAnswer = currentQuestion?.codeAnswer ?? '';
-        const isCorrect = userAnswer === correctAnswer;
-
-        // Om användarens svar är för kort
-        const isTooShort: boolean = userAnswer.length < correctAnswer.length;
-        const missingChars: number = isTooShort ? correctAnswer.length - userAnswer.length : 0;
-
-        // 2. MAX TRIES
-        // Handle incorrect answer (show feedback, highlight, etc.)
-        const ranges = compareAnswers(userAnswer, correctAnswer);
-        editor?.highlightText(ranges);
-
-        // 1. CORRECT
-        if (isCorrect) {
-            return handleCorrectAnswer(nextQuestion);
-        }
-
-        // 2. MAX-TRIES, samma IF: hanterar UI logik
-        if (attempts >= MAX_ATTEMPTS) {
-            return handleMaxAttempts(nonNormalisedAnswer, nextQuestion); // RETURNS: 'max-tries'
-        }
-
-        // 3. INCORRET
-        if (feedbackEl) {
-            // Show remaining attempts
-            return handleIncorrectAnswer(isTooShort, missingChars); // RETURNS: 'incorrect'
-        } else {
-            console.error('Returning feedback even though feedbackEl does nott exist');
-            return 'incorrect';
-        }
-    } finally {
-        console.groupEnd();
-    }
-}
-// 1. CORRECT
-function handleCorrectAnswer(nextQuestion: (() => void) | null): 'correct' {
-    console.group(`handleCorrectAnswer()`);
-
-    points = calculatePoints(attempts);
-
-    // [ ] Ska jag bara pusha när rätt?
-    if (currentQuestion) {
-        console.debug('🪳 pushing to questionResults');
-        questionResults.push({
-            questionId: currentQuestion.id,
-            points: points,
-            attempts: attempts,
-            isCorrect: true,
-        });
-        console.debug('Pushed to questionResults:', questionResults);
-    }
-
-    console.log(`RÄTT! Du fick ${points} poäng`);
-
-    // Show success message
-    showSuccessFeedback(feedbackEl, points);
-
-    console.info('canSubmit satt till ', (canSubmit = false));
-
-    // Move to next question after delay
-    setTimeout(() => {
-        editorContainerEl?.classList.remove('bg-lime-500');
-        if (nextQuestion) nextQuestion();
-    }, 2000); // var 3000 innan
-
-    console.groupEnd();
-    return 'correct';
-}
-function showSuccessFeedback(feedbackEl: HTMLElement | null, points: number): void {
-    if (feedbackEl) {
-        editorContainerEl?.classList.add('bg-cyan-500');
-        feedbackEl.innerHTML = `
-            <div class="flex gap-4">
-                <div class="shrink-0 text-black bg-green-500 p-2 border rounded-md">
-                    Rätt!
-                </div>
-                <div class="flex-1 rounded-md border bg-green-900 py-2 text-center text-green-400 p-2">
-                    Du fick ${points} poäng!
-                </div>
-            </div>
-            `;
-
-        feedbackEl.classList.remove('hidden');
-    }
-}
-
-// 2. MAX-TRIES
-function handleMaxAttempts(correctAnswer: string, nextQuestion: (() => void) | null): 'max-tries' {
-    canSubmit = false;
-
-    if (feedbackEl) {
-        editor?.setValue(correctAnswer);
-        editorContainerEl?.classList.add('bg-lime-500');
-
-        feedbackEl.innerHTML = `
-            <div class="flex gap-4">
-                <div class="shrink-0 bg-red-500 p-2 border rounded-md text-white">
-                    Inga fler försök
-                </div>
-                <div class="flex-1 rounded-md border bg-red-900 py-2 text-center text-red-400 p-2">
-                    Rätt svar nedan:
-                </div>
-            </div>
-            `;
-        feedbackEl.classList.remove('hidden');
-    }
-
-    setTimeout(() => {
-        editorContainerEl?.classList.remove('bg-lime-500');
-        if (nextQuestion) nextQuestion();
-    }, 4000); // var 8000
-
-    return 'max-tries';
-}
-// 3. INCORRET
-function handleIncorrectAnswer(isTooShort: boolean, missingChars: number): 'incorrect' {
-    // Show remaining attempts
-    if (isTooShort) {
-        // Hur många karaktärer saknas?
-        feedbackEl.innerHTML = `
-            <div class="flex gap-4">
-                <div class="shrink-0 bg-cyan-500 p-2 border rounded-md text-white">
-                    Försök kvar: ${MAX_ATTEMPTS - attempts}
-                </div>
-                <div class="flex-1 rounded-md border bg-yellow-900 py-2 text-center text-yellow-400 p-2">
-                    Ditt svar är för kort. Det saknas <span class="text-red-500 rounded-xl bg-red-950 p-1 font-bold">${missingChars}</span> ${missingChars === 1 ? 'karaktär' : 'karaktärer'}
-                </div>
-            </div>
-        `;
-    } else {
-        // Vanligt felmeddelande
-        feedbackEl.innerHTML = `
-                <div class="flex gap-4">
-                    <div class="shrink-0 bg-red-500 p-2 border rounded-md text-white">
-                        Försök kvar: ${MAX_ATTEMPTS - attempts}
-                    </div>
-                    <div class="flex-1 rounded-md border bg-yellow-900 py-2 text-center text-yellow-400 p-2">
-                        Det saknas
-                    </div>
-                </div>
-            `;
-    }
-
-    feedbackEl.classList.remove('hidden');
-    editor?.focus();
-
-    return 'incorrect';
 }
 
 function compareAnswers(userAnswer: string, correctAnswer: string) {
@@ -625,4 +455,191 @@ function normaliseCode(code: string): string {
     );
 }
 
-// Rendera feedback med funktion
+
+/**======( handleSubmit )======
+ *
+ * FUNCTIONS:
+ *  1. normaliseCode() # from userInput and correctAnswer
+ *  2. compareAnswers(userAnswer, correctAnswer) >> ranges
+ *  3. >> EDITOR.highlightText(ranges)
+ *
+ * IF CORRECT       --> handleCorrectAnswer(nextQuestion)                   --> showSuccessFeedback(feedbackEl, points)
+ * IF MAX-TRIES     --> handleMaxAttempts(correctAnswer, nextQuestion)
+ * IF INCORRECT     --> hanleIncorrectAnswer(isTooShort, missingChars)
+ */
+function handleSubmit(event: Event, nextQuestion: (() => void) | null): 'correct' | 'incorrect' | 'max-tries' {
+    event.preventDefault();
+    console.group(`handleSubmit(event)`);
+
+    try {
+        console.log('Just before max-tries end');
+        if (!canSubmit) {
+            return 'max-tries';
+        }
+
+        // Tar bort submition
+        if (attempts >= MAX_ATTEMPTS) {
+            canSubmit = false;
+        }
+
+        attempts++;
+        console.log(`=========( Attempt: ${attempts}/${MAX_ATTEMPTS} )==========`);
+
+        const userAnswer: string = normaliseCode(editor?.getValue() ?? '');
+        const correctAnswer: string = normaliseCode(currentQuestion?.codeAnswer ?? '');
+        const nonNormalisedAnswer: string = currentQuestion?.codeAnswer ?? '';
+        const isCorrect: boolean = userAnswer === correctAnswer;
+
+        // Om användarens svar är för kort
+        const isTooShort: boolean = userAnswer.length < correctAnswer.length;
+        const missingChars: number = isTooShort ? correctAnswer.length - userAnswer.length : 0;
+
+        // 2. MAX TRIES
+        // Handle incorrect answer (show feedback, highlight, etc.)
+        const ranges = compareAnswers(userAnswer, correctAnswer);
+        editor?.highlightText(ranges);
+
+        // 1. CORRECT
+        if (isCorrect) {
+            return handleCorrectAnswer(nextQuestion);
+        }
+
+        // 2. MAX-TRIES, samma IF: hanterar UI logik
+        if (attempts >= MAX_ATTEMPTS) {
+            return handleMaxAttempts(nonNormalisedAnswer, nextQuestion); // RETURNS: 'max-tries'
+        }
+
+        // 3. INCORRET
+        if (feedbackEl) {
+            // Show remaining attempts
+            return handleIncorrectAnswer(isTooShort, missingChars); // RETURNS: 'incorrect'
+        } else {
+            console.error('Returning feedback even though feedbackEl does nott exist');
+            return 'incorrect';
+        }
+    } finally {
+        console.groupEnd();
+    }
+}
+// 1. CORRECT
+function handleCorrectAnswer(nextQuestion: (() => void) | null): 'correct' {
+    console.group(`handleCorrectAnswer()`);
+
+    points = calculatePoints(attempts);
+    if (currentQuestion) {
+        quizAnswers.push({
+            // sessionId: 0, ska inte vara med
+            questionId: currentQuestion.id,
+            categoryName: currentQuestion.categoryName,
+            points,
+            attempts,
+            isCorrect: true,
+        });
+    }
+    console.log(`RÄTT! Du fick ${points} poäng`);
+
+    // Show success message
+    showSuccessFeedback(feedbackEl, points);
+
+    console.info('canSubmit satt till ', (canSubmit = false));
+
+    // Move to next question after delay
+    setTimeout(() => {
+        editorContainerEl?.classList.remove('bg-lime-500');
+        if (nextQuestion) nextQuestion();
+    }, 2000); // var 3000 innan
+
+    console.groupEnd();
+    return 'correct';
+}
+function showSuccessFeedback(feedbackEl: HTMLElement | null, points: number): void {
+    if (feedbackEl) {
+        editorContainerEl?.classList.add('bg-cyan-500');
+        feedbackEl.innerHTML = `
+            <div class="flex gap-4">
+                <div class="shrink-0 text-black bg-green-500 p-2 border rounded-md">
+                    Rätt!
+                </div>
+                <div class="flex-1 rounded-md border bg-green-900 py-2 text-center text-green-400 p-2">
+                    Du fick ${points} poäng!
+                </div>
+            </div>
+            `;
+
+        feedbackEl.classList.remove('hidden');
+    }
+}
+
+// 2. MAX-TRIES
+function handleMaxAttempts(correctAnswer: string, nextQuestion: (() => void) | null): 'max-tries' {
+    canSubmit = false;
+
+    if (currentQuestion) {
+        quizAnswers.push({
+            // sessionId: 0, läggs till i backend
+            questionId: currentQuestion.id,
+            categoryName: currentQuestion.categoryName,
+            points: 0,
+            attempts,
+            isCorrect: false,
+        });
+    }
+
+    if (feedbackEl) {
+        editor?.setValue(correctAnswer);
+        editorContainerEl?.classList.add('bg-lime-500');
+
+        feedbackEl.innerHTML = `
+            <div class="flex gap-4">
+                <div class="shrink-0 bg-red-500 p-2 border rounded-md text-white">
+                    Inga fler försök
+                </div>
+                <div class="flex-1 rounded-md border bg-red-900 py-2 text-center text-red-400 p-2">
+                    Rätt svar nedan:
+                </div>
+            </div>
+            `;
+        feedbackEl.classList.remove('hidden');
+    }
+
+    setTimeout(() => {
+        editorContainerEl?.classList.remove('bg-lime-500');
+        if (nextQuestion) nextQuestion();
+    }, 4000); // var 8000
+
+    return 'max-tries';
+}
+// 3. INCORRET
+function handleIncorrectAnswer(isTooShort: boolean, missingChars: number): 'incorrect' {
+    // Show remaining attempts
+    if (isTooShort) {
+        // Hur många karaktärer saknas?
+        feedbackEl.innerHTML = `
+            <div class="flex gap-4">
+                <div class="shrink-0 bg-cyan-500 p-2 border rounded-md text-white">
+                    Försök kvar: ${MAX_ATTEMPTS - attempts}
+                </div>
+                <div class="flex-1 rounded-md border bg-yellow-900 py-2 text-center text-yellow-400 p-2">
+                    Ditt svar är för kort. Det saknas <span class="text-red-500 rounded-xl bg-red-950 p-1 font-bold">${missingChars}</span> ${missingChars === 1 ? 'karaktär' : 'karaktärer'}
+                </div>
+            </div>
+        `;
+    } else {
+        // Vanligt felmeddelande
+        feedbackEl.innerHTML = `
+                <div class="flex gap-4">
+                    <div class="shrink-0 bg-red-500 p-2 border rounded-md text-white">
+                        Försök kvar: ${MAX_ATTEMPTS - attempts}
+                    </div>
+                    <div class="flex-1 rounded-md border bg-yellow-900 py-2 text-center text-yellow-400 p-2">
+                        Det saknas
+                    </div>
+                </div>
+            `;
+    }
+
+    feedbackEl.classList.remove('hidden');
+    editor?.focus();
+
+    return 'incorrect';
+}

@@ -15,15 +15,21 @@ export async function saveQuizSession(req: Request, res: Response) {
             answers: QuizAnswers[];
         } = req.body;
 
+        // Saknas något från quizSession?
         if (!session?.userId || !session?.totalQuestions || !session?.questionsAnswered || !session?.totalPoints) {
+            console.error('Något till sessionen saknas');
             return res.status(400).json({
-                success: false,
+                ok: false,
                 message: 'session krävs. (userId, totalQuestions, questionsAnswered, totalPoints) saknas!',
             });
         }
+
+        // Saknas något från quizAnswers?
+
         if (!Array.isArray(answers) || answers.length === 0) {
+            console.error('Är inte en array');
             return res.status(400).json({
-                success: false,
+                ok: false,
                 message: 'answers måste vara en array med minst ett svar!',
             });
         }

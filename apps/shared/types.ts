@@ -26,6 +26,7 @@ export interface QuizSessions {
 export interface QuizAnswers {
     sessionId: number; // Användarens quiz-session
     questionId: number; // Användarens fråga i sessionen
+    categoryName: string, //! Ny
     attempts: number; // Användarens försök per fråga
     points: number; // Användarens poäng per fråga
     isCorrect: boolean; // Lyckades användaren få rätt?

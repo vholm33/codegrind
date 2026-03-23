@@ -1,16 +1,14 @@
 import type { Response, Request } from 'express';
 import type { Rating, ApiResponse } from '@shared/types.js';
 import { mdbConn } from '../connection.js';
+import type { AuthRequest } from '../../middleware/authMiddleware.js';
 
 // UPDATE / POST
-export async function addRating(
-    req: Request,
-    res: Response<ApiResponse>
-): Promise<Response<ApiResponse>> {
+export async function addRating(req: Request, res: Response<ApiResponse>): Promise<Response<ApiResponse>> {
     try {
         console.log('addRating() handling update/post');
         const { sqlQuestionId, userRating, sqlUserId } = req.body;
-        console.log('red.body', req.body);
+        console.log('req.body', req.body);
 
         if (!sqlQuestionId || !userRating || !sqlUserId) {
             return res.status(401).json({
@@ -110,15 +108,56 @@ export async function addRating(
     }
 } */
 
-export async function getRating(_req: Request, res: Response<ApiResponse<Rating[]>>): Promise<Response> {
+export async function getUserRatingsById(
+    req: AuthRequest,
+    res: Response<ApiResponse<Rating[]>>,
+): Promise<Response> {
+    try {
+        console.log('[CONTROLLER] getRating(req, res)');
+/*         console.log('req.body', req.body);
+        console.log('req.params', req.params); */
+
+        const sqlUserId = req.user?.userId; // JWT hämtar
+        console.log('sqlUserId:', sqlUserId)
+        if (!sqlUserId) {
+            return res.status(401).json({
+                success: false,
+                error: 'Inte autentiserad'
+            })
+        }
+        const collection = mdbConn.collection<Rating>('ratings');
+
+        console.log('getting all user ratings...');
+
+        const userRatings: Rating[] = await collection.find({ sqlUserId }).toArray();
+        console.log('userRatings', userRatings);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Skickar tillbaks användarens ratings.',
+            // måste ha message
+            data: userRatings,
+        });
+    } catch (error: any) {
+        return res.status(400).json({
+            success: false,
+            error: error.message,
+        });
+    }
+}
+/* export async function getRating(_req: Request<{ sqlUserId: string}>,
+    res: Response<ApiResponse<Rating[]>>): Promise<Response> {
     try {
         console.log('[CONTROLLER] getRating(req, res)');
 
+        const { sqlUserId:}
         const collection = mdbConn.collection<Rating>('ratings');
 
         console.log('getting all ratings...');
         // get all
-        const allRatings: Rating[] = await collection.find().toArray();
+        const allRatings: Rating[] = await collection.find(
+            { sqlUserId: }
+        ).toArray();
         console.log('All ratings', allRatings);
 
         return res.status(200).json({
@@ -133,4 +172,31 @@ export async function getRating(_req: Request, res: Response<ApiResponse<Rating[
             error: error.message,
         });
     }
-}
+} */
+
+/* export async function getRatingByUser(_req: Request, res: Response<ApiResponse<Rating[]>>): Promise<Response> {
+    try {
+        console.log('[CONTROLLER] getRating(req, res)');
+
+        const collection = mdbConn.collection<Rating>('ratings');
+
+        console.log('getting all ratings...');
+        // get all
+        const allRatings: Rating[] = await collection.find(
+            { sqlUserId: 1}
+        ).toArray();
+        console.log('All ratings', allRatings);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Skickar tillbaks alla ratings.',
+            // måste ha message
+            data: allRatings,
+        });
+    } catch (error: any) {
+        return res.status(400).json({
+            success: false,
+            error: error.message,
+        });
+    }
+} */

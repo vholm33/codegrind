@@ -4,7 +4,7 @@ import type { Category } from '../controllers/categories.controller.js';
 
 export async function getAllCategoriesRepo() {
     try {
-        console.log('[REPO] addCodeQuestionRepo()');
+        console.log('[REPO] getAllCategoriesRepo()');
 
         const [rows] = await pool.query(`
             SELECT id, name, handout
@@ -12,7 +12,7 @@ export async function getAllCategoriesRepo() {
             ORDER BY name
         `);
 
-        // console.log('[REPO] existing categories:', rows); # visar alla rader i terminalen
+        // console.log('[REPO] existing categories:', rows); //  visar alla kategorier
         return rows;
     } catch (error: any) {
         console.error(`‼️ [REPO] ERROR in addCodeQuestionRepo: ${error.message}`);
@@ -50,19 +50,17 @@ export async function addCategoriesRepo(input: Category) {
 }
 
 export async function removeCategoryRepo(id: number) {
-    try{
+    try {
         console.log('[REPO] removeCategoryRepo()');
         const [result]: any = await pool.query('DELETE FROM categories WHERE id = ?', [id]);
         return result;
-
     } catch (error: any) {
         console.error(`!! [REPO] ERROR in removeCateoryRepo: ${error.message}`);
 
         return {
             success: false,
             error: error.message,
-            sqlMessage: error.sqlMessage
+            sqlMessage: error.sqlMessage,
         };
     }
-
 }

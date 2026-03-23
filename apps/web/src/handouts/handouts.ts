@@ -19,27 +19,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     const categories: Handout[] = json.data;
     const category = categories.find((c: Handout) => c.name === selectedCategory);
 
-    console.debug('🪳 response:', categories);
+    // console.debug('🪳 response:', categories);
 
-    if (!selectedCategory || startQuizLink) {
-        console.debug('🪳 Uppdaterar starta quiz länk');
+    if (startQuizLink) {
+        console.warn('🪳 Uppdaterar starta quiz länk');
         changeQuizLink(selectedCategory, startQuizLink);
     }
 
     if (category) {
         title.innerText = category.name;
-        console.debug('🪳 RAW markdown start');
-        console.debug('🪳 category.handout:', category.handout);
-        console.debug('🪳 RAW markdown end');
+        // console.debug('🪳 RAW markdown start');
+        // console.debug('🪳 category.handout:', category.handout);
+        // console.debug('🪳 RAW markdown end');
 
-        console.debug('🪳 Awaiting promise from marked.parse ...');
+        // console.debug('🪳 Awaiting promise from marked.parse ...');
         const html = (await marked.parse(category.handout)) as string;
 
-        console.debug('🪳 PARSED HTML:', html);
+        // console.debug('🪳 PARSED HTML:', html);
         // console.debug('🪳 html:', html);
         handout.innerHTML = html;
         handout.querySelectorAll('pre code').forEach((block) => {
-            console.debug('🪳 Code blocks:', block);
+            // console.debug('🪳 Code blocks:', block);
             hljs.highlightElement(block as HTMLElement);
         });
     }
@@ -48,18 +48,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function changeQuizLink(category: string | null, startQuizLink: HTMLAnchorElement): void {
     console.debug('changeQuizLink()');
-
     console.debug('🪳 category:', category);
     console.debug('🪳 startQuizLink:', startQuizLink);
+
+    const basePath = '/src/pages'; // Från root
 
     if (!category || !startQuizLink) {
         console.error('Hittar inte category eller startQuizLink');
     }
     if (startQuizLink && category) {
-        startQuizLink.href = `../pages/quizSession/quizSession.html?category=${encodeURIComponent(category)}`;
+        startQuizLink.href = `${basePath}/quizSession/quizSession.html?category=${encodeURIComponent(category)}`;
         console.debug('🪳 startQuizLink:', startQuizLink);
         // console.debug('🪳 startQuizLink.href:', startQuizLink.href);
     } else if (startQuizLink) {
-        startQuizLink.href = '../pages/quizSession/quizSession.html';
+        startQuizLink.href = `${basePath}/quizSession/quizSession.html`;
     }
 }
