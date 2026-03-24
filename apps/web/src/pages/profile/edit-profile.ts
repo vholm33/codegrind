@@ -20,6 +20,23 @@ const editableFields: EditableField[] = ['username', 'email', 'password'];
 // Local helpers
 // =========
 
+async function removeAccount(): Promise<void> {
+    console.log('Ta bort konto...');
+    const token = getToken();
+    const response = await fetch('http://localhost:3000/api/users/profile/me', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    const result = await response.json();
+    console.log('result:', result);
+
+    console.log('Omdirigerar till register');
+    window.location.href = '/src/pages/register/register.html';
+}
+
 function getElement<T extends HTMLElement>(selector: string): T | null {
     return document.querySelector(selector);
 }
@@ -82,6 +99,7 @@ function setFieldEditing(field: EditableField, isEditing: boolean): void {
     button.classList.toggle('text-blue-300', isEditing);
 
     if (isEditing) {
+        console.debug('🪳 Focus isEditing...');
         getFieldInput(field)?.focus();
     }
 }
@@ -242,6 +260,7 @@ async function initEditProfilePage(): Promise<void> {
 
     if (form) {
         form.addEventListener('submit', (event) => {
+            console.debug('🪳 Form submit');
             void handleSubmit(event);
         });
     }
@@ -259,4 +278,11 @@ async function initEditProfilePage(): Promise<void> {
 
 document.addEventListener('DOMContentLoaded', () => {
     void initEditProfilePage();
+
+    const removeAccountBtn = document.querySelector('#remove-profile-btn');
+    if (removeAccountBtn) {
+        removeAccountBtn.addEventListener('click', removeAccount);
+    }
+    // Onclick knapp
+    removeAccount;
 });

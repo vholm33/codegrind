@@ -22,8 +22,19 @@
             </aside>
 
             <main class="m-4 flex w-screen flex-1 flex-col">
+                <section class="flex w-full items-center justify-center">
+                    <button
+                        id="remove-profile-btn"
+                        class="flex items-center justify-center bg-red-500 p-4 font-semibold"
+                    >
+                        Ta bort konto
+                    </button>
+                </section>
                 <section class="mt-12 flex justify-center">
-                    <form id="edit-profile-form" class="flex w-full max-w-3xl flex-col rounded-md border-2 bg-gray-800 p-6">
+                    <form
+                        id="edit-profile-form"
+                        class="flex w-full max-w-3xl flex-col rounded-md border-2 bg-gray-800 p-6"
+                    >
                         <header class="mb-6 border-b pb-4">
                             <p class="text-sm uppercase tracking-[0.18em] text-gray-400">Account</p>
                             <h2 class="mt-2 text-2xl font-semibold">Profile settings</h2>
@@ -37,7 +48,9 @@
                                 <div class="flex items-start justify-between gap-4">
                                     <div>
                                         <p class="text-xs uppercase tracking-[0.18em] text-gray-500">Username</p>
-                                        <p id="username-display" class="mt-3 text-lg font-semibold text-white">Loading...</p>
+                                        <p id="username-display" class="mt-3 text-lg font-semibold text-white">
+                                            Loading...
+                                        </p>
                                     </div>
                                     <button
                                         class="rounded-md border border-gray-600 px-4 py-2 text-sm font-medium text-white transition hover:border-blue-500 hover:text-blue-300"
@@ -74,7 +87,9 @@
                                 <div class="flex items-start justify-between gap-4">
                                     <div>
                                         <p class="text-xs uppercase tracking-[0.18em] text-gray-500">Email</p>
-                                        <p id="email-display" class="mt-3 text-lg font-semibold text-white">Loading...</p>
+                                        <p id="email-display" class="mt-3 text-lg font-semibold text-white">
+                                            Loading...
+                                        </p>
                                     </div>
                                     <button
                                         class="rounded-md border border-gray-600 px-4 py-2 text-sm font-medium text-white transition hover:border-blue-500 hover:text-blue-300"
@@ -111,7 +126,9 @@
                                 <div class="flex items-start justify-between gap-4">
                                     <div>
                                         <p class="text-xs uppercase tracking-[0.18em] text-gray-500">Password</p>
-                                        <p id="password-display" class="mt-3 text-lg font-semibold text-white">••••••••</p>
+                                        <p id="password-display" class="mt-3 text-lg font-semibold text-white">
+                                            ••••••••
+                                        </p>
                                     </div>
                                     <button
                                         class="rounded-md border border-gray-600 px-4 py-2 text-sm font-medium text-white transition hover:border-blue-500 hover:text-blue-300"

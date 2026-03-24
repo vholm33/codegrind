@@ -123,3 +123,18 @@ export async function updateUserProfile(pool: Pool, input: UpdateUserProfileInpu
     const [result] = await pool.execute<ResultSetHeader>(sql, params);
     return result;
 }
+
+export async function removeProfileRepo(pool: Pool, userId: number) {
+    console.log('[Repo] In remove profile ');
+
+    console.log('userId to be removed:', userId);
+    const [rows]: any = await pool.execute(
+        `
+            DELETE FROM users WHERE id = ?
+        `,
+        [userId],
+    );
+
+    console.log('User removed?');
+    return rows[0] ?? null;
+}

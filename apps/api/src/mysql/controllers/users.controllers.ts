@@ -9,6 +9,7 @@ import jwt from 'jsonwebtoken';
 //? Import repo ?
 import { insertUser, type InsertUserInput } from '../repositories/users.repo.js';
 import { loginUser, type LoginUserInput } from '../repositories/users.repo.js';
+import { removeProfileRepo } from '../repositories/users.repo.js';
 import { getUserProfileById, updateUserProfile, type UpdateUserProfileInput } from '../repositories/users.repo.js';
 
 export async function registerUser(req: Request, res: Response) {
@@ -173,6 +174,38 @@ export async function updateMyProfileController(req: AuthRequest, res: Response)
     } catch (error: any) {
         return res.status(500).json({
             message: 'Could not update profile',
+            error: error.message,
+        });
+    }
+}
+
+export async function deleteUserProfileController(req: AuthRequest, res: Response) {
+    try {
+        console.log('[Kontroller] Ta bort profil');
+        const userId: number | undefined  = req.user?.userId;
+        console.log('userId:', userId);
+
+        // const { username, email, password } = req.body;
+
+        if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+
+        const result = await removeProfileRepo(pool, userId);
+        console.log('removed?', result);
+        /* if (result.affectedRows === 0) {
+            return res.status(404).json({
+                message: 'No user was updated',
+            });
+        }
+
+        const updatedUser = await getUserProfileById(pool, userId);
+ */
+        return res.status(200).json({
+            message: 'Profile deleted',
+            // user: updatedUser,
+        });
+    } catch (error: any) {
+        return res.status(500).json({
+            message: 'Could not delete profile',
             error: error.message,
         });
     }

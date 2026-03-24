@@ -26,9 +26,14 @@ export async function initToolbar() {
                 </a>
                 <h1 class="text-center text-2xl font-semibold">CodeGrind</h1>
                 <!-- Register: om inte har inlogg  -->
-                <button id="login-btn" class="text-md w-24 justify-self-end rounded-md bg-blue-500 font-semibold">
-                    <a id="login-btn-anchor" href="${baseUrl}/src/register.html">Register</a>
-                </button>
+                <div class="justify-self-end">
+                    <button id="login-btn" class="text-md w-24 rounded-md bg-blue-500 font-semibold">
+                        <a id="login-btn-anchor" href="${baseUrl}/src/register.html">Register</a>
+                    </button>
+                    <button id="profile-btn" class="text-md w-14 rounded-md bg-blue-500 font-semibold">
+                        <a id="profile-btn-anchor" href="${baseUrl}/src/pages/profile/profile.html">Profil</a>
+                    </button>
+                </div>
             `;
         }
         console.info('await isLoggedIn()');
@@ -101,21 +106,27 @@ async function renderLogout(baseUrl: string) {
     try {
         const loginBtn = document.querySelector('#login-btn') as HTMLButtonElement;
         const loginBtnAnchor = document.querySelector('#login-btn-anchor') as HTMLAnchorElement;
+        const profileBtn = document.querySelector('#profile-btn') as HTMLButtonElement;
+        const profileBtnAnchor = document.querySelector('#profile-btn-anchor') as HTMLAnchorElement;
 
         if (!loginBtn || !loginBtnAnchor) {
             console.error('loginBtn', loginBtn);
             console.error('loginAnchor', loginBtnAnchor);
+        }
+        if (!profileBtn || !profileBtnAnchor) {
+            console.error('profileBtn', profileBtn);
+            console.error('profileAnchor', profileBtnAnchor);
         }
 
         if (loginBtn) {
             // Color change
             loginBtn.classList.remove('bg-blue-500');
             loginBtn.classList.add('bg-red-500');
-
             // onClick function
             loginBtn.onclick = logout; // utan () ska bara anropas när knappen clickas
         }
         if (loginBtnAnchor) {
+            // profileBtnAnchor.href = `${baseUrl}/src/pages/re`
             loginBtnAnchor.textContent = 'Logout';
             loginBtnAnchor.href = `${baseUrl}/src/pages/register/register.html`;
         }
