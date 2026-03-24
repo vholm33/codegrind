@@ -110,7 +110,8 @@ export async function addRating(req: Request, res: Response<ApiResponse>): Promi
 
 export async function getUserRatingsById(
     req: AuthRequest,
-    res: Response<ApiResponse<Rating[]>>,
+    res: Response,
+    // res: Response<ApiResponse<Rating[]>>,
 ): Promise<Response> {
     try {
         console.log('[CONTROLLER] getRating(req, res)');
